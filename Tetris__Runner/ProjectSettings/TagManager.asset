@@ -15,17 +15,17 @@ TagManager:
   - 
   - 
   - 
+  - Ground
   - 
   - 
   - 
   - 
+  - Player
   - 
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - Floating
   - 
   - 
   - 
@@ -40,4 +40,28 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background1
+    uniqueID: 1381865173
+    locked: 0
+  - name: Background2
+    uniqueID: 1893965093
+    locked: 0
+  - name: Background3
+    uniqueID: 4181500369
+    locked: 0
+  - name: Ground
+    uniqueID: 1378194979
+    locked: 0
+  - name: Player_Behind
+    uniqueID: 3353180369
+    locked: 0
+  - name: Player
+    uniqueID: 1673638185
+    locked: 0
+  - name: Player_Ontop
+    uniqueID: 524125261
+    locked: 0
+  - name: Floating
+    uniqueID: 806963649
     locked: 0

@@ -21,6 +21,8 @@ public class Player_Script : MonoBehaviour
 
     [SerializeField] private float acceleration_time = 1;
 
+    public float gravity_modifier = 1;
+
     private float acceleration;
 
     private float counter = 0f;
@@ -50,18 +52,26 @@ public class Player_Script : MonoBehaviour
         {
             if (Cell_body_current.isActive && !Cell_ceiling_exist && Cell_body_current.type == Cell.Cell_type.Ground)
             {
-                transform.position = new Vector2(transform.position.x, transform.position.y + 1);
+                if(GridScript.Cell_is_ground(Ceiling_pos + new Vector2Int(-1, 0)))
+                {
+                    //Debug.Log("DEAD");
+                }
+                else
+                {
+                    //MOVING UP ONE PIECE
+                    transform.position = new Vector2(transform.position.x, transform.position.y + 1);
+                }
             }
             else if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
             {
-                Debug.Log("DEAD");
+                //Debug.Log("DEAD");
             }
         }
         else
         {
             if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
             {
-                Debug.Log("DEAD");
+                //Debug.Log("DEAD");
             }
         }
 
@@ -69,7 +79,7 @@ public class Player_Script : MonoBehaviour
 
         if (!Cell_floor_exist || (transform.position.y > Floor_pos.y + 1))
         {
-            RB.gravityScale = 1;
+            RB.gravityScale = gravity_modifier;
         }
         else
         {

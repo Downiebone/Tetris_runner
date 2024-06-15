@@ -18,8 +18,8 @@ public class GridEditor : MonoBehaviour
 
     [Header("Map_Gen")]
     
-    private int gridHeight = 15;
-    private int gridLength = 500;
+    public int gridHeight = 15;
+    public int gridLength = 500;
 
     [SerializeReference] private int startArea_size = 10;
 
@@ -28,12 +28,13 @@ public class GridEditor : MonoBehaviour
 
     [Tooltip(">= 1")]
     [SerializeField] private int Level_Min_Height = 2;
+    [SerializeField] private int Level_Max_Height = 15;
 
 
     private float perlin_x_offset = 0;
     private float perlin_y_offset = 0;
 
-
+    public GameObject[] HighlightObjects;
 
     
 
@@ -44,6 +45,12 @@ public class GridEditor : MonoBehaviour
     }
     private void Start()
     {
+        //fail_safe
+        if(Level_Max_Height > gridHeight)
+        {
+            Level_Max_Height = gridHeight;
+        }
+
         updatePerlinOffset();
 
         fillGridColors();
@@ -76,11 +83,11 @@ public class GridEditor : MonoBehaviour
 
     void fillGridShape()
     {
-        int grid_usable_height = (gridHeight) - (Level_Min_Height);
+        int grid_usable_height = (Level_Max_Height) - (Level_Min_Height);
 
         for (int c = 0; c < gridLength; c++)
         {
-            int currMaxHeight = Mathf.RoundToInt(gridHeight * ((float)Random.Range(Level_Min_Height + 1, gridHeight-1) / grid_usable_height));
+            int currMaxHeight = Mathf.RoundToInt(Level_Max_Height * ((float)Random.Range(Level_Min_Height + 1, Level_Max_Height - 1) / grid_usable_height));
 
             if(c < startArea_size)
             {
