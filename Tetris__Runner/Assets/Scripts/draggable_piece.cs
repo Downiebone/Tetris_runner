@@ -4,37 +4,42 @@ using UnityEngine;
 
 public class draggable_piece : MonoBehaviour
 {
-    private GameObject CameraObj;
+    protected Draggable_instantiater CameraObj;
+    protected GridEditor GridObj;
 
-    private Transform player_transform;
+    //private Transform player_transform;
 
     [HideInInspector] public bool isBeingDragged = false;
 
     [HideInInspector] public int myDraggableIndex;
 
-    [SerializeField] private float draggable_escapeVelocityFAST = 0.1f;
+    [SerializeField] protected float draggable_escapeVelocityFAST = 0.1f;
+
+    [Tooltip("the first one in the list needs to be the 'middle'")]
+    public Vector2Int[] HighlightSpots;
 
     private Rigidbody2D RB;
     void Start()
     {
         RB = GetComponent<Rigidbody2D>();
-        player_transform = GameObject.FindGameObjectWithTag("Player").transform;
+        //player_transform = GameObject.FindGameObjectWithTag("Player").transform;
     }
-    public void setCameraObj(GameObject CameraOb)
+    public void setReferences(Draggable_instantiater CameraOb, GridEditor GridOb)
     {
         CameraObj = CameraOb;
+        GridObj = GridOb;
     }
 
-    private  float speed_change_threshhold = 0.001F;
-    private Vector3 _position;
-    private float _speed;
-    private Vector3 _cameraPos;
+    //private  float speed_change_threshhold = 0.001F;
+    protected Vector3 _position;
+    protected float _speed;
+    protected Vector3 _cameraPos;
 
-    private float Draggable_Speed;
-    private Vector3 Draggable_Velocity;
+    protected float Draggable_Speed;
+    protected Vector3 Draggable_Velocity;
 
     public float slowDownTime = 0.5f;
-    void FixedUpdate()
+    protected void FixedUpdate()
     {
         Vector3 newPos = transform.position;
         Vector3 newCameraPos = CameraObj.transform.position;
@@ -69,18 +74,35 @@ public class draggable_piece : MonoBehaviour
 
             //if we drag object to fast, remove it from list
             //Debug.Log("ESCAPE SPEED : " + Draggable_Speed);
-            Camera.main.GetComponent<Draggable_instantiater>().RemoveDraggable_atIndex(myDraggableIndex);
+            CameraObj.RemoveDraggable_atIndex(myDraggableIndex);
             gameObject.layer = 0;
             RB.bodyType = RigidbodyType2D.Dynamic;
             RB.velocity = new Vector2(Draggable_Velocity.x, Draggable_Velocity.y);
         }
+
+        CameraObj.ResetHighlighter_Positions();
     }
+
+    protected Vector2Int LastWorkingPlaceSpot;
     public void dragged_position(Vector2 newPosition)
     {
         transform.position = newPosition;
+        Vector2Int newPos = Vector2Int.RoundToInt(newPosition);
+
+        for (int i = 0; i < HighlightSpots.Length; i++)
+        {
+            if (ValidSpaceToPlace(HighlightSpots[i] + newPos) == false) { return; }
+        }
+
+        LastWorkingPlaceSpot = HighlightSpots[0] + newPos;
+
+        for (int i = 0; i < HighlightSpots.Length; i++)
+        {
+            CameraObj.HighlightObjects[i].transform.position = (Vector2)(HighlightSpots[i] + newPos);
+        }
     }
 
-    private void PlaceDraggable()
+    protected virtual void PlaceDraggable()
     {
 
     }
@@ -88,6 +110,11 @@ public class draggable_piece : MonoBehaviour
     public virtual void touch_rotated()
     {
         transform.Rotate(new Vector3(0, 0, 90));
+    }
+
+    protected virtual bool ValidSpaceToPlace(Vector2Int pos)
+    {
+        return !(((Vector2)pos).y >= GridObj.gridHeight || GridObj.Cell_is_ground(pos));
     }
 
 }

@@ -34,11 +34,6 @@ public class GridEditor : MonoBehaviour
     private float perlin_x_offset = 0;
     private float perlin_y_offset = 0;
 
-    public GameObject[] HighlightObjects;
-
-    
-
-
     private void Awake()
     {
         Grid = new Cell[gridHeight, gridLength];

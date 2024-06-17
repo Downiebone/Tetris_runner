@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Draggable_instantiater : MonoBehaviour
 {
+    [SerializeField] private GridEditor GridScript;
+
     [SerializeField] private Transform NegX;
     [SerializeField] private Transform PosX;
     [SerializeField] private Transform offside_spawnPos;
@@ -22,6 +24,8 @@ public class Draggable_instantiater : MonoBehaviour
     public float FASTtimeBetweenSpawns = 0.2f;
     private float timer_ind = 255;
 
+    public GameObject[] HighlightObjects;
+
     void Start()
     {
         X_PieceLenght = (PosX.localPosition.x - NegX.localPosition.x) / (NumberOfDraggables_N - 1);
@@ -39,7 +43,7 @@ public class Draggable_instantiater : MonoBehaviour
             {
                 GameObject GO = Instantiate(Spawnable_Draggable, offside_spawnPos.position, Quaternion.identity, transform);
                 GO.GetComponent<draggable_piece>().myDraggableIndex = Draggables.Count;
-                GO.GetComponent<draggable_piece>().setCameraObj(this.gameObject);
+                GO.GetComponent<draggable_piece>().setReferences(this, GridScript);
                 Draggables.Add(GO);
                 timer_ind = 0;
 
@@ -74,6 +78,14 @@ public class Draggable_instantiater : MonoBehaviour
         for (int i = 0; i < Draggables.Count; i++)
         {
             Draggables[i].GetComponent<draggable_piece>().myDraggableIndex = i;
+        }
+    }
+
+    public void ResetHighlighter_Positions()
+    {
+        for (int i = 0; i < HighlightObjects.Length; i++)
+        {
+            HighlightObjects[i].transform.position = new Vector2(-1, -1);
         }
     }
 }

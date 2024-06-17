@@ -985,6 +985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7d1edabb3272940b69c5286d18b3bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GridScript: {fileID: 1706009099}
   NegX: {fileID: 1135265585}
   PosX: {fileID: 1969932955}
   offside_spawnPos: {fileID: 864122024}
@@ -993,6 +994,17 @@ MonoBehaviour:
   Spawnable_Draggable: {fileID: 1653362467072932981, guid: 657621e57e5b4cc4baa7146d552b2c38, type: 3}
   NormaltimeBetweenSpawns: 1.5
   FASTtimeBetweenSpawns: 0.2
+  HighlightObjects:
+  - {fileID: 876334252}
+  - {fileID: 1341997614}
+  - {fileID: 903098080}
+  - {fileID: 1195533939}
+  - {fileID: 657162951}
+  - {fileID: 282935773}
+  - {fileID: 1686293711}
+  - {fileID: 1170520488}
+  - {fileID: 453347457}
+  - {fileID: 595257896}
 --- !u!1 &1135265584
 GameObject:
   m_ObjectHideFlags: 0
@@ -1653,17 +1665,6 @@ MonoBehaviour:
   perlin_size: 4
   Level_Min_Height: 2
   Level_Max_Height: 11
-  HighlightObjects:
-  - {fileID: 876334252}
-  - {fileID: 1341997614}
-  - {fileID: 903098080}
-  - {fileID: 1195533939}
-  - {fileID: 657162951}
-  - {fileID: 282935773}
-  - {fileID: 1686293711}
-  - {fileID: 1170520488}
-  - {fileID: 453347457}
-  - {fileID: 595257896}
 --- !u!4 &1706009100
 Transform:
   m_ObjectHideFlags: 0
