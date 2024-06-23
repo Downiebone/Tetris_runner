@@ -1,5 +1,8 @@
 using UnityEngine;
+using System;
+using SerializableTypes;
 
+[Serializable]
 public class Cell
 {
     public enum Cell_type
@@ -13,6 +16,15 @@ public class Cell
     public bool isActive = false;
     public Cell_type type = Cell_type.Ground;
     //public int colorIndex = 0;
-    public SpriteRenderer sprite_rend;
-    public Color cellColor;
+    [NonSerialized] public SpriteRenderer sprite_rend;
+    [NonSerialized] public Color cellColor;
+    public SColor saved_cellColor;
+
+    public int Width;
+    public int Height;
+
+    public void convertToSavableColor()
+    {
+        saved_cellColor = cellColor;
+    }
 }

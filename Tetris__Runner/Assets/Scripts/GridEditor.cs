@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class GridEditor : MonoBehaviour
 {
-    private Cell[,] Grid;
+    [Header("EDITOR")]
+    [SerializeField] private bool shouldStartByLoadingLevel = false;
+    [Space]
+    [Space]
+
+
+    [Tooltip("Y,X (for some reason hehe)")]
+    public Cell[,] Grid;
 
     [SerializeField] private GameObject cell_piece_prefab;
 
@@ -45,14 +52,21 @@ public class GridEditor : MonoBehaviour
         {
             Level_Max_Height = gridHeight;
         }
+        if (shouldStartByLoadingLevel)
+        {
 
-        updatePerlinOffset();
+        }
+        else //Generate perlin map
+        {
+            updatePerlinOffset();
 
-        fillGridColors();
+            fillGridColors();
 
-        fillGridShape();
+            fillGridShape();
 
-        populateGrid();
+            populateGrid();
+        }
+        
     }
 
     
@@ -126,7 +140,7 @@ public class GridEditor : MonoBehaviour
     {
         return Grid[pos.y, pos.x];
     }
-    public void placeTile(Vector2Int pos)
+    public void placeTile(Vector2Int pos, Color placeTileColor)
     {
         Cell cell = Grid[pos.y, pos.x];
         if (cell.isActive)
@@ -134,6 +148,8 @@ public class GridEditor : MonoBehaviour
             return;
         }
         cell.isActive = true;
+        cell.cellColor = placeTileColor;
+        cell.sprite_rend.color = placeTileColor;
         cell.sprite_rend.sprite = cellSprites[(int)cell.type];
     }
     public void deleteTile(Vector2Int pos)
@@ -176,5 +192,10 @@ public class GridEditor : MonoBehaviour
         {
             return new Vector3Int(newPos.x, newPos.y, 0);
         }
+    }
+
+    public Color GainRandomColor()
+    {
+        return cellColors[Random.Range(0, cellColors.Length)];
     }
 }

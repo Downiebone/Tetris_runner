@@ -17,7 +17,7 @@ public class Draggable_instantiater : MonoBehaviour
 
     [SerializeField] private float smoothSpeed = 0.125f;
 
-    [SerializeField] private GameObject Spawnable_Draggable;
+    [SerializeField] private GameObject[] Spawnable_Draggable;
 
     float timeBetweenSpawns = 1;
     public float NormaltimeBetweenSpawns = 0.2f;
@@ -41,7 +41,7 @@ public class Draggable_instantiater : MonoBehaviour
             }
             else
             {
-                GameObject GO = Instantiate(Spawnable_Draggable, offside_spawnPos.position, Quaternion.identity, transform);
+                GameObject GO = Instantiate(Spawnable_Draggable[Random.Range(0, Spawnable_Draggable.Length)], offside_spawnPos.position, Quaternion.identity, transform);
                 GO.GetComponent<draggable_piece>().myDraggableIndex = Draggables.Count;
                 GO.GetComponent<draggable_piece>().setReferences(this, GridScript);
                 Draggables.Add(GO);

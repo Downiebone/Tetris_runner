@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 344508281092544750}
   - component: {fileID: 9029050364634089170}
   m_Layer: 20
-  m_Name: Draggable__straight_line_3
+  m_Name: Draggable__L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107,6 +107,7 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 0, y: 1}
   - {x: 0, y: -1}
+  - {x: -1, y: -1}
   slowDownTime: 0.4
 --- !u!50 &344508281092544750
 Rigidbody2D:

@@ -207,6 +207,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1315037466
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1315037467}
+  - component: {fileID: 1315037468}
+  m_Layer: 0
+  m_Name: Savable
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1315037467
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315037466}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 13.299999, y: 7, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1315037468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315037466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e5f3a1a5f4815408cfe6b1f1e4e2bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1581189955
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,6 +386,7 @@ MonoBehaviour:
   camSpeed_multiplier: 3
   cell_highlight: {fileID: 126660709}
   Grid_script: {fileID: 2056913879}
+  Save_Script: {fileID: 1315037468}
 --- !u!1 &2056913877
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +441,9 @@ MonoBehaviour:
   - {r: 0.058490515, g: 0.94225514, b: 1, a: 1}
   - {r: 0.9294833, g: 0.3226415, b: 1, a: 1}
   fillRandom: 0
+  gridHeight: 15
+  gridLength: 500
   startArea_size: 10
   perlin_size: 4
   Level_Min_Height: 2
+  Level_Max_Height: 15

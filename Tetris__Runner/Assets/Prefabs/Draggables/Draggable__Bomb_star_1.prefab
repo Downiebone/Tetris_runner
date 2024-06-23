@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1653362467072932982}
   - component: {fileID: 61931799}
-  - component: {fileID: -3310644423505321211}
   - component: {fileID: 344508281092544750}
   - component: {fileID: 9029050364634089170}
+  - component: {fileID: -6232326818095991729}
   m_Layer: 20
-  m_Name: Draggable__straight_line_3
+  m_Name: Draggable__Bomb_star_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,11 +73,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 3b22f45192083d34fad154d382b4e303, type: 3}
-  m_Color: {r: 0.58428764, g: 0, b: 1, a: 1}
+  m_SortingLayerID: 806963649
+  m_SortingLayer: 8
+  m_SortingOrder: -1
+  m_Sprite: {fileID: 21300000, guid: 288b4a1b9fce2d24d80ca1b6a8df7e8f, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -87,27 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-3310644423505321211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1653362467072932981}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9eb82460153c24b40ae3bd9679d325aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprite_ref: {fileID: 7604938256440483462, guid: 3d5e27430337fd84e861d00e6c56363f, type: 3}
-  isBeingDragged: 0
-  myDraggableIndex: 0
-  draggable_escapeVelocityFAST: 20
-  HighlightSpots:
-  - {x: 0, y: 0}
-  - {x: 0, y: 1}
-  - {x: 0, y: -1}
-  slowDownTime: 0.4
 --- !u!50 &344508281092544750
 Rigidbody2D:
   serializedVersion: 4
@@ -145,3 +124,33 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 2
+--- !u!114 &-6232326818095991729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653362467072932981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f8dca1cc6b367748933f1994766caed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprite_ref: {fileID: 7604938256440483462, guid: 3d5e27430337fd84e861d00e6c56363f, type: 3}
+  isBeingDragged: 0
+  myDraggableIndex: 0
+  draggable_escapeVelocityFAST: 20
+  HighlightSpots:
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 0}
+  - {x: 0, y: -1}
+  - {x: -1, y: 0}
+  slowDownTime: 0.2
+  toFarForPlace: 0.1
+  HighlightSpots_RotateVariant:
+  - {x: 0, y: 0}
+  - {x: 1, y: 1}
+  - {x: 1, y: -1}
+  - {x: -1, y: 1}
+  - {x: -1, y: -1}

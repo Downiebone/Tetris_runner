@@ -11,6 +11,8 @@ public class GridEditor_Camera : MonoBehaviour
 
     [SerializeField] private GridEditor Grid_script;
 
+    public GridSaver Save_Script;
+
     // Update is called once per frame
     void Update()
     {
@@ -33,11 +35,16 @@ public class GridEditor_Camera : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            Grid_script.placeTile(currentGridMousePos);
+            Grid_script.placeTile(currentGridMousePos, Color.white);
         }
         if (Input.GetKey(KeyCode.Mouse1))
         {
             Grid_script.deleteTile(currentGridMousePos);
+        }
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            Save_Script.Setup_AreaSize(Grid_script, Grid_script.gridHeight, Grid_script.gridLength);
+            Save_Script.SaveCellsToJson("test1");
         }
 
     }
