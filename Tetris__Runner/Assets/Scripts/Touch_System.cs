@@ -15,6 +15,20 @@ public class Touch_System : MonoBehaviour
     Camera main_cam;
 
     draggable_piece cur_dragObject;
+    private Vector2 origin_drag_pos;
+    private bool reached_far_enough_distance = false;
+    [SerializeField] private float far_enough_distance = 1;
+
+    [SerializeField] private Draggable_instantiater drag_inster_SYSTEM;
+
+    [SerializeField] private Transform UI_rotate_trash_btn;
+    [SerializeField] private SpriteRenderer UI_rend;
+    [SerializeField] private float distance_to_become_trashcan = 3;
+    [SerializeField] private float distance_to_be_put_in_trash = 1;
+    [SerializeField] private Sprite rotate_sprite;
+    [SerializeField] private Sprite trash_sprite;
+
+    
 
     private void Start()
     {
@@ -23,48 +37,103 @@ public class Touch_System : MonoBehaviour
 
     void Update()
     {
-#if true
 
-    Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-    Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+#if UNITY_EDITOR
 
-    Collider2D touched_drag_Collider = Physics2D.OverlapPoint(worldPosition, drag_layers);
+        Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        Vector2 worldPosition = main_cam.ScreenToWorldPoint(screenPosition);
 
-    if (Input.GetKeyDown(KeyCode.Mouse0))
-    {
-        Debug.Log("Start drag system");
+        Collider2D touched_drag_Collider = Physics2D.OverlapPoint(worldPosition, drag_layers);
 
-        if (touched_drag_Collider != null)
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            currMovingObject = true;
-            cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
-            cur_dragObject.BeginDrag();
-        }
-    }
-    if(cur_dragObject == null) { return; }
-    if (Input.GetKey(KeyCode.Mouse0))
-    {
-        if (currMovingObject)
-        {
-            cur_dragObject.dragged_position(worldPosition);
-        }
-    }
-    if (Input.GetKeyUp(KeyCode.Mouse0))
-    {
-        if (currMovingObject)
-        {
-            currMovingObject = false;
-            cur_dragObject.EndDrag();
-            cur_dragObject = null;
-        }
-    }
+            //Debug.Log("Start drag system");
 
-    //touch 2 stuff
+            if (touched_drag_Collider != null)
+            {
+                
 
-    if (Input.GetKeyDown(KeyCode.Mouse1))
-    {
-        cur_dragObject.touch_rotated();
-    }
+                currMovingObject = true;
+                cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
+                drag_inster_SYSTEM.set_currently_highlighted_draggable(cur_dragObject);
+                cur_dragObject.BeginDrag();
+                origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
+                reached_far_enough_distance = false;
+            }
+            else
+            {
+                if(drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null)
+                {
+                    currMovingObject = true;
+                    cur_dragObject = drag_inster_SYSTEM.Get_currently_highlighted_Draggable();
+                    cur_dragObject.BeginDrag();
+                    origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
+                    reached_far_enough_distance = false;
+                }
+            }
+        }
+        if (cur_dragObject == null) { return; }
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            if (currMovingObject)
+            {
+                if (reached_far_enough_distance)
+                {
+                    if(Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_become_trashcan)
+                    {
+                        UI_rend.sprite = trash_sprite;
+
+                        if (Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash)
+                        {
+                            //make block red or something???
+                            //or enlarge the trashcan
+                        }
+                    }
+                    else
+                    {
+                        UI_rend.sprite = rotate_sprite;
+                    }
+
+                    cur_dragObject.dragged_position(worldPosition);
+                }
+                else
+                {
+                    if(Vector2.Distance(worldPosition, origin_drag_pos) > far_enough_distance)
+                    {
+                        reached_far_enough_distance = true;
+                    }
+                }
+                
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            if (currMovingObject)
+            {
+                if (Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash) //close enough to trash can
+                {
+                    cur_dragObject.destroy_piece();
+                }
+                else
+                {
+                    cur_dragObject.EndDrag();
+                }
+
+                currMovingObject = false;
+                cur_dragObject = null;
+
+                UI_rend.sprite = rotate_sprite;
+
+                
+            }
+        }
+
+        //touch 2 stuff
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            cur_dragObject.touch_rotated();
+        }
 
 #else
     if (Input.touchCount <= 0) { return; }

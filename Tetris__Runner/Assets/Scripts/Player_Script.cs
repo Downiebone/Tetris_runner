@@ -6,6 +6,7 @@ public class Player_Script : MonoBehaviour
 {
 
     [SerializeField] private GridEditor GridScript;
+    public GameObject playerDeath;
 
     private Cell Cell_body_current;
 
@@ -37,44 +38,61 @@ public class Player_Script : MonoBehaviour
 
         transform.Translate(Vector2.right * playerSpeed * acceleration * Time.deltaTime);
     }
+
+    Vector2Int player_lastpos;
+    bool skipping_steps = false;
     private void LateUpdate()
     {
         Vector2Int Player_2Int_pos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
-        Vector2Int Ceiling_pos = Player_2Int_pos + new Vector2Int(0, 1);
-        Vector2Int Floor_pos = Player_2Int_pos + new Vector2Int(0, -1);
 
-
-        Cell_body_current = GridScript.Cell_on_position(Player_2Int_pos);
-
-        Cell_ceiling_exist = GridScript.Cell_is_ground(Ceiling_pos);
-
-        if (Cell_floor_exist)
+        if(Player_2Int_pos == player_lastpos)
         {
-            if (Cell_body_current.isActive && !Cell_ceiling_exist && Cell_body_current.type == Cell.Cell_type.Ground)
-            {
-                if(GridScript.Cell_is_ground(Ceiling_pos + new Vector2Int(-1, 0)))
-                {
-                    //Debug.Log("DEAD");
-                }
-                else
-                {
-                    //MOVING UP ONE PIECE
-                    transform.position = new Vector2(transform.position.x, transform.position.y + 1);
-                }
-            }
-            else if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
-            {
-                //Debug.Log("DEAD");
-            }
+            skipping_steps = true;
         }
         else
         {
-            if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
-            {
-                //Debug.Log("DEAD");
-            }
+            skipping_steps = false;
+            player_lastpos = Player_2Int_pos;
         }
 
+        Vector2Int Floor_pos = Player_2Int_pos + new Vector2Int(0, -1);
+
+        if(skipping_steps == false)
+        {
+            Vector2Int Ceiling_pos = Player_2Int_pos + new Vector2Int(0, 1);
+
+            Cell_body_current = GridScript.Cell_on_position(Player_2Int_pos);
+
+            Cell_ceiling_exist = GridScript.Cell_is_ground(Ceiling_pos);
+
+            if (Cell_floor_exist)
+            {
+                if (Cell_body_current.isActive && !Cell_ceiling_exist && Cell_body_current.type == Cell.Cell_type.Ground)
+                {
+                    if (GridScript.Cell_is_ground(Ceiling_pos + new Vector2Int(-1, 0)))
+                    {
+                        Instantiate(playerDeath, transform.position, Quaternion.identity);
+                    }
+                    else
+                    {
+                        //MOVING UP ONE PIECE
+                        transform.position = new Vector2(transform.position.x, transform.position.y + 1);
+                    }
+                }
+                else if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
+                {
+                    Instantiate(playerDeath, transform.position, Quaternion.identity);
+                }
+            }
+            else
+            {
+                if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
+                {
+                    Instantiate(playerDeath, transform.position, Quaternion.identity);
+                }
+            }
+        }
+        
         Cell_floor_exist = GridScript.Cell_is_ground(Floor_pos);
 
         if (!Cell_floor_exist || (transform.position.y > Floor_pos.y + 1))

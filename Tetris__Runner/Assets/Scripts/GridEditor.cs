@@ -28,6 +28,16 @@ public class GridEditor : MonoBehaviour
     public int gridHeight = 15;
     public int gridLength = 500;
 
+    [Header("MAP SAVE")]
+
+    public string MapName = "temp_name";
+    public int gridHeight_SAVE = 15;
+    public int gridLength_SAVE = 15;
+    public int MapDifficulity = 0;
+    public int MapRarity = 0;
+
+    [Space]
+
     [SerializeReference] private int startArea_size = 10;
 
     [Tooltip(">= 1")]
@@ -40,6 +50,8 @@ public class GridEditor : MonoBehaviour
 
     private float perlin_x_offset = 0;
     private float perlin_y_offset = 0;
+
+
 
     private void Awake()
     {
@@ -66,7 +78,8 @@ public class GridEditor : MonoBehaviour
 
             populateGrid();
         }
-        
+
+
     }
 
     
@@ -84,6 +97,7 @@ public class GridEditor : MonoBehaviour
                 Grid[r, c].sprite_rend = GO.GetComponent<SpriteRenderer>();
 
                 int colorInd = Random.Range(0, cellColors.Length);
+                Grid[r, c].color_index = colorInd;
                 Grid[r, c].cellColor = cellColors[colorInd];
                 Grid[r, c].sprite_rend.color = Grid[r, c].cellColor;
             }
@@ -117,6 +131,36 @@ public class GridEditor : MonoBehaviour
             }
         }
     }
+
+    public void Fill_In_Loaded_grid(Cell[,] Grid_loaded, int load_from_pos_x)
+    {
+        for (int i = 0; i < Grid_loaded.GetLength(0); i++) //height
+        {
+            for (int j = 0; j < Grid_loaded.GetLength(1); j++) //width
+            {
+                Cell grid_cell = Grid[i, j + load_from_pos_x];
+                Cell loaded_cell = Grid_loaded[i, j];
+                grid_cell.isActive = loaded_cell.isActive;
+                grid_cell.type = loaded_cell.type;
+                grid_cell.color_index = loaded_cell.color_index;
+
+                Color set_color = loaded_cell.type == Cell.Cell_type.Ground ? cellColors[loaded_cell.color_index] : Color.white;
+
+                grid_cell.cellColor = set_color;
+                
+                grid_cell.sprite_rend.color = set_color;
+                if (!grid_cell.isActive)
+                {
+                    grid_cell.sprite_rend.sprite = null;
+                }
+                else
+                {
+                    grid_cell.sprite_rend.sprite = cellSprites[(int)loaded_cell.type];
+                }
+                
+            }
+        }
+    }
     void updatePerlinOffset()
     {
         perlin_x_offset = Random.Range(0f, 1f);
@@ -132,26 +176,73 @@ public class GridEditor : MonoBehaviour
     }
     public bool Cell_is_ground(Vector2Int pos)
     {
+        if(pos.y >= gridHeight) { return false; }
+
         Cell cur_cell = Grid[pos.y, pos.x];
 
         return cur_cell.type == Cell.Cell_type.Ground && cur_cell.isActive == true;
     }
     public Cell Cell_on_position(Vector2Int pos)
     {
+        if (pos.y >= gridHeight) { //return "empty"/"off" cell if we check aboce the ceiling
+            Cell tempcell = new Cell();
+            tempcell.isActive = false;
+            return tempcell;
+        }
+
         return Grid[pos.y, pos.x];
     }
-    public void placeTile(Vector2Int pos, Color placeTileColor)
+    public void placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell = Cell.Cell_type.Ground, int color_index = 0)
     {
         Cell cell = Grid[pos.y, pos.x];
-        if (cell.isActive)
-        {
-            return;
-        }
+        //if (cell.isActive && cell.type == typa_cell)
+        //{
+        //    return;
+        //}
+
+        cell.type = typa_cell;
+        
+
         cell.isActive = true;
+
+        if(typa_cell != Cell.Cell_type.Ground)
+        {
+            placeTileColor = Color.white;
+        }
+
         cell.cellColor = placeTileColor;
         cell.sprite_rend.color = placeTileColor;
+        cell.color_index = color_index;
+
         cell.sprite_rend.sprite = cellSprites[(int)cell.type];
     }
+    public void place_fullCell(Vector2Int pos, Cell newCell)
+    {
+        //Debug.Log("placing full cell: active: " + newCell.isActive + " | x: " + pos.x + " | y: " + pos.y);
+        Cell cell = Grid[pos.y, pos.x];
+        //if (cell.isActive && cell.type == typa_cell)
+        //{
+        //    return;
+        //}
+
+        cell.type = newCell.type;
+
+        cell.isActive = newCell.isActive;
+
+        Color placeTileColor = newCell.cellColor;
+
+        if (newCell.type != Cell.Cell_type.Ground)
+        {
+            placeTileColor = Color.white;
+        }
+
+        cell.cellColor = placeTileColor;
+        cell.sprite_rend.color = placeTileColor;
+        cell.color_index = newCell.color_index;
+
+        cell.sprite_rend.sprite = newCell.isActive == true? cellSprites[(int)cell.type] : null;
+    }
+
     public void deleteTile(Vector2Int pos)
     {
         Cell cell = Grid[pos.y, pos.x];
@@ -192,6 +283,11 @@ public class GridEditor : MonoBehaviour
         {
             return new Vector3Int(newPos.x, newPos.y, 0);
         }
+    }
+
+    public Cell getCellAtPoint(Vector2Int point)
+    {
+        return Grid[point.y, point.x];
     }
 
     public Color GainRandomColor()
