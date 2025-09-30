@@ -106,7 +106,6 @@ public class GridEditor_Camera : MonoBehaviour
             undo_cell_value undo_val = new undo_cell_value();
             undo_val.yx_vals = pos;
             undo_val.cell.copyCell(save_cell);
-            Debug.Log("save_cell: " + save_cell.isActive + " | new_cell: " + undo_val.cell.isActive);
             undo_cell_values.Add(undo_val);
         }
     }
@@ -207,7 +206,6 @@ public class GridEditor_Camera : MonoBehaviour
 
         if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Z))
         {
-            Debug.Log("Undoing: " + undo_cell_values.Count);
             for (int i = 0; i < undo_cell_values.Count; i++)
             {
                 //Debug.Log("saved_cell: " + undo_cell_values[i].cell.isActive);

@@ -124,10 +124,11 @@ public class GridEditor : MonoBehaviour
                 {
                     Grid[r, c].isActive = true;
                 }
-                else if(r < currMaxHeight)
-                {
-                    Grid[r, c].isActive = getPerlinCord(r, c);
-                }
+                //-------------------------------PERLIN LEVEL PART
+                //else if(r < currMaxHeight)
+                //{
+                //    Grid[r, c].isActive = getPerlinCord(r, c);
+                //}
             }
         }
     }
