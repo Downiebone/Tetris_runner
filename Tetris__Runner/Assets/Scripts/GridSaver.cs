@@ -212,6 +212,119 @@ public class GridSaver : MonoBehaviour
         grid_return = grid;
     }
 
+    //private void Start()
+    //{
+    //    test_read_directory("Bot", "Mid", 1);
+    //}
+
+    //public void test_read_directory(string from_load, string to_load, int difficulity_load)
+    //{
+    //    string path = "Assets/Resources/Levels/" + (from_load + "_" + to_load) + "/" + difficulity_load.ToString();
+
+    //    string[] fileInfo = Directory.GetDirectories(path);
+
+    //    for (int i = 0; i < fileInfo.Length; i++)
+    //    {
+
+    //        fileInfo[i] = fileInfo[i].Replace("\\", "/");
+
+    //        Debug.Log("fil: " + fileInfo[i]);
+    //    }
+    //}
+
+    public async Task LoadCells_at_random(string from_load, string to_load, int difficulity_load)
+    {
+
+        string path = "";
+
+        while (true)
+        {
+
+            string originPath = "Assets/Resources/Levels/" + (from_load + "_" + to_load) + "/" + difficulity_load.ToString();
+
+#if UNITY_EDITOR || true
+
+#else //TODO: MAKE IT LOAD FROM RESOURCES!! maybe: https://answers.unity.com/questions/8187/how-can-i-read-binary-files-from-resources.html
+
+            //stuff from dreamers chaos:
+            if (!inEditorScene)
+            {
+                string path = "MarchingCubes/" + fileName;
+                LoadedvectorTextAsset = (Resources.Load(path + "/vectors") as TextAsset).bytes;
+                LoadedchunkTextAsset = (Resources.Load(path + "/chunks") as TextAsset).bytes;
+                LoadedcolorTextAsset = (Resources.Load(path + "/colors") as TextAsset).bytes;
+            }
+            await Task.Run(() =>
+            {
+                string path = "MarchingCubes/" + fileName;
+                loadResourcesFileGAME(path);
+            });
+
+#endif
+            string[] fileInfo = Directory.GetDirectories(originPath);
+
+            if(fileInfo.Length != 0)
+            {
+                for (int i = 0; i < fileInfo.Length; i++)
+                {
+
+                    fileInfo[i] = fileInfo[i].Replace("\\", "/");
+
+                    //Debug.Log("fil: " + fileInfo[i]);
+                }
+
+
+                path = fileInfo[UnityEngine.Random.Range(0, fileInfo.Length)];
+
+                break;
+            }
+            else
+            {
+                //cycle through difficulities until we find one that has levels
+                difficulity_load++;
+                if(difficulity_load > 5)
+                {
+                    difficulity_load = 1;
+                }
+            }
+
+        }
+
+
+        Debug.Log("Loading from: " + path);
+
+        if (!File.Exists(path + "/cells.bytes"))
+        {
+            Debug.LogError("FILE DOEST NOT EXIST, CANT LOAD: " + path);
+            return;
+        }
+
+        string data_str = await LoadTextAsync(path + "/dataStr.txt");
+        byte[] vectorString = await LoadBytesAsync(path + "/vectors.bytes");
+        byte[] cellString = await LoadBytesAsync(path + "/cells.bytes");
+
+        List<SVector2Int> vectorList = Deserializer<List<SVector2Int>>(vectorString);
+        List<Cell> savable_cellsList = Deserializer<List<Cell>>(cellString);
+
+        string[] data_str_parts = data_str.Split(Environment.NewLine, StringSplitOptions.None);
+        int heights = int.Parse(data_str_parts[0]);
+        int widths = int.Parse(data_str_parts[1]);
+
+        Debug.Log("Loading stats");
+        Debug.Log("h: " + heights + " | w: " + widths);
+        Debug.Log("vectors: " + vectorList.Count);
+        Debug.Log("cells: " + savable_cellsList.Count);
+
+        Cell[,] grid = new Cell[heights, widths];
+
+        for (int i = 0; i < vectorList.Count; i++)
+        {
+            grid[vectorList[i].y, vectorList[i].x] = savable_cellsList[i];
+        }
+
+        grid_return = grid;
+    }
+
     public async Task<byte[]> LoadBytesAsync(string filePath)
     {
         // File.ReadAllBytesAsync is already async, no need for Task.Run

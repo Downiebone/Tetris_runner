@@ -291,7 +291,7 @@ public class GridEditor_Camera : MonoBehaviour
 
         Debug.Log("Loaded: " + Save_Script.grid_return.GetLength(0) + " | " + Save_Script.grid_return.GetLength(1));
 
-        Grid_script.Fill_In_Loaded_grid(Save_Script.grid_return, 20);
+        Grid_script.Fill_In_Loaded_grid(Save_Script.grid_return);
         can_load = true;
         Debug.Log("LoadCells finished successfully!");
     }

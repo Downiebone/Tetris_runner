@@ -209,6 +209,7 @@ public class draggable_piece : MonoBehaviour
         transform.position = newPosition;
         Vector2Int newPos = Vector2Int.RoundToInt(newPosition);
 
+        //testing this now
         LastTestedPlaceSpot = newPos;
 
         bool failed_pos = false;
@@ -256,6 +257,7 @@ public class draggable_piece : MonoBehaviour
 
             for (int i = 0; i < HighlightSpots.Length; i++)
             {
+                //--------------------------------------------------------------------------------------final fail of placing blocks-(where it returns if all fails)------------------------------------------------
                 if (ValidSpaceToPlace(HighlightSpots[i] + newPos) == false) { return; }
             }
         }
@@ -297,7 +299,14 @@ public class draggable_piece : MonoBehaviour
 
     protected virtual bool ValidSpaceToPlace(Vector2Int pos)
     {
-        return !(((Vector2)pos).y >= GridObj.gridHeight || GridObj.Cell_is_ground(pos));
+
+        return (pos.y < GridObj.gridHeight && pos.y >= 0) && !GridObj.Cell_is_ground(pos);
+
+
+
+        //return false;
+
+        //return !(((Vector2)pos).y >= GridObj.gridHeight || GridObj.Cell_is_ground(pos));
     }
 
     public void Un_highlight()

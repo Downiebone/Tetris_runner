@@ -21,7 +21,7 @@ public class Paralax : MonoBehaviour
 
 
 
-    private void Update()
+    private void LateUpdate()
     {
         Vector3 Position = MainCamera.transform.position;
         float Temp = Position.x * (1 - AmountOfParallax);

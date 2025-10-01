@@ -100,7 +100,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eb82460153c24b40ae3bd9679d325aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circle_high: {fileID: 6449971106726497329}
   sprite_ref: {fileID: 7604938256440483462, guid: 3d5e27430337fd84e861d00e6c56363f, type: 3}
   floating_scale: 0.75
   selected_scale: 1.25
@@ -113,7 +112,8 @@ MonoBehaviour:
   - {x: 1, y: 0}
   - {x: 0, y: -1}
   - {x: -1, y: -1}
-  slowDownTime: 0.3
+  delayed_start_highlight: 0
+  slowDownTime: 0.2
   toFarForPlace: 1.5
 --- !u!50 &344508281092544750
 Rigidbody2D:

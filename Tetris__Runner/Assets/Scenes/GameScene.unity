@@ -154,12 +154,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drag_layers:
     serializedVersion: 2
-    m_Bits: 1048576
+    m_Bits: 3145728
   far_enough_distance: 1.5
   drag_inster_SYSTEM: {fileID: 977843881}
   UI_rotate_trash_btn: {fileID: 666433240}
   UI_rend: {fileID: 666433239}
-  distance_to_become_trashcan: 3
+  distance_to_become_trashcan: 4
   distance_to_be_put_in_trash: 1
   rotate_sprite: {fileID: 21300000, guid: c42976e5e4648414e9855698d97f2d97, type: 3}
   trash_sprite: {fileID: 21300000, guid: 096c123d3f56b26458969b5426ba8b69, type: 3}
@@ -687,7 +687,8 @@ GameObject:
   m_Component:
   - component: {fileID: 666433240}
   - component: {fileID: 666433239}
-  m_Layer: 0
+  - component: {fileID: 666433241}
+  m_Layer: 21
   m_Name: Rotate_Trash_SPOT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -761,6 +762,22 @@ Transform:
   m_Father: {fileID: 977843878}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &666433241
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666433238}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 1.5
 --- !u!1 &702922849
 GameObject:
   m_ObjectHideFlags: 0
@@ -812,7 +829,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &805911286
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1361,15 +1378,14 @@ MonoBehaviour:
   offside_spawnPos: {fileID: 864122024}
   NumberOfDraggables_N: 3
   Draggables: []
-  smoothSpeed: 3
+  smoothSpeed: 4
   Spawnable_Draggable:
-  - {fileID: 1653362467072932981, guid: 073f974470f8a004797de7544e63a6b6, type: 3}
   - {fileID: 1653362467072932981, guid: 4616d7d0e31ec2b46a2f019114b3208b, type: 3}
   - {fileID: 1653362467072932981, guid: 9c2e5a816e795984e8ac4abef4adea9e, type: 3}
   - {fileID: 1653362467072932981, guid: 12820adc1781f6d4c9adbf4f3f8d37f8, type: 3}
   - {fileID: 1653362467072932981, guid: 657621e57e5b4cc4baa7146d552b2c38, type: 3}
   - {fileID: 1653362467072932981, guid: 58f88bf506fa74e40afed53a5611beeb, type: 3}
-  - {fileID: 1653362467072932981, guid: 58f88bf506fa74e40afed53a5611beeb, type: 3}
+  - {fileID: 1653362467072932981, guid: ef94ebaae564bf143a741056c0695eeb, type: 3}
   NormaltimeBetweenSpawns: 1.5
   FASTtimeBetweenSpawns: 0.2
   HighlightObjects:
@@ -1852,6 +1868,7 @@ MonoBehaviour:
   RB: {fileID: 1363358009}
   playerSpeed: 3
   acceleration_time: 3
+  blast_speed_multiplier: 0.5
   gravity_modifier: 1
 --- !u!4 &1363358007
 Transform:
@@ -2378,6 +2395,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1706009100}
   - component: {fileID: 1706009099}
+  - component: {fileID: 1706009101}
   m_Layer: 0
   m_Name: SYSTEM-Grid---------------
   m_TagString: Untagged
@@ -2397,16 +2415,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bdbbd40ab154a646bd2d6852c299d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shouldStartByLoadingLevel: 0
+  shouldStartByLoadingLevel: 1
+  x_value_to_start_loading: 10
+  x_value_offset_from_player_to_load: 30
+  Save_script: {fileID: 1706009101}
+  current_from_str: Bot
+  current_to_str: Bot
+  current_difficulity: 1
   cell_piece_prefab: {fileID: 4221838574275903016, guid: abfc5861c2ea25e4aa5651f7bbe7e6ca, type: 3}
   emptyCellSprite: {fileID: 21300000, guid: 3b22f45192083d34fad154d382b4e303, type: 3}
   cellSprites:
   - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
+  - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
+  - {fileID: 21300000, guid: 8e00707df108f2c419ca2f7856fed412, type: 3}
   cellColors:
   - {r: 0.7433963, g: 0, b: 0, a: 1}
   - {r: 0.06326315, g: 0.645283, b: 0, a: 1}
   - {r: 0, g: 0.6261792, b: 0.6679245, a: 1}
   - {r: 0.59166753, g: 0, b: 0.6603774, a: 1}
+  - {r: 1, g: 0.97088087, b: 0, a: 1}
   fillRandom: 0
   gridHeight: 9
   gridLength: 500
@@ -2434,6 +2461,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1706009101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1706009098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e5f3a1a5f4815408cfe6b1f1e4e2bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GridObj: {fileID: 1706009099}
+  save_level_name: 
 --- !u!1 &1767244216
 GameObject:
   m_ObjectHideFlags: 0

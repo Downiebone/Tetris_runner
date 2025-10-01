@@ -22,11 +22,32 @@ public class Player_Script : MonoBehaviour
 
     [SerializeField] private float acceleration_time = 1;
 
+    private float bomb_timer = 0;
+
+    private float player_up_speed = 0;
+
+    [SerializeField] private float blast_speed_multiplier = 1;
+
     public float gravity_modifier = 1;
 
     private float acceleration;
 
     private float counter = 0f;
+
+    public void Bomb_player(float bomb_force)
+    {
+        Debug.Log("BOMBED!!!!!!!!!");
+
+        //bomb_timer = 0.5f;
+        //blast_speed_multiplier = 0.5f;
+        counter = acceleration_time/2;
+        gravity_modifier = 0;
+        RB.velocity = new Vector2(0, 0);
+        RB.gravityScale = gravity_modifier;
+
+        player_up_speed = bomb_force;
+    }
+
     private void Update()
     {
         if (counter < acceleration_time)
@@ -37,12 +58,38 @@ public class Player_Script : MonoBehaviour
         }
 
         transform.Translate(Vector2.right * playerSpeed * acceleration * Time.deltaTime);
+
+        if(player_up_speed > 0)
+        {
+            player_up_speed -= Time.deltaTime * 9.82f * 3;
+        }else if (gravity_modifier != 1)
+        {
+            gravity_modifier = 1;
+            //RB.velocity = new Vector2(0, 0);
+            RB.gravityScale = gravity_modifier;
+            //blast_speed_multiplier = 1;
+        }
     }
 
     Vector2Int player_lastpos;
     bool skipping_steps = false;
     private void LateUpdate()
     {
+
+        if (player_up_speed > 0)
+        {
+            if (Cell_ceiling_exist) // bumb head on ceiling while rising
+            {
+                transform.position = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y));
+                player_up_speed = 0;
+            }
+            else
+            {
+                transform.Translate(Vector2.up * player_up_speed * Time.deltaTime);
+            }
+
+        }
+
         Vector2Int Player_2Int_pos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
 
         if(Player_2Int_pos == player_lastpos)
@@ -57,6 +104,8 @@ public class Player_Script : MonoBehaviour
 
         Vector2Int Floor_pos = Player_2Int_pos + new Vector2Int(0, -1);
 
+        
+
         if(skipping_steps == false)
         {
             Vector2Int Ceiling_pos = Player_2Int_pos + new Vector2Int(0, 1);
@@ -65,7 +114,7 @@ public class Player_Script : MonoBehaviour
 
             Cell_ceiling_exist = GridScript.Cell_is_ground(Ceiling_pos);
 
-            if (Cell_floor_exist)
+            if (Cell_floor_exist || true) //remove perhaps
             {
                 if (Cell_body_current.isActive && !Cell_ceiling_exist && Cell_body_current.type == Cell.Cell_type.Ground)
                 {
@@ -76,7 +125,11 @@ public class Player_Script : MonoBehaviour
                     else
                     {
                         //MOVING UP ONE PIECE
-                        transform.position = new Vector2(transform.position.x, transform.position.y + 1);
+
+                        Vector2 new_pos = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y + 1));
+
+                        transform.position = new_pos;
+                        RB.velocity = new Vector2(0, 0);
                     }
                 }
                 else if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)

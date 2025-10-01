@@ -10,6 +10,10 @@ public class Bomb_draggable : draggable_piece
 
     [SerializeField] private SpriteRenderer highlight_renderer;
 
+
+    [Header("Player launch")]
+    [SerializeField] private float player_launch_rate = 3;
+
     protected override void Start()
     {
         RB = GetComponent<Rigidbody2D>();
@@ -42,10 +46,20 @@ public class Bomb_draggable : draggable_piece
 
     protected override void PlaceDraggable()
     {
+        Transform player_pos = GameObject.FindGameObjectWithTag("Player").transform;
+
         CameraObj.RemoveDraggable_atIndex(myDraggableIndex);
 
         for (int i = 0; i < HighlightSpots.Length; i++)
         {
+
+            //Debug.Log("player_pos: " + Vector2Int.RoundToInt((Vector2)player_pos.position) + " | high_spot: " + HighlightSpots[i]);
+
+            if((LastWorkingPlaceSpot + HighlightSpots[i]) == Vector2Int.RoundToInt((Vector2)player_pos.position)) //if we bomb the player
+            {
+                player_pos.gameObject.GetComponent<Player_Script>().Bomb_player(player_launch_rate);
+            }
+
             GridObj.deleteTile(LastWorkingPlaceSpot + HighlightSpots[i]);
         }
 
@@ -55,7 +69,7 @@ public class Bomb_draggable : draggable_piece
 
     protected override bool ValidSpaceToPlace(Vector2Int pos)
     {
-        return !(((Vector2)pos).y >= GridObj.gridHeight);
+        return (pos.y < GridObj.gridHeight && pos.y >= 0);
     }
 
     //need override because bomb_draggable does not use highlight_spots when selected

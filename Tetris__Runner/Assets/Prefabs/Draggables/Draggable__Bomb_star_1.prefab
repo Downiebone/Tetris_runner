@@ -151,8 +151,8 @@ MonoBehaviour:
   - {x: 0, y: -1}
   - {x: -1, y: 0}
   delayed_start_highlight: 0
-  slowDownTime: 0.3
-  toFarForPlace: 0.1
+  slowDownTime: 0.2
+  toFarForPlace: 1
   HighlightSpots_RotateVariant:
   - {x: 0, y: 0}
   - {x: 1, y: 1}
@@ -160,6 +160,7 @@ MonoBehaviour:
   - {x: -1, y: 1}
   - {x: -1, y: -1}
   highlight_renderer: {fileID: 464246145153050764}
+  player_launch_rate: 20
 --- !u!1 &6597235200633099637
 GameObject:
   m_ObjectHideFlags: 0

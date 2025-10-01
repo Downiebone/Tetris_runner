@@ -51,14 +51,22 @@ public class Touch_System : MonoBehaviour
 
             if (touched_drag_Collider != null)
             {
-                
-
-                currMovingObject = true;
-                cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
-                drag_inster_SYSTEM.set_currently_highlighted_draggable(cur_dragObject);
-                cur_dragObject.BeginDrag();
-                origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
-                reached_far_enough_distance = false;
+                if(touched_drag_Collider.gameObject.layer == 21) //rotate button
+                {
+                    if (drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null)
+                    {
+                        drag_inster_SYSTEM.Get_currently_highlighted_Draggable().touch_rotated();
+                    }
+                }
+                else //draggable
+                {
+                    currMovingObject = true;
+                    cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
+                    drag_inster_SYSTEM.set_currently_highlighted_draggable(cur_dragObject);
+                    cur_dragObject.BeginDrag();
+                    origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
+                    reached_far_enough_distance = false;
+                }
             }
             else
             {
@@ -85,8 +93,14 @@ public class Touch_System : MonoBehaviour
 
                         if (Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash)
                         {
+                            UI_rend.transform.localScale = new Vector3(1.3f,1.3f,1);
+
                             //make block red or something???
                             //or enlarge the trashcan
+                        }
+                        else
+                        {
+                            UI_rend.transform.localScale = new Vector3(1, 1, 1);
                         }
                     }
                     else
@@ -98,6 +112,7 @@ public class Touch_System : MonoBehaviour
                 }
                 else
                 {
+                    //need to drag something far enough from its start pos in order to count (make small touches nicer)
                     if(Vector2.Distance(worldPosition, origin_drag_pos) > far_enough_distance)
                     {
                         reached_far_enough_distance = true;
@@ -123,8 +138,9 @@ public class Touch_System : MonoBehaviour
                 cur_dragObject = null;
 
                 UI_rend.sprite = rotate_sprite;
+                UI_rend.transform.localScale = new Vector3(1, 1, 1);
 
-                
+
             }
         }
 
