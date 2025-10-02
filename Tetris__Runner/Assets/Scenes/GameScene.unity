@@ -160,7 +160,7 @@ MonoBehaviour:
   UI_rotate_trash_btn: {fileID: 666433240}
   UI_rend: {fileID: 666433239}
   distance_to_become_trashcan: 4
-  distance_to_be_put_in_trash: 1
+  distance_to_be_put_in_trash: 1.5
   rotate_sprite: {fileID: 21300000, guid: c42976e5e4648414e9855698d97f2d97, type: 3}
   trash_sprite: {fileID: 21300000, guid: 096c123d3f56b26458969b5426ba8b69, type: 3}
 --- !u!4 &80635547
@@ -1385,7 +1385,6 @@ MonoBehaviour:
   - {fileID: 1653362467072932981, guid: 12820adc1781f6d4c9adbf4f3f8d37f8, type: 3}
   - {fileID: 1653362467072932981, guid: 657621e57e5b4cc4baa7146d552b2c38, type: 3}
   - {fileID: 1653362467072932981, guid: 58f88bf506fa74e40afed53a5611beeb, type: 3}
-  - {fileID: 1653362467072932981, guid: ef94ebaae564bf143a741056c0695eeb, type: 3}
   NormaltimeBetweenSpawns: 1.5
   FASTtimeBetweenSpawns: 0.2
   HighlightObjects:

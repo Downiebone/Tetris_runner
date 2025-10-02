@@ -27,10 +27,10 @@ public class Draggable_instantiater : MonoBehaviour
 
     [SerializeField] private GameObject[] Spawnable_Draggable;
 
-    float timeBetweenSpawns = 1;
-    public float NormaltimeBetweenSpawns = 0.2f;
-    public float FASTtimeBetweenSpawns = 0.2f;
-    private float timer_ind = 255;
+    //float timeBetweenSpawns = 1;
+    //public float NormaltimeBetweenSpawns = 0.2f;
+    //public float FASTtimeBetweenSpawns = 0.2f;
+    //private float timer_ind = 255;
 
     public GameObject[] HighlightObjects;
 

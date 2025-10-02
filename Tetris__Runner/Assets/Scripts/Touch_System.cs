@@ -152,50 +152,120 @@ public class Touch_System : MonoBehaviour
         }
 
 #else
-    if (Input.touchCount <= 0) { return; }
+        if (Input.touchCount <= 0) { return; }
 
-    Touch touch_0 = Input.GetTouch(0);
+        Debug.Log("touch_count: " + Input.touchCount);
 
-    Touch_0_pos = main_cam.ScreenToWorldPoint(touch_0.position);
+        Touch touch_0 = Input.GetTouch(0);
 
-    if (touch_0.phase == TouchPhase.Began)
-    {
-        Collider2D touched_drag_Collider = Physics2D.OverlapPoint(Touch_0_pos, drag_layers);
+        Touch_0_pos = main_cam.ScreenToWorldPoint(touch_0.position);
 
-        if (touched_drag_Collider != null)
+        if (touch_0.phase == TouchPhase.Began)
         {
-            currMovingObject = true;
-            cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
-            cur_dragObject.BeginDrag();
+            Collider2D touched_drag_Collider_touch = Physics2D.OverlapPoint(Touch_0_pos, drag_layers);
+
+            if (touched_drag_Collider_touch != null)
+            {
+                if (touched_drag_Collider_touch.gameObject.layer == 21) //rotate button
+                {
+                    if (drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null)
+                    {
+                        drag_inster_SYSTEM.Get_currently_highlighted_Draggable().touch_rotated();
+                    }
+                }
+                else //draggable
+                {
+                    currMovingObject = true;
+                    cur_dragObject = touched_drag_Collider_touch.gameObject.GetComponent<draggable_piece>();
+                    drag_inster_SYSTEM.set_currently_highlighted_draggable(cur_dragObject);
+                    cur_dragObject.BeginDrag();
+                    origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
+                    reached_far_enough_distance = false;
+                }
+            }
+            else
+            {
+                if (drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null)
+                {
+                    currMovingObject = true;
+                    cur_dragObject = drag_inster_SYSTEM.Get_currently_highlighted_Draggable();
+                    cur_dragObject.BeginDrag();
+                    origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
+                    reached_far_enough_distance = false;
+                }
+            }
+
         }
-    }
-    if(cur_dragObject == null) { return; }
-    if (touch_0.phase == TouchPhase.Moved || touch_0.phase == TouchPhase.Stationary)
-    {
-        if (currMovingObject)
+        if(cur_dragObject == null) { return; }
+        if (touch_0.phase == TouchPhase.Moved || touch_0.phase == TouchPhase.Stationary)
         {
-            cur_dragObject.dragged_position(Touch_0_pos);
+            if (currMovingObject)
+            {
+                if (reached_far_enough_distance)
+                {
+                    if (Vector2.Distance(Touch_0_pos, UI_rotate_trash_btn.position) < distance_to_become_trashcan)
+                    {
+                        UI_rend.sprite = trash_sprite;
+
+                        if (Vector2.Distance(Touch_0_pos, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash)
+                        {
+                            UI_rend.transform.localScale = new Vector3(1.3f, 1.3f, 1);
+
+                            //make block red or something???
+                            //or enlarge the trashcan
+                        }
+                        else
+                        {
+                            UI_rend.transform.localScale = new Vector3(1, 1, 1);
+                        }
+                    }
+                    else
+                    {
+                        UI_rend.sprite = rotate_sprite;
+                    }
+
+                    cur_dragObject.dragged_position(Touch_0_pos);
+                }
+                else
+                {
+                    //need to drag something far enough from its start pos in order to count (make small touches nicer)
+                    if (Vector2.Distance(Touch_0_pos, origin_drag_pos) > far_enough_distance)
+                    {
+                        reached_far_enough_distance = true;
+                    }
+                }
+            }
         }
-    }
-    else if (touch_0.phase == TouchPhase.Ended)
-    {
-        if (currMovingObject)
+        else if (touch_0.phase == TouchPhase.Ended)
         {
-            currMovingObject = false;
-            cur_dragObject.EndDrag();
-            cur_dragObject = null;
+            if (currMovingObject)
+            {
+                if (Vector2.Distance(Touch_0_pos, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash) //close enough to trash can
+                {
+                    cur_dragObject.destroy_piece();
+                }
+                else
+                {
+                    cur_dragObject.EndDrag();
+                }
+
+                currMovingObject = false;
+                cur_dragObject = null;
+
+                UI_rend.sprite = rotate_sprite;
+                UI_rend.transform.localScale = new Vector3(1, 1, 1);
+            }
         }
-    }
 
-    //touch 2 stuff
-    if (cur_dragObject == null) { return; } //can only rotate if we are holding object
+        //touch 2 stuff
+        if (cur_dragObject == null) { return; } //can only rotate if we are holding object
 
-    Touch touch_1 = Input.GetTouch(1);
+        Touch touch_1 = Input.GetTouch(1);
 
-    if (touch_1.phase == TouchPhase.Began)
-    {
-        cur_dragObject.touch_rotated();
-    }
+        if (touch_1.phase == TouchPhase.Began)
+        {
+            cur_dragObject.touch_rotated();
+        }
 #endif
     }
 }

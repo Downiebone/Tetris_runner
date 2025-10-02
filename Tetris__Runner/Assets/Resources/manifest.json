@@ -1,0 +1,94 @@
+{
+  "Levels": [
+    {
+      "name": "Bot_Bot",
+      "subfolders": [
+        { "id": "1", "files": ["Bot_plane"] },
+        { "id": "2", "files": ["coin_rainbow", "coin_wave"] },
+        { "id": "3", "files": ["pillars_wit_coins"] },
+        { "id": "4", "files": ["great_pillar"] },
+        { "id": "5", "files": [] }
+      ]
+    },
+    {
+      "name": "Bot_Mid",
+      "subfolders": [
+        { "id": "1", "files": ["Bot_to_mid_simple", "danger_stair"] },
+        { "id": "2", "files": [] },
+        { "id": "3", "files": ["fireworks"] },
+        { "id": "4", "files": ["coin_direction_up"] },
+        { "id": "5", "files": [] }
+      ]
+    },
+    {
+      "name": "Bot_Top",
+      "subfolders": [
+        { "id": "1", "files": ["test"] },
+        { "id": "2", "files": [] },
+        { "id": "3", "files": ["wall_up"] },
+        { "id": "4", "files": [] },
+        { "id": "5", "files": [] }
+      ]
+    },
+    {
+      "name": "Mid_Bot",
+      "subfolders": [
+        { "id": "1", "files": ["mid_to_bot_simple"] },
+        { "id": "2", "files": ["floating_cubes", "power"] },
+        { "id": "3", "files": [] },
+        { "id": "4", "files": [] },
+        { "id": "5", "files": [] }
+      ]
+    },
+    {
+      "name": "Mid_Mid",
+      "subfolders": [
+        { "id": "1", "files": ["coin_bridge", "mid_plane"] },
+        { "id": "2", "files": ["wind"] },
+        { "id": "3", "files": ["tunnel"] },
+        { "id": "4", "files": [] },
+        { "id": "5", "files": [] }
+      ]
+    },
+    {
+      "name": "Mid_Top",
+      "subfolders": [
+        { "id": "1", "files": ["danger_stair_tp", "mid_to_top_simple"] },
+        { "id": "2", "files": [] },
+        { "id": "3", "files": ["test1"] },
+        { "id": "4", "files": [] },
+        { "id": "5", "files": [] }
+      ]
+    },
+    {
+      "name": "Top_Bot",
+      "subfolders": [
+        { "id": "1", "files": ["big_stair_down", "top_bot_fall"] },
+        { "id": "2", "files": ["coin_tunnel", "downing_arrows"] },
+        { "id": "3", "files": [] },
+        { "id": "4", "files": [] },
+        { "id": "5", "files": [] }
+      ]
+    },
+    {
+      "name": "Top_Mid",
+      "subfolders": [
+        { "id": "1", "files": ["top_to_mid_simple"] },
+        { "id": "2", "files": [] },
+        { "id": "3", "files": ["squigily_haven"] },
+        { "id": "4", "files": [] },
+        { "id": "5", "files": [] }
+      ]
+    },
+    {
+      "name": "Top_Top",
+      "subfolders": [
+        { "id": "1", "files": ["heart", "top_plane"] },
+        { "id": "2", "files": [] },
+        { "id": "3", "files": ["coin_pool", "floating_penises"] },
+        { "id": "4", "files": [] },
+        { "id": "5", "files": [] }
+      ]
+    }
+  ]
+}

@@ -9,8 +9,33 @@ using System;
 using TMPro;
 using System.Threading.Tasks;
 
+[System.Serializable]
+public class LevelManifest
+{
+    public LevelEntry[] Levels;
+}
+
+[System.Serializable]
+public class LevelEntry
+{
+    public string name;
+    public SubfolderEntry[] subfolders;
+}
+
+[System.Serializable]
+public class SubfolderEntry
+{
+    public string id;
+    public string[] files;
+}
+
 public class GridSaver : MonoBehaviour
 {
+
+    //THE MANIFEST
+    LevelManifest manifest;
+
+
     [SerializeField] private GridEditor GridObj;
 
     private int CurrentSaveHeight;
@@ -139,9 +164,7 @@ public class GridSaver : MonoBehaviour
         File.WriteAllText(path + "/dataStr.txt", dataStr);
 
 
-#if UNITY_EDITOR
-        UnityEditor.AssetDatabase.Refresh();
-#endif
+        addFilesToManifest(from_str, to_str, difficulity, fileName);
 
     }
 
@@ -212,25 +235,6 @@ public class GridSaver : MonoBehaviour
         grid_return = grid;
     }
 
-    //private void Start()
-    //{
-    //    test_read_directory("Bot", "Mid", 1);
-    //}
-
-    //public void test_read_directory(string from_load, string to_load, int difficulity_load)
-    //{
-    //    string path = "Assets/Resources/Levels/" + (from_load + "_" + to_load) + "/" + difficulity_load.ToString();
-
-    //    string[] fileInfo = Directory.GetDirectories(path);
-
-    //    for (int i = 0; i < fileInfo.Length; i++)
-    //    {
-
-    //        fileInfo[i] = fileInfo[i].Replace("\\", "/");
-
-    //        Debug.Log("fil: " + fileInfo[i]);
-    //    }
-    //}
 
     public async Task LoadCells_at_random(string from_load, string to_load, int difficulity_load)
     {
@@ -310,6 +314,206 @@ public class GridSaver : MonoBehaviour
         int heights = int.Parse(data_str_parts[0]);
         int widths = int.Parse(data_str_parts[1]);
 
+        //Debug.Log("Loading stats");
+        //Debug.Log("h: " + heights + " | w: " + widths);
+        //Debug.Log("vectors: " + vectorList.Count);
+        //Debug.Log("cells: " + savable_cellsList.Count);
+
+        Cell[,] grid = new Cell[heights, widths];
+
+        for (int i = 0; i < vectorList.Count; i++)
+        {
+            grid[vectorList[i].y, vectorList[i].x] = savable_cellsList[i];
+        }
+
+        grid_return = grid;
+    }
+
+    private void Start()
+    {
+        TextAsset textAsset = Resources.Load<TextAsset>("manifest");
+        manifest = JsonUtility.FromJson<LevelManifest>(textAsset.text);
+
+        string[] levels = GetFiles("Bot", "Mid", 1);
+
+        for (int i = 0; i < levels.Length; i++)
+        {
+            Debug.Log(levels[i]);
+        }
+
+    }
+
+    private string[] GetFiles(string from_str, string to_str, int difficulity)
+    {
+        if (manifest == null)
+        {
+            Debug.LogError("Manifest not loaded! Call LoadManifest() first.");
+            return new string[0];
+        }
+
+        string levelName = (from_str + "_" + to_str);
+        string subfolderId = difficulity.ToString();
+
+        LevelEntry level = Array.Find(manifest.Levels, l => l.name == levelName);
+        if (level == null)
+        {
+            Debug.LogWarning("Level not found: " + levelName);
+            return new string[0];
+        }
+
+        SubfolderEntry sub = Array.Find(level.subfolders, s => s.id == subfolderId);
+        if (sub == null)
+        {
+            Debug.LogWarning($"Subfolder {subfolderId} not found in level {levelName}");
+            return new string[0];
+        }
+
+        return sub.files;
+    }
+
+    private bool addFilesToManifest(string from_str, string to_str, int difficulity, string newFile)
+    {
+        if (manifest == null)
+        {
+            Debug.LogError("Manifest not loaded!");
+            return false;
+        }
+
+        string levelName = (from_str + "_" + to_str);
+        string subfolderId = difficulity.ToString();
+
+        LevelEntry level = Array.Find(manifest.Levels, l => l.name == levelName);
+        if (level == null)
+        {
+            Debug.LogWarning("Level not found: " + levelName);
+            return false;
+        }
+
+        SubfolderEntry sub = Array.Find(level.subfolders, s => s.id == subfolderId);
+        if (sub == null)
+        {
+            Debug.LogWarning($"Subfolder {subfolderId} not found in level {levelName}");
+            return false;
+        }
+
+        // Expand array to add new file
+        int oldLength = sub.files.Length;
+        Array.Resize(ref sub.files, oldLength + 1);
+        sub.files[oldLength] = newFile;
+
+        // Serialize back to JSON with pretty print
+        string json = JsonUtility.ToJson(manifest, true);
+
+        // Save to disk
+        string manifestPath = "Assets/Resources/manifest.json";
+        File.WriteAllText(manifestPath, json);
+
+        // Refresh AssetDatabase so Unity sees the updated file
+#if UNITY_EDITOR
+        UnityEditor.AssetDatabase.Refresh();
+#endif
+
+        Debug.Log($"Added '{newFile}' to {levelName} subfolder {subfolderId}");
+
+        return true;
+    }
+
+    //private void test_manifest()
+    //{
+    //    // Find Bot_Mid
+    //    LevelEntry botMid = System.Array.Find(manifest.Levels, l => l.name == "Bot_Mid");
+
+    //    if (botMid != null)
+    //    {
+    //        // Find subfolder with id "3"
+    //        SubfolderEntry sub3 = System.Array.Find(botMid.subfolders, s => s.id == "3");
+    //        if (sub3 != null)
+    //        {
+    //            Debug.Log("Files under Bot_Mid 3:");
+    //            foreach (var file in sub3.files)
+    //                Debug.Log(file);
+    //        }
+    //    }
+    //}
+
+
+    /// <summary>
+    /// Loads a level from resources at random (using from, to, and difficulity ofcourse).
+    /// </summary>
+    /// <param name="from_load"> 0-2 in order: "Bot" "Mid" "Top".</param>
+    /// <param name="to_load"> 0-2 in order: "Bot" "Mid" "Top".</param>
+    /// <param name="difficulity_load">1-5 in rising difficulity (1 = easiest).</param>
+    /// <returns></returns>
+    public IEnumerator LoadCells_at_random_fromResources(string from_load, string to_load, int difficulity_load)
+    {
+
+        string path = "";
+
+        while (true)
+        {
+
+            //string originPath = "Assets/Resources/Levels/" + (from_load + "_" + to_load) + "/" + difficulity_load.ToString();
+
+
+            string[] fileInfo = GetFiles(from_load, to_load, difficulity_load);
+
+            if (fileInfo.Length != 0)
+            {
+                path = "Levels/" + (from_load + "_" + to_load) + "/" + difficulity_load.ToString() + "/" + fileInfo[UnityEngine.Random.Range(0, fileInfo.Length)];
+
+                break;
+            }
+            else
+            {
+                //Debug.Log("could not: " + from_load + "_" + to_load + "/" + difficulity_load.ToString());
+                //cycle through difficulities until we find one that has levels
+                difficulity_load++;
+                if (difficulity_load > 5)
+                {
+                    difficulity_load = 1;
+                }
+            }
+
+        }
+
+
+        Debug.Log("Loading from: " + path);
+
+
+        //stuff from dreamers chaos:
+
+        //await Task.Run(() =>
+        //{
+        //    string path = "MarchingCubes/" + fileName;
+        //    loadResourcesFileGAME(path);
+        //});
+
+        
+
+        //string data_str = await LoadTextAsync(path + "/dataStr.txt");
+        //byte[] vectorString = await LoadBytesAsync(path + "/vectors.bytes");
+        //byte[] cellString = await LoadBytesAsync(path + "/cells.bytes");
+
+        //string resources_path = "Levels/" + (from_load + "_" + to_load) + "/" + difficulity_load.ToString();
+
+        ResourceRequest resourceRequest_dataStr = Resources.LoadAsync<TextAsset>(path + "/dataStr");
+        yield return resourceRequest_dataStr;
+        ResourceRequest resourceRequest_vectors = Resources.LoadAsync<TextAsset>(path + "/vectors");
+        yield return resourceRequest_vectors;
+        ResourceRequest resourceRequest_cells = Resources.LoadAsync<TextAsset>(path + "/cells");
+        yield return resourceRequest_cells;
+
+        string data_str = (resourceRequest_dataStr.asset as TextAsset).text;
+        byte[] vectorString = (resourceRequest_vectors.asset as TextAsset).bytes;
+        byte[] cellString = (resourceRequest_cells.asset as TextAsset).bytes;
+
+        List<SVector2Int> vectorList = Deserializer<List<SVector2Int>>(vectorString);
+        List<Cell> savable_cellsList = Deserializer<List<Cell>>(cellString);
+
+        string[] data_str_parts = data_str.Split(Environment.NewLine, StringSplitOptions.None);
+        int heights = int.Parse(data_str_parts[0]);
+        int widths = int.Parse(data_str_parts[1]);
+
         Debug.Log("Loading stats");
         Debug.Log("h: " + heights + " | w: " + widths);
         Debug.Log("vectors: " + vectorList.Count);
@@ -323,6 +527,8 @@ public class GridSaver : MonoBehaviour
         }
 
         grid_return = grid;
+
+        yield break;
     }
 
     public async Task<byte[]> LoadBytesAsync(string filePath)

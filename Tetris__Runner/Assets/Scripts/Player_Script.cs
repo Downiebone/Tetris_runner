@@ -22,11 +22,11 @@ public class Player_Script : MonoBehaviour
 
     [SerializeField] private float acceleration_time = 1;
 
-    private float bomb_timer = 0;
+    //private float bomb_timer = 0;
 
     private float player_up_speed = 0;
 
-    [SerializeField] private float blast_speed_multiplier = 1;
+    //[SerializeField] private float blast_speed_multiplier = 1;
 
     public float gravity_modifier = 1;
 
@@ -40,7 +40,7 @@ public class Player_Script : MonoBehaviour
 
         //bomb_timer = 0.5f;
         //blast_speed_multiplier = 0.5f;
-        counter = acceleration_time/2;
+        //counter = acceleration_time/2;
         gravity_modifier = 0;
         RB.velocity = new Vector2(0, 0);
         RB.gravityScale = gravity_modifier;

@@ -56,7 +56,7 @@ public class GridEditor : MonoBehaviour
 
     [SerializeField] private Color[] cellColors;
 
-    [SerializeField] private bool fillRandom = false;
+    //[SerializeField] private bool fillRandom = false;
 
     [Header("Map_Gen")]
     
@@ -354,6 +354,18 @@ public class GridEditor : MonoBehaviour
 
     private void Update()
     {
+
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
+        //    current_to_str = to_save_options[Random.Range(0, 3)];
+        //    current_difficulity = difficulity_slider[Random.Range(0, difficulity_slider.Length)];
+
+        //    StartCoroutine(Save_script.LoadCells_at_random_fromResources(current_from_str, current_to_str, current_difficulity));
+
+        //    current_from_str = current_to_str;
+        //}
+        //return;
+
         if (!shouldStartByLoadingLevel) { return; }
 
         if(can_load && (x_value_to_start_loading < (player_trans.position.x + x_value_offset_from_player_to_load)))
@@ -381,15 +393,17 @@ public class GridEditor : MonoBehaviour
 
     IEnumerator CountingCoroutine(string from_load, string to_load, int difficulity_load)
     {
-        var task = Save_script.LoadCells_at_random(from_load, to_load, difficulity_load);
+        //var task = Save_script.LoadCells_at_random(from_load, to_load, difficulity_load);
 
-        yield return new WaitUntil(() => task.IsCompleted);
+        //yield return new WaitUntil(() => task.IsCompleted);
 
-        if (task.Exception != null)
-        {
-            Debug.LogError("Error in LoadCells: " + task.Exception);
-            yield break;
-        }
+        //if (task.Exception != null)
+        //{
+        //    Debug.LogError("Error in LoadCells: " + task.Exception);
+        //    yield break;
+        //}
+
+        yield return Save_script.LoadCells_at_random_fromResources(from_load, to_load, difficulity_load);
 
         Debug.Log("Loaded: " + Save_script.grid_return.GetLength(0) + " | " + Save_script.grid_return.GetLength(1));
 
