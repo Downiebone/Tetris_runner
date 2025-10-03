@@ -6,6 +6,9 @@ public class Player_Script : MonoBehaviour
 {
 
     [SerializeField] private GridEditor GridScript;
+
+    [SerializeField] private level_play_system play_system;
+
     public GameObject playerDeath;
 
     private Cell Cell_body_current;
@@ -71,6 +74,34 @@ public class Player_Script : MonoBehaviour
         }
     }
 
+    private void check_misc_connection(Vector2Int body_pos)
+    {
+        Vector2Int top_pos = body_pos + new Vector2Int(0, 1);
+        Vector2Int top_right_pos = body_pos + new Vector2Int(1, 1);
+        Vector2Int right_pos = body_pos + new Vector2Int(1, 0);
+
+        if(GridScript.Cell_is_active_type(body_pos, Cell.Cell_type.collectable_coin))
+        {
+            GridScript.deleteTile(body_pos);
+            play_system.spawn_coin_referance(top_right_pos, transform);
+        }
+        if (GridScript.Cell_is_active_type(top_pos, Cell.Cell_type.collectable_coin))
+        {
+            GridScript.deleteTile(top_pos);
+            play_system.spawn_coin_referance(top_pos, transform.gameObject.transform);
+        }
+        if (GridScript.Cell_is_active_type(top_right_pos, Cell.Cell_type.collectable_coin))
+        {
+            GridScript.deleteTile(top_right_pos);
+            play_system.spawn_coin_referance(top_right_pos, transform.gameObject.transform);
+        }
+        if (GridScript.Cell_is_active_type(right_pos, Cell.Cell_type.collectable_coin))
+        {
+            GridScript.deleteTile(right_pos);
+            play_system.spawn_coin_referance(right_pos, transform.gameObject.transform);
+        }
+    }
+
     Vector2Int player_lastpos;
     bool skipping_steps = false;
     private void LateUpdate()
@@ -106,19 +137,23 @@ public class Player_Script : MonoBehaviour
 
         
 
+        
+
         if(skipping_steps == false)
         {
             Vector2Int Ceiling_pos = Player_2Int_pos + new Vector2Int(0, 1);
 
-            Cell_body_current = GridScript.Cell_on_position(Player_2Int_pos);
+            check_misc_connection(Player_2Int_pos);
 
-            Cell_ceiling_exist = GridScript.Cell_is_ground(Ceiling_pos);
+            Cell_body_current = GridScript.getCellAtPoint(Player_2Int_pos);
+
+            Cell_ceiling_exist = GridScript.Cell_is_active_type(Ceiling_pos, Cell.Cell_type.Ground);
 
             if (Cell_floor_exist || true) //remove perhaps
             {
                 if (Cell_body_current.isActive && !Cell_ceiling_exist && Cell_body_current.type == Cell.Cell_type.Ground)
                 {
-                    if (GridScript.Cell_is_ground(Ceiling_pos + new Vector2Int(-1, 0)))
+                    if (GridScript.Cell_is_active_type(Ceiling_pos + new Vector2Int(-1, 0), Cell.Cell_type.Ground))
                     {
                         Instantiate(playerDeath, transform.position, Quaternion.identity);
                     }
@@ -146,7 +181,7 @@ public class Player_Script : MonoBehaviour
             }
         }
         
-        Cell_floor_exist = GridScript.Cell_is_ground(Floor_pos);
+        Cell_floor_exist = GridScript.Cell_is_active_type(Floor_pos, Cell.Cell_type.Ground);
 
         if (!Cell_floor_exist || (transform.position.y > Floor_pos.y + 1))
         {

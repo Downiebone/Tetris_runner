@@ -229,23 +229,13 @@ public class GridEditor : MonoBehaviour
         return Mathf.RoundToInt(Mathf.PerlinNoise(xCord, yCord)) == 1;
 
     }
-    public bool Cell_is_ground(Vector2Int pos)
+    public bool Cell_is_active_type(Vector2Int pos, Cell.Cell_type typ)
     {
         if(pos.y >= gridHeight || pos.y < 0) { return false; }
 
         Cell cur_cell = Grid[pos.y, pos.x];
 
-        return cur_cell.type == Cell.Cell_type.Ground && cur_cell.isActive == true;
-    }
-    public Cell Cell_on_position(Vector2Int pos)
-    {
-        if (pos.y >= gridHeight) { //return "empty"/"off" cell if we check aboce the ceiling
-            Cell tempcell = new Cell();
-            tempcell.isActive = false;
-            return tempcell;
-        }
-
-        return Grid[pos.y, pos.x];
+        return cur_cell.type == typ && cur_cell.isActive == true;
     }
     public void placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell = Cell.Cell_type.Ground, int color_index = 0)
     {
@@ -342,6 +332,10 @@ public class GridEditor : MonoBehaviour
 
     public Cell getCellAtPoint(Vector2Int point)
     {
+        if (point.y >= gridHeight || point.y < 0) {
+            return new Cell();
+        }
+
         return Grid[point.y, point.x];
     }
 

@@ -300,7 +300,7 @@ public class draggable_piece : MonoBehaviour
     protected virtual bool ValidSpaceToPlace(Vector2Int pos)
     {
 
-        return (pos.y < GridObj.gridHeight && pos.y >= 0) && !GridObj.Cell_is_ground(pos);
+        return (pos.y < GridObj.gridHeight && pos.y >= 0) && !GridObj.Cell_is_active_type(pos, Cell.Cell_type.Ground);
 
 
 
