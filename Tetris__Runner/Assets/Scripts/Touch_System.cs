@@ -25,7 +25,7 @@ public class Touch_System : MonoBehaviour
     [SerializeField] private SpriteRenderer UI_rend;
     [SerializeField] private float distance_to_become_trashcan = 3;
     [SerializeField] private float distance_to_be_put_in_trash = 1;
-    [SerializeField] private Sprite rotate_sprite;
+    //[SerializeField] private Sprite rotate_sprite;
     [SerializeField] private Sprite trash_sprite;
 
     
@@ -51,22 +51,12 @@ public class Touch_System : MonoBehaviour
 
             if (touched_drag_Collider != null)
             {
-                if(touched_drag_Collider.gameObject.layer == 21) //rotate button
-                {
-                    if (drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null)
-                    {
-                        drag_inster_SYSTEM.Get_currently_highlighted_Draggable().touch_rotated();
-                    }
-                }
-                else //draggable
-                {
-                    currMovingObject = true;
-                    cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
-                    drag_inster_SYSTEM.set_currently_highlighted_draggable(cur_dragObject);
-                    cur_dragObject.BeginDrag();
-                    origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
-                    reached_far_enough_distance = false;
-                }
+                currMovingObject = true;
+                cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
+                drag_inster_SYSTEM.set_currently_highlighted_draggable(cur_dragObject);
+                cur_dragObject.BeginDrag();
+                origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
+                reached_far_enough_distance = false;
             }
             else
             {
@@ -103,10 +93,6 @@ public class Touch_System : MonoBehaviour
                             UI_rend.transform.localScale = new Vector3(1, 1, 1);
                         }
                     }
-                    else
-                    {
-                        UI_rend.sprite = rotate_sprite;
-                    }
 
                     cur_dragObject.dragged_position(worldPosition);
                 }
@@ -137,7 +123,6 @@ public class Touch_System : MonoBehaviour
                 currMovingObject = false;
                 cur_dragObject = null;
 
-                UI_rend.sprite = rotate_sprite;
                 UI_rend.transform.localScale = new Vector3(1, 1, 1);
 
 

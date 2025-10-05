@@ -10,9 +10,8 @@ public class GridEditor : MonoBehaviour
     [SerializeField] private int x_value_to_start_loading = 10;
     [SerializeField] private int x_value_offset_from_player_to_load = 30;
 
-    private bool reached_end_of_world = false;
-
     [SerializeField] private GridSaver Save_script;
+    [SerializeField] private level_play_system play_system;
 
     private Transform player_trans;
 
@@ -49,6 +48,25 @@ public class GridEditor : MonoBehaviour
 
     [Tooltip("Y,X (for some reason hehe)")]
     public Cell[,] Grid;
+
+    public Cell[,] Grid_2;
+
+    public GameObject Grid_1_Parent;
+    public GameObject Grid_2_Parent;
+
+    private bool move_grid_forward = false;
+    /// <summary>
+    /// 1: will move @Grid next, 2: will move @Grid_2 next
+    /// </summary>
+    private int next_grid_to_move = 2;
+    private int number_of_times_grid_moved = 0;
+
+    // sets constantly from the player script
+    private int player_x_val = 1;
+    public void player_x_val_set(int new_x)
+    {
+        player_x_val = new_x;
+    }
 
     [SerializeField] private Sprite emptyCellSprite;
 
@@ -91,7 +109,50 @@ public class GridEditor : MonoBehaviour
     private void Awake()
     {
         Grid = new Cell[gridHeight, gridLength];
+        Grid_2 = new Cell[gridHeight, gridLength];
     }
+
+    public Cell getCellAtPoint(Vector2Int point)
+    {
+        if (point.y >= gridHeight || point.y < 0)
+        {
+            return new Cell();
+        }
+
+        return getCellAtPoint(point.y, point.x);
+    }
+
+    public Cell getCellAtPoint(int y_, int x_)
+    {
+        if (y_ >= gridHeight || y_ < 0)
+        {
+            return new Cell();
+        }
+
+        int offset_x = x_;
+
+        if(x_ >= (gridLength * number_of_times_grid_moved)) //on latest_grid_moved
+        {
+            if(number_of_times_grid_moved > 0)
+            {
+                offset_x = x_ % (gridLength * number_of_times_grid_moved);
+            }
+            
+            return get_latest_moved_grid_cell(offset_x, y_);
+        }
+        else
+        {
+            if ((number_of_times_grid_moved - 1) > 0)
+            {
+                offset_x = x_ % (gridLength * (number_of_times_grid_moved - 1));
+            }
+
+            return get_oldest_moved_grid_cell(offset_x, y_);
+        }
+
+        
+    }
+
     private void Start()
     {
         //fail_safe
@@ -134,15 +195,28 @@ public class GridEditor : MonoBehaviour
         {
             for (int c = 0; c < gridLength; c++)
             {
+                //fill grid_1
                 Grid[r, c] = new Cell();
 
-                GameObject GO = Instantiate(cell_piece_prefab, new Vector3(c, r, 0), Quaternion.identity, gameObject.transform);
+                GameObject GO = Instantiate(cell_piece_prefab, new Vector3(c, r, 0), Quaternion.identity, Grid_1_Parent.transform);
                 Grid[r, c].sprite_rend = GO.GetComponent<SpriteRenderer>();
 
                 int colorInd = Random.Range(0, cellColors.Length);
                 Grid[r, c].color_index = colorInd;
                 Grid[r, c].cellColor = cellColors[colorInd];
                 Grid[r, c].sprite_rend.color = Grid[r, c].cellColor;
+
+
+                //fill grid_2
+                Grid_2[r, c] = new Cell();
+
+                GameObject GO_2 = Instantiate(cell_piece_prefab, new Vector3(c, r + Grid_2_Parent.transform.position.y, 0), Quaternion.identity, Grid_2_Parent.transform);
+                Grid_2[r, c].sprite_rend = GO_2.GetComponent<SpriteRenderer>();
+                 
+                int colorInd_2 = Random.Range(0, cellColors.Length);
+                Grid_2[r, c].color_index = colorInd_2;
+                Grid_2[r, c].cellColor = cellColors[colorInd_2];
+                Grid_2[r, c].sprite_rend.color = Grid_2[r, c].cellColor;
             }
         }
     }
@@ -166,6 +240,7 @@ public class GridEditor : MonoBehaviour
                 if(r < Level_Min_Height)
                 {
                     Grid[r, c].isActive = true;
+                    Grid_2[r, c].isActive = true;
                 }
                 //-------------------------------PERLIN LEVEL PART
                 //else if(r < currMaxHeight)
@@ -178,19 +253,12 @@ public class GridEditor : MonoBehaviour
 
     public void Fill_In_Loaded_grid(Cell[,] Grid_loaded)
     {
-        if(x_value_to_start_loading + Grid_loaded.GetLength(1) >= gridLength)
-        {
-            reached_end_of_world = true;
-            Debug.Log("reached the end of world");
-
-            return;
-        }
 
         for (int i = 0; i < Grid_loaded.GetLength(0); i++) //height
         {
             for (int j = 0; j < Grid_loaded.GetLength(1); j++) //width
             {
-                Cell grid_cell = Grid[i, j + x_value_to_start_loading];
+                Cell grid_cell = getCellAtPoint(i, j + x_value_to_start_loading); //check
                 Cell loaded_cell = Grid_loaded[i, j];
                 grid_cell.isActive = loaded_cell.isActive;
                 grid_cell.type = loaded_cell.type;
@@ -214,7 +282,6 @@ public class GridEditor : MonoBehaviour
         }
 
         x_value_to_start_loading += Grid_loaded.GetLength(1);
-        Debug.Log("Next x: " + x_value_to_start_loading.ToString());
     }
     void updatePerlinOffset()
     {
@@ -233,13 +300,13 @@ public class GridEditor : MonoBehaviour
     {
         if(pos.y >= gridHeight || pos.y < 0) { return false; }
 
-        Cell cur_cell = Grid[pos.y, pos.x];
+        Cell cur_cell = getCellAtPoint(pos.y, pos.x); //check
 
         return cur_cell.type == typ && cur_cell.isActive == true;
     }
     public void placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell = Cell.Cell_type.Ground, int color_index = 0)
     {
-        Cell cell = Grid[pos.y, pos.x];
+        Cell cell = getCellAtPoint(pos.y, pos.x);
         //if (cell.isActive && cell.type == typa_cell)
         //{
         //    return;
@@ -264,7 +331,7 @@ public class GridEditor : MonoBehaviour
     public void place_fullCell(Vector2Int pos, Cell newCell)
     {
         //Debug.Log("placing full cell: active: " + newCell.isActive + " | x: " + pos.x + " | y: " + pos.y);
-        Cell cell = Grid[pos.y, pos.x];
+        Cell cell = getCellAtPoint(pos.y, pos.x);
         //if (cell.isActive && cell.type == typa_cell)
         //{
         //    return;
@@ -290,11 +357,27 @@ public class GridEditor : MonoBehaviour
 
     public void deleteTile(Vector2Int pos)
     {
-        Cell cell = Grid[pos.y, pos.x];
+        Cell cell = getCellAtPoint(pos.y, pos.x);
         if (!cell.isActive)
         {
             return;
         }
+        cell.isActive = false;
+        cell.sprite_rend.sprite = null;
+    }
+    public void bombTile(Vector2Int pos)
+    {
+        Cell cell = getCellAtPoint(pos.y, pos.x);
+        if (!cell.isActive)
+        {
+            return;
+        }
+
+        if(cell.type == Cell.Cell_type.collectable_coin)
+        {
+            play_system.spawn_coin_referance(pos, player_trans);
+        }
+
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
     }
@@ -305,13 +388,16 @@ public class GridEditor : MonoBehaviour
             for (int c = 0; c < gridLength; c++)
             {
                 Cell curCell = Grid[r, c];
+                Cell curCell_2 = Grid_2[r, c];
                 if (curCell.isActive == true)
                 {
                     curCell.sprite_rend.sprite = cellSprites[(int)curCell.type];
+                    curCell_2.sprite_rend.sprite = cellSprites[(int)curCell.type];
                 }
                 else
                 {
                     curCell.sprite_rend.sprite = null;
+                    curCell_2.sprite_rend.sprite = null;
                 }
             }
         }
@@ -330,21 +416,51 @@ public class GridEditor : MonoBehaviour
         }
     }
 
-    public Cell getCellAtPoint(Vector2Int point)
-    {
-        if (point.y >= gridHeight || point.y < 0) {
-            return new Cell();
-        }
-
-        return Grid[point.y, point.x];
-    }
-
     public Color GainRandomColor()
     {
         return cellColors[Random.Range(0, cellColors.Length)];
     }
 
     private bool can_load = true;
+
+    private void Move_grids()
+    {
+        number_of_times_grid_moved++;
+
+        if(next_grid_to_move == 1)
+        {
+            Grid_1_Parent.transform.position = new Vector2((gridLength * number_of_times_grid_moved), 0);
+            next_grid_to_move = 2;
+        }
+        else
+        {
+            Grid_2_Parent.transform.position = new Vector2((gridLength * number_of_times_grid_moved), 0);
+            next_grid_to_move = 1;
+        }
+    }
+
+    private Cell get_latest_moved_grid_cell(int x__, int y__)
+    {
+        if(next_grid_to_move == 1) //if we next will move the first grid, that means we latest moved the second
+        {
+            return Grid_2[y__, x__];
+        }
+        else
+        {
+            return Grid[y__, x__];
+        }
+    }
+    private Cell get_oldest_moved_grid_cell(int x__, int y__)
+    {
+        if (next_grid_to_move == 1) //if we next will move the first grid, that means we latest moved the second
+        {
+            return Grid[y__, x__];
+        }
+        else
+        {
+            return Grid_2[y__, x__];
+        }
+    }
 
     private void Update()
     {
@@ -362,6 +478,12 @@ public class GridEditor : MonoBehaviour
 
         if (!shouldStartByLoadingLevel) { return; }
 
+        if(player_x_val == (gridLength/2) + gridLength * number_of_times_grid_moved)
+        {
+            Debug.Log("MOVING GRIDS");
+            Move_grids();
+        }
+
         if(can_load && (x_value_to_start_loading < (player_trans.position.x + x_value_offset_from_player_to_load)))
         {
             Debug.Log("------------LOADING NEXT!!--------------");
@@ -376,7 +498,7 @@ public class GridEditor : MonoBehaviour
 
     public void load_next_level()
     {
-        if (reached_end_of_world) { return; }
+        //if (reached_end_of_world) { return; }
 
 
         current_to_str = to_save_options[Random.Range(0, 3)];

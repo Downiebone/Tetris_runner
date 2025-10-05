@@ -141,6 +141,8 @@ public class Player_Script : MonoBehaviour
 
         if(skipping_steps == false)
         {
+            GridScript.player_x_val_set(Player_2Int_pos.x);
+
             Vector2Int Ceiling_pos = Player_2Int_pos + new Vector2Int(0, 1);
 
             check_misc_connection(Player_2Int_pos);

@@ -14,14 +14,24 @@ public class level_play_system : MonoBehaviour
     private int current_coint_ind = 0;
     private int max_coins = 0;
 
+    [SerializeField] private TMP_Text money_text;
+
     public void Add_money()
     {
         money_from_level++;
+        update_money_text();
+    }
+    private void update_money_text()
+    {
+        //shake the counter a little :)
+        money_text.text = money_from_level.ToString() + "x";
     }
 
     void Start()
     {
         max_coins = coins_for_animation.Length;
+
+        update_money_text();
     }
 
     public void spawn_coin(Vector2 start_pos, Vector2 end_pos)

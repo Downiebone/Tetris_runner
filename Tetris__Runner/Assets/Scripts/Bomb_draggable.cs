@@ -60,7 +60,7 @@ public class Bomb_draggable : draggable_piece
                 player_pos.gameObject.GetComponent<Player_Script>().Bomb_player(player_launch_rate);
             }
 
-            GridObj.deleteTile(LastWorkingPlaceSpot + HighlightSpots[i]);
+            GridObj.bombTile(LastWorkingPlaceSpot + HighlightSpots[i]);
         }
 
         Destroy(this.gameObject);
