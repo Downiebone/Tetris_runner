@@ -54,7 +54,7 @@ public class GridEditor : MonoBehaviour
     public GameObject Grid_1_Parent;
     public GameObject Grid_2_Parent;
 
-    private bool move_grid_forward = false;
+    //private bool move_grid_forward = false;
     /// <summary>
     /// 1: will move @Grid next, 2: will move @Grid_2 next
     /// </summary>
@@ -124,7 +124,7 @@ public class GridEditor : MonoBehaviour
 
     public Cell getCellAtPoint(int y_, int x_)
     {
-        if (y_ >= gridHeight || y_ < 0)
+        if (y_ >= gridHeight || y_ < 0 || x_ < 0)
         {
             return new Cell();
         }
@@ -198,7 +198,7 @@ public class GridEditor : MonoBehaviour
                 //fill grid_1
                 Grid[r, c] = new Cell();
 
-                GameObject GO = Instantiate(cell_piece_prefab, new Vector3(c, r, 0), Quaternion.identity, Grid_1_Parent.transform);
+                GameObject GO = Instantiate(cell_piece_prefab, new Vector3(c + Grid_1_Parent.transform.position.x, r + Grid_2_Parent.transform.position.y, 0), Quaternion.identity, Grid_1_Parent.transform);
                 Grid[r, c].sprite_rend = GO.GetComponent<SpriteRenderer>();
 
                 int colorInd = Random.Range(0, cellColors.Length);
@@ -210,7 +210,7 @@ public class GridEditor : MonoBehaviour
                 //fill grid_2
                 Grid_2[r, c] = new Cell();
 
-                GameObject GO_2 = Instantiate(cell_piece_prefab, new Vector3(c, r + Grid_2_Parent.transform.position.y, 0), Quaternion.identity, Grid_2_Parent.transform);
+                GameObject GO_2 = Instantiate(cell_piece_prefab, new Vector3(c + Grid_2_Parent.transform.position.x, r + Grid_2_Parent.transform.position.y, 0), Quaternion.identity, Grid_2_Parent.transform);
                 Grid_2[r, c].sprite_rend = GO_2.GetComponent<SpriteRenderer>();
                  
                 int colorInd_2 = Random.Range(0, cellColors.Length);
@@ -354,9 +354,39 @@ public class GridEditor : MonoBehaviour
 
         cell.sprite_rend.sprite = newCell.isActive == true? cellSprites[(int)cell.type] : null;
     }
+    public void replace_active_Tile(Vector2Int pos, Cell.Cell_type replace_to_type)
+    {
+        if (pos.y < 1) //dont replace bottom
+        {
+            return;
+        }
 
+        Cell cell = getCellAtPoint(pos.y, pos.x);
+        if (!cell.isActive)
+        {
+            return;
+        }
+        cell.type = replace_to_type;
+        cell.sprite_rend.color = Color.white;
+        cell.sprite_rend.sprite = cellSprites[(int)cell.type];
+    }
     public void deleteTile(Vector2Int pos)
     {
+        Cell cell = getCellAtPoint(pos.y, pos.x);
+        if (!cell.isActive)
+        {
+            return;
+        }
+        cell.isActive = false;
+        cell.sprite_rend.sprite = null;
+    }
+    public void deleteTile_exeptFloor(Vector2Int pos)
+    {
+        if(pos.y < 1) //dont destroy floor
+        {
+            return;
+        }
+
         Cell cell = getCellAtPoint(pos.y, pos.x);
         if (!cell.isActive)
         {
@@ -521,7 +551,7 @@ public class GridEditor : MonoBehaviour
 
         yield return Save_script.LoadCells_at_random_fromResources(from_load, to_load, difficulity_load);
 
-        Debug.Log("Loaded: " + Save_script.grid_return.GetLength(0) + " | " + Save_script.grid_return.GetLength(1));
+        Debug.Log("Loaded x: " + Save_script.grid_return.GetLength(1));
 
         Fill_In_Loaded_grid(Save_script.grid_return);
         //can_load = true;
@@ -529,6 +559,6 @@ public class GridEditor : MonoBehaviour
         //set next in chain, so the world links up
         current_from_str = current_to_str;
         can_load = true;
-        Debug.Log("LoadCells finished successfully!");
+        //Debug.Log("LoadCells finished successfully!");
     }
 }

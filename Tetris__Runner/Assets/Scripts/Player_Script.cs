@@ -39,7 +39,7 @@ public class Player_Script : MonoBehaviour
 
     public void Bomb_player(float bomb_force)
     {
-        Debug.Log("BOMBED!!!!!!!!!");
+        //Debug.Log("BOMBED!!!!!!!!!");
 
         //bomb_timer = 0.5f;
         //blast_speed_multiplier = 0.5f;

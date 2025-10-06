@@ -101,6 +101,28 @@ public class Draggable_instantiater : MonoBehaviour
         Draggables.Add(GO);
     }
 
+    public void replace_draggable_with_other(draggable_piece new_draggable)
+    {
+        int draggable_index = 1;
+
+        if (currently_chosen_draggable != null)
+        {
+            draggable_index = currently_chosen_draggable.myDraggableIndex;
+        }
+
+        new_draggable.myDraggableIndex = draggable_index;
+        new_draggable.transform.parent = transform;
+
+        currently_chosen_draggable = new_draggable;
+        currently_chosen_draggable.Highlight();
+
+        Destroy(Draggables[draggable_index].gameObject);
+
+        Draggables[draggable_index] = new_draggable.gameObject;
+
+
+    }
+
     void Update()
     {
         //if (Draggables.Count < NumberOfDraggables_N)

@@ -25,10 +25,11 @@ public class Touch_System : MonoBehaviour
     [SerializeField] private SpriteRenderer UI_rend;
     [SerializeField] private float distance_to_become_trashcan = 3;
     [SerializeField] private float distance_to_be_put_in_trash = 1;
-    //[SerializeField] private Sprite rotate_sprite;
+    [SerializeField] private Sprite pause_sprite;
     [SerializeField] private Sprite trash_sprite;
 
-    
+    [SerializeField] private Pause_Manager pause_script;
+    [SerializeField] private PowerUp_manager PowerUp_Script;
 
     private void Start()
     {
@@ -51,12 +52,23 @@ public class Touch_System : MonoBehaviour
 
             if (touched_drag_Collider != null)
             {
-                currMovingObject = true;
-                cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
-                drag_inster_SYSTEM.set_currently_highlighted_draggable(cur_dragObject);
-                cur_dragObject.BeginDrag();
-                origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
-                reached_far_enough_distance = false;
+                if(touched_drag_Collider.gameObject.layer == 21)
+                {
+                    pause_script.Pause_Game();
+                }
+                else if(touched_drag_Collider.gameObject.layer == 22)
+                {
+                    PowerUp_Script.Use_PowerUp();
+                }
+                else
+                {
+                    currMovingObject = true;
+                    cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
+                    drag_inster_SYSTEM.set_currently_highlighted_draggable(cur_dragObject);
+                    cur_dragObject.BeginDrag();
+                    origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
+                    reached_far_enough_distance = false;
+                }
             }
             else
             {
@@ -83,7 +95,7 @@ public class Touch_System : MonoBehaviour
 
                         if (Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash)
                         {
-                            UI_rend.transform.localScale = new Vector3(1.3f,1.3f,1);
+                            UI_rend.transform.localScale = new Vector3(1.3f, 1.3f, 1);
 
                             //make block red or something???
                             //or enlarge the trashcan
@@ -91,7 +103,13 @@ public class Touch_System : MonoBehaviour
                         else
                         {
                             UI_rend.transform.localScale = new Vector3(1, 1, 1);
+
+
                         }
+                    }
+                    else
+                    {
+                        UI_rend.sprite = pause_sprite;
                     }
 
                     cur_dragObject.dragged_position(worldPosition);
@@ -124,7 +142,7 @@ public class Touch_System : MonoBehaviour
                 cur_dragObject = null;
 
                 UI_rend.transform.localScale = new Vector3(1, 1, 1);
-
+                UI_rend.sprite = pause_sprite;
 
             }
         }

@@ -334,12 +334,12 @@ public class GridSaver : MonoBehaviour
         TextAsset textAsset = Resources.Load<TextAsset>("manifest");
         manifest = JsonUtility.FromJson<LevelManifest>(textAsset.text);
 
-        string[] levels = GetFiles("Bot", "Mid", 1);
+        //string[] levels = GetFiles("Bot", "Mid", 1);
 
-        for (int i = 0; i < levels.Length; i++)
-        {
-            Debug.Log(levels[i]);
-        }
+        //for (int i = 0; i < levels.Length; i++)
+        //{
+        //    Debug.Log(levels[i]);
+        //}
 
     }
 
@@ -477,7 +477,7 @@ public class GridSaver : MonoBehaviour
         }
 
 
-        Debug.Log("Loading from: " + path);
+        //Debug.Log("Loading from: " + path);
 
 
         //stuff from dreamers chaos:
@@ -514,10 +514,10 @@ public class GridSaver : MonoBehaviour
         int heights = int.Parse(data_str_parts[0]);
         int widths = int.Parse(data_str_parts[1]);
 
-        Debug.Log("Loading stats");
-        Debug.Log("h: " + heights + " | w: " + widths);
-        Debug.Log("vectors: " + vectorList.Count);
-        Debug.Log("cells: " + savable_cellsList.Count);
+        //Debug.Log("Loading stats");
+        //Debug.Log("h: " + heights + " | w: " + widths);
+        //Debug.Log("vectors: " + vectorList.Count);
+        //Debug.Log("cells: " + savable_cellsList.Count);
 
         Cell[,] grid = new Cell[heights, widths];
 

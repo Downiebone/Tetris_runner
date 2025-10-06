@@ -16,10 +16,14 @@ public class level_play_system : MonoBehaviour
 
     [SerializeField] private TMP_Text money_text;
 
+    [SerializeField] private PowerUp_manager power_up_manager;
+
     public void Add_money()
     {
         money_from_level++;
         update_money_text();
+
+        power_up_manager.add_coin_forPowerUp(1);
     }
     private void update_money_text()
     {
