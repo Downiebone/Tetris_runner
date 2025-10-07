@@ -397,13 +397,18 @@ public class GridEditor : MonoBehaviour
     }
     public void bombTile(Vector2Int pos)
     {
+        if (pos.y < 1) //dont destroy floor
+        {
+            return;
+        }
+
         Cell cell = getCellAtPoint(pos.y, pos.x);
         if (!cell.isActive)
         {
             return;
         }
 
-        if(cell.type == Cell.Cell_type.collectable_coin)
+        if(cell.type == Cell.Cell_type.collectable_coin) // maybe become an item?
         {
             play_system.spawn_coin_referance(pos, player_trans);
         }
@@ -551,7 +556,7 @@ public class GridEditor : MonoBehaviour
 
         yield return Save_script.LoadCells_at_random_fromResources(from_load, to_load, difficulity_load);
 
-        Debug.Log("Loaded x: " + Save_script.grid_return.GetLength(1));
+        //Debug.Log("Loaded x: " + Save_script.grid_return.GetLength(1));
 
         Fill_In_Loaded_grid(Save_script.grid_return);
         //can_load = true;

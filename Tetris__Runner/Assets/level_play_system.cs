@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class level_play_system : MonoBehaviour
 {
     // Start is called before the first frame update
+    [SerializeField] private Pause_Manager pause_manage;
+    [SerializeField] private Player_Script player_scrip;
 
     private int money_from_level = 0;
 
@@ -15,6 +17,52 @@ public class level_play_system : MonoBehaviour
     private int max_coins = 0;
 
     [SerializeField] private TMP_Text money_text;
+    [SerializeField] private TMP_Text end_of_level_money_text;
+
+    [SerializeField] private GameObject end_of_level_screen;
+
+    [SerializeField] private TMP_Text revive_text;
+    private int Number_Of_Revives = 1;
+    public bool has_revives()
+    {
+        return Number_Of_Revives > 0;
+    }
+    private void update_revive_text()
+    {
+        revive_text.text = Number_Of_Revives.ToString() + "x";
+    }
+    public void Remove_Revive()
+    {
+        Number_Of_Revives--;
+        update_revive_text();
+    }
+    public void Add_Revive()
+    {
+        Number_Of_Revives++;
+        update_revive_text();
+    }
+    public void player_died_collectionFunc()
+    {
+        pause_manage.Pause_Game_without_menu(); // we want to pause the game, but not show the pause-screen
+
+        end_of_level_money_text.text = money_from_level.ToString() + "x";
+
+        end_of_level_screen.SetActive(true);
+    }
+
+    public void Revive_Player_After_AD()
+    {
+        pause_manage.Pause_Game_without_menu(); // unpause game
+
+        end_of_level_screen.SetActive(false);
+
+        player_scrip.Revived();
+    }
+
+    public void save_moneys()
+    {
+        PlayerPrefs.SetInt("Money", PlayerPrefs.GetInt("Money") + money_from_level); // add money to playerpref
+    }
 
     [SerializeField] private PowerUp_manager power_up_manager;
 
@@ -36,6 +84,7 @@ public class level_play_system : MonoBehaviour
         max_coins = coins_for_animation.Length;
 
         update_money_text();
+        update_revive_text();
     }
 
     public void spawn_coin(Vector2 start_pos, Vector2 end_pos)

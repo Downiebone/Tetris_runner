@@ -46,5 +46,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   max_explosions: 5
   time_between_explosions: 0.01
-  start_on_load: 1
+  start_on_load: 0
   destroy_on_use: 1

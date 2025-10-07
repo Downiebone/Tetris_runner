@@ -30,6 +30,7 @@ public class Touch_System : MonoBehaviour
 
     [SerializeField] private Pause_Manager pause_script;
     [SerializeField] private PowerUp_manager PowerUp_Script;
+    [SerializeField] private Player_Script player_scrip;
 
     private void Start()
     {
@@ -56,11 +57,11 @@ public class Touch_System : MonoBehaviour
                 {
                     pause_script.Pause_Game();
                 }
-                else if(touched_drag_Collider.gameObject.layer == 22)
+                else if(touched_drag_Collider.gameObject.layer == 22 && Pause_Manager.GAME_IS_PAUSED == false) //press the powerup_button
                 {
-                    PowerUp_Script.Use_PowerUp();
+                    PowerUp_Script.Use_PowerUp(touched_drag_Collider.transform.position);
                 }
-                else
+                else if(Pause_Manager.GAME_IS_PAUSED == false && player_scrip.current_form == Player_Script.transformation_type.Normal)
                 {
                     currMovingObject = true;
                     cur_dragObject = touched_drag_Collider.gameObject.GetComponent<draggable_piece>();
@@ -72,7 +73,7 @@ public class Touch_System : MonoBehaviour
             }
             else
             {
-                if(drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null)
+                if(drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null && Pause_Manager.GAME_IS_PAUSED == false && player_scrip.current_form == Player_Script.transformation_type.Normal)
                 {
                     currMovingObject = true;
                     cur_dragObject = drag_inster_SYSTEM.Get_currently_highlighted_Draggable();
@@ -169,14 +170,15 @@ public class Touch_System : MonoBehaviour
 
             if (touched_drag_Collider_touch != null)
             {
-                if (touched_drag_Collider_touch.gameObject.layer == 21) //rotate button
+                if (touched_drag_Collider_touch.gameObject.layer == 21)
                 {
-                    if (drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null)
-                    {
-                        drag_inster_SYSTEM.Get_currently_highlighted_Draggable().touch_rotated();
-                    }
+                    pause_script.Pause_Game();
                 }
-                else //draggable
+                else if (touched_drag_Collider_touch.gameObject.layer == 22 && Pause_Manager.GAME_IS_PAUSED == false) //press the powerup_button
+                {
+                    PowerUp_Script.Use_PowerUp(touched_drag_Collider_touch.transform.position);
+                }
+                else if (Pause_Manager.GAME_IS_PAUSED == false && player_scrip.current_form == Player_Script.transformation_type.Normal)
                 {
                     currMovingObject = true;
                     cur_dragObject = touched_drag_Collider_touch.gameObject.GetComponent<draggable_piece>();
@@ -188,7 +190,7 @@ public class Touch_System : MonoBehaviour
             }
             else
             {
-                if (drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null)
+                if (drag_inster_SYSTEM.Get_currently_highlighted_Draggable() != null && Pause_Manager.GAME_IS_PAUSED == false && player_scrip.current_form == Player_Script.transformation_type.Normal)
                 {
                     currMovingObject = true;
                     cur_dragObject = drag_inster_SYSTEM.Get_currently_highlighted_Draggable();
@@ -224,7 +226,7 @@ public class Touch_System : MonoBehaviour
                     }
                     else
                     {
-                        UI_rend.sprite = rotate_sprite;
+                        UI_rend.sprite = pause_sprite;
                     }
 
                     cur_dragObject.dragged_position(Touch_0_pos);
@@ -255,7 +257,7 @@ public class Touch_System : MonoBehaviour
                 currMovingObject = false;
                 cur_dragObject = null;
 
-                UI_rend.sprite = rotate_sprite;
+                UI_rend.sprite = pause_sprite;
                 UI_rend.transform.localScale = new Vector3(1, 1, 1);
             }
         }

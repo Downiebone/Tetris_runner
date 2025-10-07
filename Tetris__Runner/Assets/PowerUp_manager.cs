@@ -14,13 +14,14 @@ public class PowerUp_manager : MonoBehaviour
     [SerializeField] private int max_coins_for_PowerUp = 20;
     [SerializeField] private int current_coins_for_PowerUp = 0;
 
-    [SerializeField] private Power_up_obj Selected_power_up;
+    [SerializeField] private Power_up_obj[] Selected_powerUp;
+    private int selected_puwerup = 0;
 
-    public void Use_PowerUp()
+    public void Use_PowerUp(Vector2 pos)
     {
         if(current_coins_for_PowerUp < max_coins_for_PowerUp) { return; } //cant activate yet
 
-        Selected_power_up.Activate(new Vector2(1, 1));
+        Selected_powerUp[selected_puwerup].Activate(pos);
         current_coins_for_PowerUp = 0;
 
         determine_current_holder_percent();
@@ -28,6 +29,11 @@ public class PowerUp_manager : MonoBehaviour
 
     void Start()
     {
+        selected_puwerup = PlayerPrefs.GetInt("PowerUp_Selected");
+
+        PowerUp_spot_sprite.sprite = Selected_powerUp[selected_puwerup].power_up_sprite;
+        max_coins_for_PowerUp = Selected_powerUp[selected_puwerup].coins_for_using;
+
         determine_current_holder_percent();
     }
 

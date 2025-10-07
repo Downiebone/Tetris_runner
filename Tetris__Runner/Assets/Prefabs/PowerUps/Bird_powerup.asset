@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92ab4b0d0bbabc343879bd2dc1b6e797, type: 3}
-  m_Name: GoldenRing
+  m_Script: {fileID: 11500000, guid: 8e845a218d98f1443972942e5ff057a2, type: 3}
+  m_Name: Bird_powerup
   m_EditorClassIdentifier: 
   coins_for_using: 30
-  power_up_sprite: {fileID: 21300000, guid: 4042826fa17a0b147ad10669e341a22c, type: 3}
+  power_up_sprite: {fileID: 21300000, guid: 0bf1934e718778d4e8110d9b391b57c4, type: 3}
   press_button_effect: {fileID: 8692322562694487632, guid: 95da25cb39c53834184a6be68539ead2, type: 3}
-  Golden_Ring_Prefab_draggable: {fileID: 5374080915148969997, guid: b9ad8eead301577418a4bc1bf5b5b2a6, type: 3}
+  bird_timer_length: 5
+  added_time_per_upgrade: 3

@@ -181,7 +181,7 @@ public class draggable_piece : MonoBehaviour
     }
 
     
-    public void dragged_position(Vector2 newPosition)
+    public virtual void dragged_position(Vector2 newPosition)
     {
         if (Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) > toFarForPlace)
         {
