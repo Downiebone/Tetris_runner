@@ -9,6 +9,8 @@ public class Power_up_obj : ScriptableObject
 
     public Sprite power_up_sprite;
 
+    public AudioClip ActivateSound;
+
     [SerializeField] protected GameObject press_button_effect;
     public virtual void Activate(Vector2 power_up_btn_pos) {  }
 }

@@ -115,6 +115,7 @@ public class draggable_piece : MonoBehaviour
     }
     public void BeginDrag()
     {
+        Debug.Log("Down");
         isBeingDragged = true;
         Time.timeScale = slowDownTime;
 
@@ -138,6 +139,8 @@ public class draggable_piece : MonoBehaviour
     [SerializeField] protected float toFarForPlace = 3f;
     public void EndDrag()
     {
+        Debug.Log("Up");
+
         isBeingDragged = false;
         Time.timeScale = 1;
 
@@ -183,7 +186,9 @@ public class draggable_piece : MonoBehaviour
     
     public virtual void dragged_position(Vector2 newPosition)
     {
-        if (Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) > toFarForPlace)
+        Debug.Log("Get");
+        //8.5 top of screen limit?
+        if (newPosition.y > 8.5f || Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) > toFarForPlace)
         {
             if (to_far_to_place == false)
             {
@@ -207,7 +212,9 @@ public class draggable_piece : MonoBehaviour
         }
 
         transform.position = newPosition;
-        Vector2Int newPos = Vector2Int.RoundToInt(newPosition);
+        Vector2Int newPos = Vector2Int.RoundToInt(newPosition); //highlighet object
+
+        Vector2Int[] extra_positions = new Vector2Int[7];
 
         //testing this now
         LastTestedPlaceSpot = newPos;
@@ -216,7 +223,10 @@ public class draggable_piece : MonoBehaviour
 
         for (int i = 0; i < HighlightSpots.Length; i++)
         {
-            if (ValidSpaceToPlace(HighlightSpots[i] + newPos) == false) { failed_pos = true; }
+            if (ValidSpaceToPlace(HighlightSpots[i] + newPos) == false) { 
+                failed_pos = true; 
+                break; 
+            }
         }
         //check closest spot aswell (cyotetime :)
         if (failed_pos)
@@ -234,33 +244,99 @@ public class draggable_piece : MonoBehaviour
             }
             if(is_x_val)
             {
-                if (closest_numb > 0.5f)
+                if (closest_numb > 0.5f) 
                 {
-                    newPos = Vector2Int.RoundToInt(newPosition + new Vector2(-1, 0));
+                    //closest to left
+                    //newPos = Vector2Int.RoundToInt(newPosition + new Vector2(-1, 0));
+                    extra_positions[0] = new Vector2Int(-1, 0);
+                    extra_positions[1] = new Vector2Int(0, 1);
+                    extra_positions[2] = new Vector2Int(0, -1);
+                    extra_positions[3] = new Vector2Int(1, 0);
+                    extra_positions[4] = new Vector2Int(-2, 0);
+                    extra_positions[5] = new Vector2Int(-1, 1);
+                    extra_positions[6] = new Vector2Int(-1, -1);
                 }
-                else
+                else 
                 {
-                    newPos = Vector2Int.RoundToInt(newPosition + new Vector2(1, 0));
+                    //closest to right
+                    //newPos = Vector2Int.RoundToInt(newPosition + new Vector2(1, 0));
+                    extra_positions[0] = new Vector2Int(1, 0);
+                    extra_positions[1] = new Vector2Int(0, 1);
+                    extra_positions[2] = new Vector2Int(0, -1);
+                    extra_positions[3] = new Vector2Int(-1, 0);
+                    extra_positions[4] = new Vector2Int(2, 0);
+                    extra_positions[5] = new Vector2Int(1, 1);
+                    extra_positions[6] = new Vector2Int(1, -1);
                 }
             }
             else
             {
                 if (closest_numb > 0.5f)
                 {
-                    newPos = Vector2Int.RoundToInt(newPosition + new Vector2(0, -1));
+                    //closest to bot
+                    //newPos = Vector2Int.RoundToInt(newPosition + new Vector2(0, -1));
+                    extra_positions[0] = new Vector2Int(0, -1);
+                    extra_positions[1] = new Vector2Int(-1, 0);
+                    extra_positions[2] = new Vector2Int(1, 0);
+                    extra_positions[3] = new Vector2Int(0, 1);
+                    extra_positions[4] = new Vector2Int(0, -2);
+                    extra_positions[5] = new Vector2Int(-1, -1);
+                    extra_positions[6] = new Vector2Int(1, -1);
                 }
                 else
                 {
-                    newPos = Vector2Int.RoundToInt(newPosition + new Vector2(0, 1));
+                    //closest to top
+                    //newPos = Vector2Int.RoundToInt(newPosition + new Vector2(0, 1));
+                    extra_positions[0] = new Vector2Int(0, 1);
+                    extra_positions[1] = new Vector2Int(-1, 0);
+                    extra_positions[2] = new Vector2Int(1, 0);
+                    extra_positions[3] = new Vector2Int(0, -1);
+                    extra_positions[4] = new Vector2Int(0, 2);
+                    extra_positions[5] = new Vector2Int(-1, 1);
+                    extra_positions[6] = new Vector2Int(1, 1);
                 }
             }
 
+            bool for_loop_found_working = false;
+
+            for (int x = 0; x < 7; x++)
+            {
+
+                bool working_newpos = true;
+                for (int i = 0; i < HighlightSpots.Length; i++)
+                {
+                    //--------------------------------------------------------------------------------------final fail of placing blocks-(where it returns if all fails)------------------------------------------------
+                    if (ValidSpaceToPlace(HighlightSpots[i] + newPos + extra_positions[x]) == false) {
+                        working_newpos = false;
+                        break; 
+                    }
+                }
+                if(working_newpos == true) //this spot worked -> save it!
+                {
+                    newPos = newPos + extra_positions[x];
+                    for_loop_found_working = true;
+                    break;
+                }
+            }
+
+            if(for_loop_found_working == false) // did not find any new working position
+            {
+                //no place working :(
+                return;
+            }
+            
+        }
+
+        //FOUND WORKING SPOT! HERE
+
+        if (to_far_to_place == true)
+        {
             for (int i = 0; i < HighlightSpots.Length; i++)
             {
-                //--------------------------------------------------------------------------------------final fail of placing blocks-(where it returns if all fails)------------------------------------------------
-                if (ValidSpaceToPlace(HighlightSpots[i] + newPos) == false) { return; }
+                CameraObj.HighlightObjects[i].GetComponent<SpriteRenderer>().color = Color.white;
             }
         }
+        to_far_to_place = false;
 
         LastWorkingPlaceSpot = newPos;
 
@@ -269,7 +345,10 @@ public class draggable_piece : MonoBehaviour
             CameraObj.HighlightObjects[i].transform.position = (Vector2)(HighlightSpots[i] + newPos);
         }
     }
-    
+
+    [SerializeField] protected AudioClip place_sound;
+    [SerializeField] protected bool use_pitch_varying = true;
+
     protected virtual void PlaceDraggable()
     {
         
@@ -281,6 +360,8 @@ public class draggable_piece : MonoBehaviour
             //change to ground layer (this should not matter as they are being destroyed this frame??)
             renderers[i].sortingLayerName = "Ground";
         }
+
+        MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
 
         CameraObj.RemoveDraggable_atIndex(myDraggableIndex);
 

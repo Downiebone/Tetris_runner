@@ -153,6 +153,8 @@ MonoBehaviour:
   delayed_start_highlight: 0
   slowDownTime: 0.2
   toFarForPlace: 1
+  place_sound: {fileID: 8300000, guid: 4ee2685d410163243bdc86412605c185, type: 3}
+  use_pitch_varying: 1
   HighlightSpots_RotateVariant:
   - {x: 0, y: 0}
   - {x: 1, y: 1}

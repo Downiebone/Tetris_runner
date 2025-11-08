@@ -22,6 +22,9 @@ public class PowerUp_manager : MonoBehaviour
         if(current_coins_for_PowerUp < max_coins_for_PowerUp) { return; } //cant activate yet
 
         Selected_powerUp[selected_puwerup].Activate(pos);
+
+        MusicManager.Instance.play_soundeffect(Selected_powerUp[selected_puwerup].ActivateSound);
+
         current_coins_for_PowerUp = 0;
 
         determine_current_holder_percent();

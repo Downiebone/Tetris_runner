@@ -60,8 +60,10 @@ public class Bomb_draggable : draggable_piece
                 player_pos.gameObject.GetComponent<Player_Script>().Bomb_player(player_launch_rate);
             }
 
-            GridObj.bombTile(LastWorkingPlaceSpot + HighlightSpots[i]);
+            GridObj.bombTilePlayer(LastWorkingPlaceSpot + HighlightSpots[i]);
         }
+
+        MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
 
         Destroy(this.gameObject);
         //instantiate bomb-effect or some thing

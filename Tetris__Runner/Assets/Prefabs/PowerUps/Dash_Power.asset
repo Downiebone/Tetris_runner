@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coins_for_using: 30
   power_up_sprite: {fileID: 21300000, guid: bd092d4e97afb534aa267684821a677d, type: 3}
+  ActivateSound: {fileID: 8300000, guid: b549967641833cc4fb0f81bf0104ba9c, type: 3}
   press_button_effect: {fileID: 8692322562694487632, guid: 95da25cb39c53834184a6be68539ead2, type: 3}
   dash_timer_length: 2
   added_time_per_upgrade: 1

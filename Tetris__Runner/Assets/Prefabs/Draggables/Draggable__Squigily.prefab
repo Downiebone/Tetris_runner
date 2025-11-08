@@ -113,8 +113,10 @@ MonoBehaviour:
   - {x: 0, y: -1}
   - {x: -1, y: -1}
   delayed_start_highlight: 0
-  slowDownTime: 0.2
-  toFarForPlace: 1.5
+  slowDownTime: 0.05
+  toFarForPlace: 2
+  place_sound: {fileID: 8300000, guid: 1352ee9cd6a10f846930a07ecae17e75, type: 3}
+  use_pitch_varying: 1
 --- !u!50 &344508281092544750
 Rigidbody2D:
   serializedVersion: 4

@@ -48,11 +48,18 @@ public class move_to_position : MonoBehaviour
         time_to_movethere = time_;
     }
 
+    bool worked = false;
+
     // Update is called once per frame
     void LateUpdate()
     {
         if (counter < time_to_movethere)
         {
+            if (!worked)
+            {
+                worked = true;
+            }
+
             counter += Time.deltaTime;
 
             if (moving_with_referance)
@@ -64,9 +71,10 @@ public class move_to_position : MonoBehaviour
                 transform.position = Vector2.Lerp(start_pos, end_pos, EaseInBack(0.5f, 1, counter / time_to_movethere));
             }
         }
-        else if(sprit.enabled)
+        else if(sprit.enabled && worked) //end thing
         {
             sprit.enabled = false;
+            MusicManager.Instance.play_coinEffect();
         }
     }
 

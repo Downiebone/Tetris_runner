@@ -68,6 +68,7 @@ public class expanding_bomb : MonoBehaviour
                         if(Mathf.Abs(i) + Mathf.Abs(j) == current_explosion_radius) //star shape
                         {
                             grid_script.deleteTile_exeptFloor(my_explosion_pos + new Vector2Int(i, j));
+                            //grid_script.bombTile(my_explosion_pos + new Vector2Int(i, j));
                         }
                     }
                 }

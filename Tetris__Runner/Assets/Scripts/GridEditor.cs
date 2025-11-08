@@ -116,7 +116,9 @@ public class GridEditor : MonoBehaviour
     {
         if (point.y >= gridHeight || point.y < 0)
         {
-            return new Cell();
+            Cell blank_cell = new Cell();
+            blank_cell.isActive = false;
+            return blank_cell;
         }
 
         return getCellAtPoint(point.y, point.x);
@@ -408,7 +410,25 @@ public class GridEditor : MonoBehaviour
             return;
         }
 
-        if(cell.type == Cell.Cell_type.collectable_coin) // maybe become an item?
+        cell.isActive = false;
+        cell.sprite_rend.sprite = null;
+    }
+
+    //if the player bombed something (for applying player items)
+    public void bombTilePlayer(Vector2Int pos)
+    {
+        if (pos.y < 1) //dont destroy floor
+        {
+            return;
+        }
+
+        Cell cell = getCellAtPoint(pos.y, pos.x);
+        if (!cell.isActive)
+        {
+            return;
+        }
+
+        if (cell.type == Cell.Cell_type.collectable_coin) // swap out for item logic
         {
             play_system.spawn_coin_referance(pos, player_trans);
         }
@@ -515,13 +535,13 @@ public class GridEditor : MonoBehaviour
 
         if(player_x_val == (gridLength/2) + gridLength * number_of_times_grid_moved)
         {
-            Debug.Log("MOVING GRIDS");
+            //Debug.Log("MOVING GRIDS");
             Move_grids();
         }
 
         if(can_load && (x_value_to_start_loading < (player_trans.position.x + x_value_offset_from_player_to_load)))
         {
-            Debug.Log("------------LOADING NEXT!!--------------");
+            //Debug.Log("------------LOADING NEXT!!--------------");
 
             can_load = false;
 

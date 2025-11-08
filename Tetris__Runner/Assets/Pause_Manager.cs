@@ -26,11 +26,28 @@ public class Pause_Manager : MonoBehaviour
     {
         GAME_IS_PAUSED = !GAME_IS_PAUSED;
 
+        if (GAME_IS_PAUSED) { //just paused game
+            MusicManager.Instance.dampen_music(0.3f);
+        }
+        else //just unpaused
+        {
+            MusicManager.Instance.unDamp_music();
+        }
+
         UI_pause_menu.SetActive(GAME_IS_PAUSED);
     }
     public void Pause_Game_without_menu()
     {
         GAME_IS_PAUSED = !GAME_IS_PAUSED;
+
+        if (GAME_IS_PAUSED)
+        { //just paused game
+            MusicManager.Instance.dampen_music(0.3f);
+        }
+        else //just unpaused
+        {
+            MusicManager.Instance.unDamp_music();
+        }
     }
 
     public void Load_Menu()

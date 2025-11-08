@@ -149,9 +149,12 @@ MonoBehaviour:
   delayed_start_highlight: 0
   slowDownTime: 0.1
   toFarForPlace: 1
+  place_sound: {fileID: 8300000, guid: 95c5869dab07d6d4db9de39b887838ee, type: 3}
+  use_pitch_varying: 0
   prefab_to_spawn: {fileID: 3224367349761019683, guid: 1edb0d419e8ddfd4c90016df5d3d6785, type: 3}
   highlight_renderer: {fileID: 5374080916524598418}
   player_launch_rate: 3
+  spawn_golden_area: 1
 --- !u!1 &5374080916524598416
 GameObject:
   m_ObjectHideFlags: 0

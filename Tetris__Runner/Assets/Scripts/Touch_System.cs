@@ -8,6 +8,8 @@ public class Touch_System : MonoBehaviour
     private Vector2 Touch_0_pos;
     private Vector2 Touch_1_pos;
 
+    private Vector2 touch_offset;
+
     [Header("Touch Script")]
 
     [SerializeField] private LayerMask drag_layers;
@@ -35,7 +37,14 @@ public class Touch_System : MonoBehaviour
     private void Start()
     {
         main_cam = Camera.main;
+
+        touch_offset = new Vector2(PlayerPrefs.GetFloat("X_off"), PlayerPrefs.GetFloat("Y_off"));
     }
+
+    Vector2 old_world_position = new Vector2(-1,-1);
+
+    [SerializeField] private AudioClip tap_sound;
+    [SerializeField] private AudioClip trash_sound;
 
     void Update()
     {
@@ -49,6 +58,7 @@ public class Touch_System : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
+            
             //Debug.Log("Start drag system");
 
             if (touched_drag_Collider != null)
@@ -69,6 +79,8 @@ public class Touch_System : MonoBehaviour
                     cur_dragObject.BeginDrag();
                     origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
                     reached_far_enough_distance = false;
+
+                    MusicManager.Instance.play_soundeffect(tap_sound, true);
                 }
             }
             else
@@ -84,54 +96,63 @@ public class Touch_System : MonoBehaviour
             }
         }
         if (cur_dragObject == null) { return; }
+
+        worldPosition += touch_offset;
+
         if (Input.GetKey(KeyCode.Mouse0))
         {
             if (currMovingObject)
             {
-                if (reached_far_enough_distance)
+                if(worldPosition != old_world_position)
                 {
-                    if(Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_become_trashcan)
+                    old_world_position = worldPosition;
+
+                    if (reached_far_enough_distance)
                     {
-                        UI_rend.sprite = trash_sprite;
-
-                        if (Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash)
+                        if (Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_become_trashcan)
                         {
-                            UI_rend.transform.localScale = new Vector3(1.3f, 1.3f, 1);
+                            UI_rend.sprite = trash_sprite;
 
-                            //make block red or something???
-                            //or enlarge the trashcan
+                            if (Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash)
+                            {
+                                UI_rend.transform.localScale = new Vector3(1.3f, 1.3f, 1);
+
+                                //make block red or something???
+                                //or enlarge the trashcan
+                            }
+                            else
+                            {
+                                UI_rend.transform.localScale = new Vector3(1, 1, 1);
+
+
+                            }
                         }
                         else
                         {
-                            UI_rend.transform.localScale = new Vector3(1, 1, 1);
-
-
+                            UI_rend.sprite = pause_sprite;
                         }
+
+                        cur_dragObject.dragged_position(worldPosition);
                     }
                     else
                     {
-                        UI_rend.sprite = pause_sprite;
-                    }
-
-                    cur_dragObject.dragged_position(worldPosition);
-                }
-                else
-                {
-                    //need to drag something far enough from its start pos in order to count (make small touches nicer)
-                    if(Vector2.Distance(worldPosition, origin_drag_pos) > far_enough_distance)
-                    {
-                        reached_far_enough_distance = true;
+                        //need to drag something far enough from its start pos in order to count (make small touches nicer)
+                        if (Vector2.Distance(worldPosition, origin_drag_pos) > far_enough_distance)
+                        {
+                            reached_far_enough_distance = true;
+                        }
                     }
                 }
-                
             }
         }
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
+            
             if (currMovingObject)
             {
                 if (Vector2.Distance(worldPosition, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash) //close enough to trash can
                 {
+                    MusicManager.Instance.play_soundeffect(trash_sound, true);
                     cur_dragObject.destroy_piece();
                 }
                 else
@@ -141,6 +162,7 @@ public class Touch_System : MonoBehaviour
 
                 currMovingObject = false;
                 cur_dragObject = null;
+                old_world_position = new Vector2(-1, 1);
 
                 UI_rend.transform.localScale = new Vector3(1, 1, 1);
                 UI_rend.sprite = pause_sprite;
@@ -158,7 +180,7 @@ public class Touch_System : MonoBehaviour
 #else
         if (Input.touchCount <= 0) { return; }
 
-        Debug.Log("touch_count: " + Input.touchCount);
+        //Debug.Log("touch_count: " + Input.touchCount);
 
         Touch touch_0 = Input.GetTouch(0);
 
@@ -186,6 +208,8 @@ public class Touch_System : MonoBehaviour
                     cur_dragObject.BeginDrag();
                     origin_drag_pos = new Vector2(cur_dragObject.transform.position.x, cur_dragObject.transform.position.y);
                     reached_far_enough_distance = false;
+
+                    MusicManager.Instance.play_soundeffect(tap_sound, true);
                 }
             }
             else
@@ -202,41 +226,51 @@ public class Touch_System : MonoBehaviour
 
         }
         if(cur_dragObject == null) { return; }
+
+        Touch_0_pos += touch_offset;
+
         if (touch_0.phase == TouchPhase.Moved || touch_0.phase == TouchPhase.Stationary)
         {
             if (currMovingObject)
             {
-                if (reached_far_enough_distance)
+                if (Touch_0_pos != old_world_position)
                 {
-                    if (Vector2.Distance(Touch_0_pos, UI_rotate_trash_btn.position) < distance_to_become_trashcan)
+                    old_world_position = Touch_0_pos;
+
+                    if (reached_far_enough_distance)
                     {
-                        UI_rend.sprite = trash_sprite;
-
-                        if (Vector2.Distance(Touch_0_pos, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash)
+                        if (Vector2.Distance(Touch_0_pos, UI_rotate_trash_btn.position) < distance_to_become_trashcan)
                         {
-                            UI_rend.transform.localScale = new Vector3(1.3f, 1.3f, 1);
+                            UI_rend.sprite = trash_sprite;
 
-                            //make block red or something???
-                            //or enlarge the trashcan
+                            if (Vector2.Distance(Touch_0_pos, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash)
+                            {
+                                UI_rend.transform.localScale = new Vector3(1.3f, 1.3f, 1);
+
+                                //make block red or something???
+                                //or enlarge the trashcan
+                            }
+                            else
+                            {
+                                UI_rend.transform.localScale = new Vector3(1, 1, 1);
+
+
+                            }
                         }
                         else
                         {
-                            UI_rend.transform.localScale = new Vector3(1, 1, 1);
+                            UI_rend.sprite = pause_sprite;
                         }
+
+                        cur_dragObject.dragged_position(Touch_0_pos);
                     }
                     else
                     {
-                        UI_rend.sprite = pause_sprite;
-                    }
-
-                    cur_dragObject.dragged_position(Touch_0_pos);
-                }
-                else
-                {
-                    //need to drag something far enough from its start pos in order to count (make small touches nicer)
-                    if (Vector2.Distance(Touch_0_pos, origin_drag_pos) > far_enough_distance)
-                    {
-                        reached_far_enough_distance = true;
+                        //need to drag something far enough from its start pos in order to count (make small touches nicer)
+                        if (Vector2.Distance(Touch_0_pos, origin_drag_pos) > far_enough_distance)
+                        {
+                            reached_far_enough_distance = true;
+                        }
                     }
                 }
             }
@@ -247,6 +281,8 @@ public class Touch_System : MonoBehaviour
             {
                 if (Vector2.Distance(Touch_0_pos, UI_rotate_trash_btn.position) < distance_to_be_put_in_trash) //close enough to trash can
                 {
+                    MusicManager.Instance.play_soundeffect(trash_sound, true);
+
                     cur_dragObject.destroy_piece();
                 }
                 else
@@ -256,6 +292,7 @@ public class Touch_System : MonoBehaviour
 
                 currMovingObject = false;
                 cur_dragObject = null;
+                old_world_position = new Vector2(-1, 1);
 
                 UI_rend.sprite = pause_sprite;
                 UI_rend.transform.localScale = new Vector3(1, 1, 1);

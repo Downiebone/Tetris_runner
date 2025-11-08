@@ -24,9 +24,22 @@ public class Player_Script : MonoBehaviour
 
     [Header("Player Variables")]
 
-    [SerializeField] private float playerSpeed = 10;
 
-    [SerializeField] private float acceleration_time = 1;
+    // The initial speed of the player
+    public float initialMultiplier = 1.0f;
+    // The maximum speed the player will reach
+    public float maxMultiplier = 2.0f;
+    // The time duration over which the speed increases (175 seconds based on Subway Surfers mechanics)
+    public float durationToMaxSpeed = 175f;
+
+    private float speedIncreaseRate;
+
+    [SerializeField] private float player_multiplier = 1;
+
+    // The playerSpeed value used by your player movement script
+    [SerializeField] private float playerSpeed = 3.5f;
+
+    [SerializeField] private float acceleration_time = 3;
 
     //private float bomb_timer = 0;
 
@@ -79,7 +92,7 @@ public class Player_Script : MonoBehaviour
 
         gravity_modifier = 0;
         RB.velocity = new Vector2(0, 0);
-        RB.gravityScale = gravity_modifier;
+        RB.gravityScale = gravity_modifier * player_multiplier;
 
         //just in case
         player_up_speed = 0;
@@ -114,14 +127,16 @@ public class Player_Script : MonoBehaviour
 
         gravity_modifier = 0;
         RB.velocity = new Vector2(0, 0);
-        RB.gravityScale = gravity_modifier;
+        RB.gravityScale = gravity_modifier * player_multiplier;
 
         player_up_speed = bomb_force;
     }
 
+    float invincible_Counter = 0;
+
     private void DIE()
     {
-        if(current_form == transformation_type.Dashing) { return; } //cant die while dashing
+        if(current_form == transformation_type.Dashing || invincible_Counter > 0) { return; } //cant die while dashing or invincible
 
         if(current_form == transformation_type.Bird) //end bird
         {
@@ -161,13 +176,37 @@ public class Player_Script : MonoBehaviour
         expand_bomb.expanding_explosion(25, Vector2Int.RoundToInt((Vector2)transform.position));
     }
 
+    private void Start()
+    {
+        player_multiplier = initialMultiplier;
+
+        // Calculate how much speed to add per second to reach the max speed
+        float speedDifference = maxMultiplier - initialMultiplier;
+        speedIncreaseRate = speedDifference / durationToMaxSpeed;
+    }
+
     private void Update()
     {
         if(Pause_Manager.GAME_IS_PAUSED == true) {
             return; 
         }
 
-        transform.Translate(Vector2.right * playerSpeed * dashing_speed * acceleration * Time.deltaTime); //movement always happens
+        if(invincible_Counter > 0)
+        {
+            invincible_Counter -= Time.deltaTime;
+        }
+
+        // Increase speed only if it hasn't reached the maximum yet
+        if (player_multiplier < maxMultiplier)
+        {
+            // Add the speed increase for the time passed since the last frame
+            player_multiplier += speedIncreaseRate * Time.deltaTime;
+
+            // Clamp the speed to ensure it doesn't exceed the maximum value
+            player_multiplier = Mathf.Clamp(player_multiplier, initialMultiplier, maxMultiplier);
+        }
+
+        transform.Translate(Vector2.right * playerSpeed * player_multiplier * dashing_speed * acceleration * Time.deltaTime); //movement always happens
 
         if (current_form != transformation_type.Normal)
         {
@@ -179,7 +218,7 @@ public class Player_Script : MonoBehaviour
                 {
                     gravity_modifier = 0;
                     RB.velocity = new Vector2(0, 0);
-                    RB.gravityScale = gravity_modifier;
+                    RB.gravityScale = gravity_modifier * player_multiplier;
 
                     player_up_speed = bird_jump_height;
 
@@ -194,7 +233,7 @@ public class Player_Script : MonoBehaviour
                     {
                         gravity_modifier = 0;
                         RB.velocity = new Vector2(0, 0);
-                        RB.gravityScale = gravity_modifier;
+                        RB.gravityScale = gravity_modifier * player_multiplier;
 
                         player_up_speed = bird_jump_height;
 
@@ -209,8 +248,10 @@ public class Player_Script : MonoBehaviour
             {
                 time_in_transformation_counter += Time.deltaTime;
             }
-            else
+            else //end transformation?
             {
+                invincible_Counter = 1; //short invinc-timer
+
                 current_form = transformation_type.Normal;
                 dashing_speed = 1;
 
@@ -242,8 +283,8 @@ public class Player_Script : MonoBehaviour
             was_upping = false;
 
             gravity_modifier = 1;
-            //RB.velocity = new Vector2(0, 0);
-            RB.gravityScale = gravity_modifier;
+            RB.velocity = new Vector2(0, 0);
+            RB.gravityScale = gravity_modifier * player_multiplier;
             //blast_speed_multiplier = 1;
         }
     }
@@ -288,7 +329,7 @@ public class Player_Script : MonoBehaviour
 
         if (player_up_speed > 0)
         {
-            if ((Cell_ceiling_exist && transform.position.y % 1 > 0.5f) || Mathf.RoundToInt(transform.position.y) > 10) // bumb head on ceiling while rising or top of level
+            if ((Cell_ceiling_exist && (transform.position.y % 1 <= 0.5f || transform.position.y % 1 >= 0.95f)) || Mathf.RoundToInt(transform.position.y) > 10) // bumb head on ceiling while rising or top of level
             {
                 transform.position = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y));
                 player_up_speed = 0;
@@ -336,16 +377,22 @@ public class Player_Script : MonoBehaviour
                 {
                     if (GridScript.Cell_is_active_type(Ceiling_pos + new Vector2Int(-1, 0), Cell.Cell_type.Ground))
                     {
-                        Instantiate(playerDeath, transform.position, Quaternion.identity);
+                        DIE();
                     }
                     else if (current_form != transformation_type.Dashing) // dashing cant move up
                     {
                         //MOVING UP ONE PIECE
+                        if(transform.position.y % 1 > 0.5f && transform.position.y % 1 < 0.8f) // is at very bottom of block
+                        {
+                            DIE();
+                        }
+                        else
+                        {
+                            Vector2 new_pos = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y + 1));
 
-                        Vector2 new_pos = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y + 1));
-
-                        transform.position = new_pos;
-                        RB.velocity = new Vector2(0, 0);
+                            transform.position = new_pos;
+                            RB.velocity = new Vector2(0, 0);
+                        }
                     }
                 }
                 else if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
@@ -367,7 +414,7 @@ public class Player_Script : MonoBehaviour
         if (!Cell_floor_exist || (transform.position.y > Floor_pos.y + 1))
         {
             if (im_dead || current_form == transformation_type.Dashing) { return; } //dead or dashing are not affected by gravity
-            RB.gravityScale = gravity_modifier;
+            RB.gravityScale = gravity_modifier * player_multiplier;
         }
         else
         {

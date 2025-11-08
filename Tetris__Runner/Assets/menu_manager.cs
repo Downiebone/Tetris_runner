@@ -5,7 +5,11 @@ using UnityEngine.SceneManagement;
 public class menu_manager : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+
+    public GameObject Menu_part;
+    public GameObject Settings_part;
+
+    void Awake()
     {
         fix_playerprefs();
     }
@@ -13,16 +17,17 @@ public class menu_manager : MonoBehaviour
     private void fix_playerprefs()
     {
         
-        if (PlayerPrefs.GetInt("PowerUp_Golden") == 0)
+        if (PlayerPrefs.GetInt("PowerUp_Golden") == 0) //first time playing game?
         {
             PlayerPrefs.SetInt("PowerUp_Golden", 1);
-        }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+            //original offset?
+            PlayerPrefs.SetFloat("X_off", -0.5f);
+            PlayerPrefs.SetFloat("Y_off", 0);
+
+            PlayerPrefs.SetFloat("Sound_Effects", 1);
+            PlayerPrefs.SetFloat("Sound_Music", 1);
+        }
     }
 
     public void add_money_debug()
@@ -38,7 +43,19 @@ public class menu_manager : MonoBehaviour
 
         PlayerPrefs.SetInt("PowerUp_Selected", 0);
 
+        PlayerPrefs.SetInt("BombJump", 0);
+        PlayerPrefs.SetInt("BombCoin", 0);
+
+        PlayerPrefs.SetInt("Item_Selected_1", 0);
+        PlayerPrefs.SetInt("Item_Selected_2", 0);
+
         PlayerPrefs.SetInt("Money", 0);
+
+        PlayerPrefs.SetFloat("X_off", -0.5f);
+        PlayerPrefs.SetFloat("Y_off", 0);
+
+        PlayerPrefs.SetFloat("Sound_Effects", 1);
+        PlayerPrefs.SetFloat("Sound_Music", 1);
     }
 
     public void Start_Game()
@@ -49,5 +66,17 @@ public class menu_manager : MonoBehaviour
     public void Load_shop_scren()
     {
         SceneManager.LoadScene("Shop"); //load shop
+    }
+
+    public void Settings_Button()
+    {
+        Settings_part.SetActive(true);
+        Menu_part.SetActive(false);
+    }
+
+    public void Exit_settings_button()
+    {
+        Menu_part.SetActive(true);
+        Settings_part.SetActive(false);
     }
 }

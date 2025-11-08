@@ -180,6 +180,8 @@ public class Draggable_SpawnThing : draggable_piece
 
         GO.GetComponent<Golden_ring>().expanding_explosion(spawn_golden_area - 1, LastWorkingPlaceSpot);
 
+        MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
+
         Destroy(this.gameObject);
         //instantiate bomb-effect or some thing
     }
