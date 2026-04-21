@@ -115,7 +115,6 @@ public class draggable_piece : MonoBehaviour
     }
     public void BeginDrag()
     {
-        Debug.Log("Down");
         isBeingDragged = true;
         Time.timeScale = slowDownTime;
 
@@ -139,7 +138,6 @@ public class draggable_piece : MonoBehaviour
     [SerializeField] protected float toFarForPlace = 3f;
     public void EndDrag()
     {
-        Debug.Log("Up");
 
         isBeingDragged = false;
         Time.timeScale = 1;
@@ -186,7 +184,7 @@ public class draggable_piece : MonoBehaviour
     
     public virtual void dragged_position(Vector2 newPosition)
     {
-        Debug.Log("Get");
+
         //8.5 top of screen limit?
         if (newPosition.y > 8.5f || Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) > toFarForPlace)
         {
@@ -351,14 +349,26 @@ public class draggable_piece : MonoBehaviour
 
     protected virtual void PlaceDraggable()
     {
-        
+        Transform player_pos = GameObject.FindGameObjectWithTag("Player").transform;
+
+        bool placeOnPlayer = false;
 
         for (int i = 0; i < HighlightSpots.Length; i++)
         {
+            if ((LastWorkingPlaceSpot + HighlightSpots[i]) == Vector2Int.RoundToInt((Vector2)player_pos.position)) //if we bomb the player
+            {
+                placeOnPlayer = true;
+            }
+
             GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color);
 
             //change to ground layer (this should not matter as they are being destroyed this frame??)
             renderers[i].sortingLayerName = "Ground";
+        }
+
+        if (placeOnPlayer)
+        {
+            player_pos.gameObject.GetComponent<Player_Script>().PlaceBlockOnPlayer();
         }
 
         MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
@@ -389,7 +399,39 @@ public class draggable_piece : MonoBehaviour
 
         //return !(((Vector2)pos).y >= GridObj.gridHeight || GridObj.Cell_is_ground(pos));
     }
-
+    public void ShowVisuals()
+    {
+        show_visuals_internal();
+    }
+    public void HideVisuals()
+    {
+        hide_visuals_internal();
+    }
+    protected virtual void hide_visuals_internal()
+    {
+        foreach (SpriteRenderer rend in renderers)
+        {
+            rend.enabled = false;
+        }
+        foreach (SpriteRenderer rend in Highlight_renderers)
+        {
+            rend.enabled = false;
+        }
+    }
+    protected virtual void show_visuals_internal()
+    {
+        foreach (SpriteRenderer rend in renderers)
+        {
+            rend.enabled = true;
+        }
+        if (is_chosen)
+        {
+            foreach (SpriteRenderer rend in Highlight_renderers)
+            {
+                rend.enabled = true;
+            }
+        }
+    }
     public void Un_highlight()
     {
         disable_highlight();

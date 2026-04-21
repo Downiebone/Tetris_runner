@@ -37,6 +37,11 @@ public class settings_settings : MonoBehaviour
     {
         effect_vol = change;
         PlayerPrefs.SetFloat("Sound_Effects", change);
+
+        if (MusicManager.Instance != null)
+        {
+            MusicManager.Instance.update_max_volume_effect(effect_vol);
+        }
     }
 
     public void set_sound_music(float change)

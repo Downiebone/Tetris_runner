@@ -34,7 +34,35 @@ public class Draggable_instantiater : MonoBehaviour
 
     public GameObject[] HighlightObjects;
 
-    
+    [SerializeField] private GameObject blockadeThing;
+
+    public void enable_top_blockade(bool shouldEnable)
+    {
+        if (shouldEnable)
+        {
+            blockadeThing.SetActive(true);
+            HideDraggables();
+        }
+        else
+        {
+            blockadeThing.SetActive(false);
+            ShowDraggables();
+        }
+    }
+    public void HideDraggables()
+    {
+        for (int i = 0; i < Draggables.Count; i++)
+        {
+            Draggables[i].GetComponent<draggable_piece>().HideVisuals();
+        }
+    }
+    public void ShowDraggables()
+    {
+        for (int i = 0; i < Draggables.Count; i++)
+        {
+            Draggables[i].GetComponent<draggable_piece>().ShowVisuals();
+        }
+    }
 
     public void set_currently_highlighted_draggable(draggable_piece draggable_piece_obj)
     {

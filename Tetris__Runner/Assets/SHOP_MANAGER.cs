@@ -33,11 +33,15 @@ public class SHOP_MANAGER : MonoBehaviour
     [Header("Selected Item")]
     private int itemToSelect = 1;
 
+    private string item_playerPref_1;
     [SerializeField] private TMP_Text item_name_1;
     [SerializeField] private Image item_icon_1;
+    [SerializeField] private Image Item_1_Holder;
     [Space]
+    private string item_playerPref_2;
     [SerializeField] private TMP_Text item_name_2;
     [SerializeField] private Image item_icon_2;
+    [SerializeField] private Image Item_2_Holder;
 
     [SerializeField] private power_up_inshop[] powers;
     [SerializeField] private Item_Inshop[] items;
@@ -52,7 +56,9 @@ public class SHOP_MANAGER : MonoBehaviour
     {
         powers[PlayerPrefs.GetInt("PowerUp_Selected")].transfer_my_selected(this);
 
-        if(PlayerPrefs.GetInt("Item_Selected_1") != 0)
+        HighlightItemHolder(1);
+
+        if (PlayerPrefs.GetInt("Item_Selected_1") != 0)
         {
             itemToSelect = 1;
             items[PlayerPrefs.GetInt("Item_Selected_1") - 1].transfer_my_selected(this, 1);
@@ -72,42 +78,69 @@ public class SHOP_MANAGER : MonoBehaviour
     {
         itemToSelect = itemSelect;
         //highlight
+        HighlightItemHolder(itemSelect);
     }
 
-    public void Set_selected_Item(string myName, Sprite mySprit, int playerPrefOrder)
+    private void HighlightItemHolder(int which)
+    {
+        if(which == 1)
+        {
+            Item_1_Holder.color = Color.green;
+            Item_2_Holder.color = Color.white;
+        }
+        else
+        {
+            Item_2_Holder.color = Color.green;
+            Item_1_Holder.color = Color.white;
+        }
+    }
+
+    public void Set_selected_Item(string myName, Sprite mySprit, int playerPrefOrder, string player_pref_Item)
     {
         if(itemToSelect == 1)
         {
+            PlayerPrefs.SetInt(item_playerPref_1, 1); // set old item in this slot to just bought
+
+            item_playerPref_1 = player_pref_Item;
             item_name_1.text = myName;
             item_icon_1.sprite = mySprit;
 
             if(item_name_2.text == myName) //item is already on other slot
             {
+                item_playerPref_2 = "";
                 item_name_2.text = "empty";
                 item_icon_2.sprite = null;
                 PlayerPrefs.SetInt("Item_Selected_2", 0);
             }
 
             PlayerPrefs.SetInt("Item_Selected_1", playerPrefOrder);
+            PlayerPrefs.SetInt(player_pref_Item, 2); // set new item in this slot to selected
 
             itemToSelect = 2;
+            HighlightItemHolder(2);
             //highlight other
         }
         else if(itemToSelect == 2) 
         {
+            PlayerPrefs.SetInt(item_playerPref_2, 1); // set old item in this slot to just bought
+
+            item_playerPref_2 = player_pref_Item;
             item_name_2.text = myName;
             item_icon_2.sprite = mySprit;
 
             if (item_name_1.text == myName) //item is already on other slot
             {
+                item_playerPref_1 = "";
                 item_name_1.text = "empty";
                 item_icon_1.sprite = null;
                 PlayerPrefs.SetInt("Item_Selected_1", 0);
             }
 
             PlayerPrefs.SetInt("Item_Selected_2", playerPrefOrder);
+            PlayerPrefs.SetInt(player_pref_Item, 2); // set new item in this slot to selected
 
             itemToSelect = 1;
+            HighlightItemHolder(1);
             //highlight other
         }
 

@@ -12,6 +12,7 @@ public class Item_Inshop : MonoBehaviour
     [SerializeField] private TMP_Text description_obj;
     [SerializeField] private Image icon_sprit;
     [SerializeField] private TMP_Text Prize_Text;
+    [SerializeField] private GameObject prizebutton;
 
     [Space]
     [SerializeField] private string player_pref_Item;
@@ -34,7 +35,7 @@ public class Item_Inshop : MonoBehaviour
     {
         shop_Manage = GameObject.FindGameObjectWithTag("Shop").GetComponent<SHOP_MANAGER>();
 
-        if(PlayerPrefs.GetInt(player_pref_Item) == 1) //have own item
+        if(PlayerPrefs.GetInt(player_pref_Item) > 0) //you own item
         {
             bought = true;
         }
@@ -48,6 +49,11 @@ public class Item_Inshop : MonoBehaviour
         description_obj.text = myDescript;
         icon_sprit.sprite = mySprit;
         Prize_Text.text = Prize.ToString() + "$";
+
+        if (bought)
+        {
+            prizebutton.SetActive(false);
+        }
     }
 
     public void leave_enter_state()
@@ -88,7 +94,7 @@ public class Item_Inshop : MonoBehaviour
     {
         if (bought == true)
         {
-            shop_Manage.Set_selected_Item(myName, mySprit, player_pref_ordering);
+            shop_Manage.Set_selected_Item(myName, mySprit, player_pref_ordering, player_pref_Item);
         }
 
         leave_enter_state();
@@ -97,6 +103,6 @@ public class Item_Inshop : MonoBehaviour
     public void transfer_my_selected(SHOP_MANAGER managered, int itemToSelect) //select item 1 or 2
     {
 
-        managered.Set_selected_Item(myName, mySprit, player_pref_ordering);
+        managered.Set_selected_Item(myName, mySprit, player_pref_ordering, player_pref_Item);
     }
 }

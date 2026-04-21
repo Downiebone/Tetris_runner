@@ -155,6 +155,8 @@ public class GridEditor : MonoBehaviour
         
     }
 
+    private bool have_bombCoin = false;
+
     private void Start()
     {
         //fail_safe
@@ -173,6 +175,11 @@ public class GridEditor : MonoBehaviour
             populateGrid();
 
             player_trans = GameObject.FindGameObjectWithTag("Player").transform;
+
+            if(PlayerPrefs.GetInt("BombCoin") == 2) //1 means owned, 2 means selected
+            {
+                have_bombCoin = true;
+            }
         }
         else //Generate perlin map
         {
@@ -428,7 +435,7 @@ public class GridEditor : MonoBehaviour
             return;
         }
 
-        if (cell.type == Cell.Cell_type.collectable_coin) // swap out for item logic
+        if (have_bombCoin == true && cell.type == Cell.Cell_type.collectable_coin) // need item (bombcoin)
         {
             play_system.spawn_coin_referance(pos, player_trans);
         }

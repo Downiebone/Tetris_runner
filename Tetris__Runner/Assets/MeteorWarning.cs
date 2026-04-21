@@ -27,6 +27,8 @@ public class MeteorWarning : MonoBehaviour
 
     Vector2 flightvector;
 
+    bool meteorCoinsItem = false;
+
     void Start()
     {
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<GridEditor>();
@@ -34,6 +36,11 @@ public class MeteorWarning : MonoBehaviour
         StartCoroutine(flash());
 
         flightvector = new Vector2(3.5f, Random.Range(-downSpeedMin, -downSpeedMax));
+
+        if(PlayerPrefs.GetInt("MeteorCoin") == 2) //1 means owned, 2 means selected right now
+        {
+            meteorCoinsItem = true;
+        }
     }
 
     // Update is called once per frame
@@ -53,7 +60,15 @@ public class MeteorWarning : MonoBehaviour
 
             for (int i = 0; i < ExplosionSpots.Length; i++)
             {
-                grid.bombTile(currSpot + ExplosionSpots[i]);
+                if (meteorCoinsItem)
+                {
+                    grid.replace_active_Tile(currSpot + ExplosionSpots[i], Cell.Cell_type.collectable_coin);
+                }
+                else
+                {
+                    grid.bombTile(currSpot + ExplosionSpots[i]);
+                }
+                
             }
 
             Destroy(this.gameObject);

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player_Script : MonoBehaviour
 {
+    [SerializeField] private Draggable_instantiater drag_inst;
+    [SerializeField] private Following_player cameraFollow_script;
 
     [SerializeField] private GridEditor GridScript;
 
@@ -57,6 +59,11 @@ public class Player_Script : MonoBehaviour
 
     private bool im_dead = false;
 
+    Vector2Int player_lastpos;
+    bool skipping_steps = false;
+
+    private bool HaveCoinMagnet = false;
+
 
     // ############################################### --- Power Ups --- #################################################
 
@@ -100,7 +107,12 @@ public class Player_Script : MonoBehaviour
 
     public void Bird_Power(float bird_timer)
     {
+        drag_inst.enable_top_blockade(true);
+
         current_form = transformation_type.Bird;
+
+        //short invincibility
+        invincible_Counter = 1;
 
         //visual change
         sprit.color = Color.yellow;
@@ -108,14 +120,14 @@ public class Player_Script : MonoBehaviour
 
         time_before_transformation_ends = bird_timer;
         time_in_transformation_counter = 0;
-
-        
     }
 
-
+    bool Have_BombJump = false;
 
     public void Bomb_player(float bomb_force)
     {
+        if (!Have_BombJump) { return; } //cant jump if you dont have item
+
         if (current_form != transformation_type.Normal) { return; } //cant bomb in form
 
         //Debug.Log("BOMBED!!!!!!!!!");
@@ -132,6 +144,14 @@ public class Player_Script : MonoBehaviour
         player_up_speed = bomb_force;
     }
 
+    public void PlaceBlockOnPlayer()
+    {
+        transform.position = new Vector3(transform.position.x, player_lastpos.y + 1, 0); // jump up one block
+
+        RB.gravityScale = 0;
+        RB.velocity = new Vector2(0, 0);
+    }
+
     float invincible_Counter = 0;
 
     private void DIE()
@@ -142,6 +162,9 @@ public class Player_Script : MonoBehaviour
         {
             current_form = transformation_type.Normal;
             sprit.color = Color.blue;
+            drag_inst.enable_top_blockade(false);
+
+            cameraFollow_script.ShakeStart(1, 0.5f);
 
             Instantiate(playerDeath, transform.position, Quaternion.identity);
             expand_bomb.expanding_explosion(20, Vector2Int.RoundToInt((Vector2)transform.position)); //explode a little
@@ -154,11 +177,15 @@ public class Player_Script : MonoBehaviour
             //maybe some screen shake? large explosion
             play_system.Remove_Revive();
 
+            cameraFollow_script.ShakeStart(0.8f, 0.5f);
+
             Instantiate(playerDeath, transform.position, Quaternion.identity);
             expand_bomb.expanding_explosion(25, Vector2Int.RoundToInt((Vector2)transform.position));
         }
         else //we are cooked
         {
+            cameraFollow_script.ShakeStart(1);
+
             im_dead = true;
             play_system.player_died_collectionFunc();
             RB.gravityScale = 0;
@@ -183,6 +210,16 @@ public class Player_Script : MonoBehaviour
         // Calculate how much speed to add per second to reach the max speed
         float speedDifference = maxMultiplier - initialMultiplier;
         speedIncreaseRate = speedDifference / durationToMaxSpeed;
+
+        if(PlayerPrefs.GetInt("BombJump") == 2) //1 = item owned, 2 = item selected now
+        {
+            Have_BombJump = true;
+        }
+        if (PlayerPrefs.GetInt("CoinMagnet") == 2) //1 = item owned, 2 = item selected
+        {
+            HaveCoinMagnet = true;
+        }
+        
     }
 
     private void Update()
@@ -252,6 +289,12 @@ public class Player_Script : MonoBehaviour
             {
                 invincible_Counter = 1; //short invinc-timer
 
+                if(current_form == transformation_type.Bird)
+                {
+                    //was bird?
+                    drag_inst.enable_top_blockade(false);
+                }
+
                 current_form = transformation_type.Normal;
                 dashing_speed = 1;
 
@@ -289,36 +332,60 @@ public class Player_Script : MonoBehaviour
         }
     }
 
+    Vector2Int[] checkCoin_positions =
+    {
+        new Vector2Int(0,0),
+        new Vector2Int(0,1),
+        new Vector2Int(1,1),
+        new Vector2Int(1,0),
+    };
+    Vector2Int[] checkMagnetCoin_positions =
+    {
+        new Vector2Int(0,-1),
+        new Vector2Int(1,2),
+        new Vector2Int(2,0),
+        new Vector2Int(2,1),
+        new Vector2Int(0,2),
+        new Vector2Int(1,-1),
+        new Vector2Int(1,-1),
+        new Vector2Int(2,-1),
+        new Vector2Int(0,-2),
+        new Vector2Int(1,-2),
+        new Vector2Int(0, 3),
+        new Vector2Int(1, 3),
+        new Vector2Int(2, 2),
+        new Vector2Int(3, 1),
+        new Vector2Int(3, 0),
+    };
+
     private void check_misc_connection(Vector2Int body_pos)
     {
-        Vector2Int top_pos = body_pos + new Vector2Int(0, 1);
-        Vector2Int top_right_pos = body_pos + new Vector2Int(1, 1);
-        Vector2Int right_pos = body_pos + new Vector2Int(1, 0);
-
-        if(GridScript.Cell_is_active_type(body_pos, Cell.Cell_type.collectable_coin))
+        if (HaveCoinMagnet)
         {
-            GridScript.deleteTile(body_pos);
-            play_system.spawn_coin_referance(top_right_pos, transform);
+            for (int i = 0; i < checkMagnetCoin_positions.Length; i++)
+            {
+                if (GridScript.Cell_is_active_type(body_pos + checkMagnetCoin_positions[i], Cell.Cell_type.collectable_coin))
+                {
+                    GridScript.deleteTile(body_pos + checkMagnetCoin_positions[i]);
+                    play_system.spawn_coin_referance(body_pos + checkMagnetCoin_positions[i], transform);
+                }
+            }
         }
-        if (GridScript.Cell_is_active_type(top_pos, Cell.Cell_type.collectable_coin))
+        else
         {
-            GridScript.deleteTile(top_pos);
-            play_system.spawn_coin_referance(top_pos, transform.gameObject.transform);
+            for (int i = 0; i < checkCoin_positions.Length; i++)
+            {
+                if (GridScript.Cell_is_active_type(body_pos + checkCoin_positions[i], Cell.Cell_type.collectable_coin))
+                {
+                    GridScript.deleteTile(body_pos + checkCoin_positions[i]);
+                    play_system.spawn_coin_referance(body_pos + checkCoin_positions[i], transform);
+                }
+            }
         }
-        if (GridScript.Cell_is_active_type(top_right_pos, Cell.Cell_type.collectable_coin))
-        {
-            GridScript.deleteTile(top_right_pos);
-            play_system.spawn_coin_referance(top_right_pos, transform.gameObject.transform);
-        }
-        if (GridScript.Cell_is_active_type(right_pos, Cell.Cell_type.collectable_coin))
-        {
-            GridScript.deleteTile(right_pos);
-            play_system.spawn_coin_referance(right_pos, transform.gameObject.transform);
-        }
+        
     }
 
-    Vector2Int player_lastpos;
-    bool skipping_steps = false;
+    
     private void LateUpdate()
     {
         if(Pause_Manager.GAME_IS_PAUSED == true) {
@@ -329,9 +396,14 @@ public class Player_Script : MonoBehaviour
 
         if (player_up_speed > 0)
         {
-            if ((Cell_ceiling_exist && (transform.position.y % 1 <= 0.5f || transform.position.y % 1 >= 0.95f)) || Mathf.RoundToInt(transform.position.y) > 10) // bumb head on ceiling while rising or top of level
+            if (player_up_speed > 1 && ((Cell_ceiling_exist && (transform.position.y % 1 <= 0.5f || transform.position.y % 1 >= 0.95f)) || Mathf.RoundToInt(transform.position.y) > 10)) // bumb head on ceiling while rising or top of level
             {
                 transform.position = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y));
+                player_up_speed = 0;
+            }
+            else if(current_form == transformation_type.Bird && transform.position.y > 8) //transformation limit
+            {
+                transform.position = new Vector2(transform.position.x, 8);
                 player_up_speed = 0;
             }
             else

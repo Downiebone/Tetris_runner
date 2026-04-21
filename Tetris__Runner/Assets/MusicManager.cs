@@ -43,6 +43,7 @@ public class MusicManager : MonoBehaviour
         start_music_loop(8);
 
         max_vol_toReach = PlayerPrefs.GetFloat("Sound_Music");
+        effectsSource.volume = PlayerPrefs.GetFloat("Sound_Effects");
     }
 
     public void dampen_music(float music_percen)
@@ -148,6 +149,13 @@ public class MusicManager : MonoBehaviour
         }
 
         max_vol_toReach = max_vol;
+        PlayerPrefs.SetFloat("Sound_Music", max_vol);
+        
+    }
+    public void update_max_volume_effect(float max_vol)
+    {
+        effectsSource.volume = max_vol;
+        PlayerPrefs.SetFloat("Sound_Effects", max_vol);
     }
 
     IEnumerator AnimateMusicCrossfade(AudioClip nextTrack, float fadeDuration = 0.5f)

@@ -37,25 +37,31 @@ public class menu_manager : MonoBehaviour
 
     public void reset_playerprefs_Debug()
     {
-        PlayerPrefs.SetInt("PowerUp_Golden", 1);
-        PlayerPrefs.SetInt("PowerUp_Dash", 0);
-        PlayerPrefs.SetInt("PowerUp_Bird", 0);
+        PlayerPrefs.DeleteAll();
 
-        PlayerPrefs.SetInt("PowerUp_Selected", 0);
+        fix_playerprefs();
 
-        PlayerPrefs.SetInt("BombJump", 0);
-        PlayerPrefs.SetInt("BombCoin", 0);
+        //PlayerPrefs.SetInt("PowerUp_Golden", 1);
+        //PlayerPrefs.SetInt("PowerUp_Dash", 0);
+        //PlayerPrefs.SetInt("PowerUp_Bird", 0);
 
-        PlayerPrefs.SetInt("Item_Selected_1", 0);
-        PlayerPrefs.SetInt("Item_Selected_2", 0);
+        //PlayerPrefs.SetInt("PowerUp_Selected", 0);
 
-        PlayerPrefs.SetInt("Money", 0);
+        //PlayerPrefs.SetInt("BombJump", 0);
+        //PlayerPrefs.SetInt("BombCoin", 0);
+        //PlayerPrefs.SetInt("MeteorCoin", 0);
+        //PlayerPrefs.SetInt("CoinMagnet", 0);
 
-        PlayerPrefs.SetFloat("X_off", -0.5f);
-        PlayerPrefs.SetFloat("Y_off", 0);
+        //PlayerPrefs.SetInt("Item_Selected_1", 0);
+        //PlayerPrefs.SetInt("Item_Selected_2", 0);
 
-        PlayerPrefs.SetFloat("Sound_Effects", 1);
-        PlayerPrefs.SetFloat("Sound_Music", 1);
+        //PlayerPrefs.SetInt("Money", 0);
+
+        //PlayerPrefs.SetFloat("X_off", -0.5f);
+        //PlayerPrefs.SetFloat("Y_off", 0);
+
+        //PlayerPrefs.SetFloat("Sound_Effects", 1);
+        //PlayerPrefs.SetFloat("Sound_Music", 1);
     }
 
     public void Start_Game()

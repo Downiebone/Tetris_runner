@@ -89,6 +89,21 @@ public class Bomb_draggable : draggable_piece
     //    }
     //}
 
+    protected override void hide_visuals_internal()
+    {
+        GetComponent<SpriteRenderer>().enabled = false;
+        highlight_renderer.enabled = false;
+    }
+    protected override void show_visuals_internal()
+    {
+        GetComponent<SpriteRenderer>().enabled = true;
+
+        if (is_chosen)
+        {
+            highlight_renderer.enabled = true;
+        }
+    }
+
     protected override void enable_highlight()
     {
         highlight_renderer.enabled = true;

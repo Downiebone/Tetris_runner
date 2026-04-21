@@ -29,15 +29,24 @@ public class MeteorSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(timeBeforeMeteor);
 
-        if(Random.Range(0,10) == 0) // 1 in 10 for meteor array?
-        {
+        int rand = Random.Range(0, 10);
 
+        if (rand == 0) // 1 in 10 for meteor array?
+        {
+            spawnMeteorArray(Random.Range(2, 4));
+            StartCoroutine(wait_forSpawning_normal(Random.Range(Min_timeBetween_meteors, Max_timeBetween_meteors)));
+        }
+        else if (rand == 1) //meteor uppehåll
+        {
+            //spawnOneMeteorRandom();
+            StartCoroutine(wait_forSpawning_normal(Random.Range(Min_timeBetween_meteors*2, Max_timeBetween_meteors*2)));
         }
         else
         {
             spawnOneMeteorRandom();
+            StartCoroutine(wait_forSpawning_normal(Random.Range(Min_timeBetween_meteors, Max_timeBetween_meteors)));
         }
-        StartCoroutine(wait_forSpawning_normal(Random.Range(Min_timeBetween_meteors, Max_timeBetween_meteors)));
+        
     }
 
     private void spawnOneMeteorRandom()
