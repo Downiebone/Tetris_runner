@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c79d046e5358a242a85cb618ebe260d, type: 3}
+  m_Name: OnlyOnePieceQuest
+  m_EditorClassIdentifier: 
+  MustBeAccepted: 0
+  AffectedByDifficulity: 1
+  QuestSprite: {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
+  QuestName: OnePiece
+  QuestID: 1
+  QuestDescription: Only one type of piece to place
+  QuestRarity: 1
+  QuestDifficulity: 1
+  Quest_Easy_Difficulity_reward: 100
+  Quest_Medium_Difficulity_reward: 200
+  Quest_Hard_Difficulity_reward: 300
+  PiecesToHave: 
+  Randomize_Piece: 0

@@ -21,7 +21,7 @@ public class Draggable_instantiater : MonoBehaviour
         return currently_chosen_draggable;
     }
 
-    private float X_PieceLenght;
+    private float X_PieceLenght; 
 
     [SerializeField] private float smoothSpeed = 0.125f;
 
@@ -31,6 +31,30 @@ public class Draggable_instantiater : MonoBehaviour
     //public float NormaltimeBetweenSpawns = 0.2f;
     //public float FASTtimeBetweenSpawns = 0.2f;
     //private float timer_ind = 255;
+
+    public void ModifyDraggableList(int[] DraggablesToInclude)
+    {
+        if(DraggablesToInclude.Length > Spawnable_Draggable.Length)
+        {
+            Debug.LogError("too many draggables to removes");
+            throw new System.Exception();
+        }
+
+        GameObject[] TempDraggableList = new GameObject[DraggablesToInclude.Length];
+
+        for (int i = 0; i < DraggablesToInclude.Length; i++)
+        {
+            if (DraggablesToInclude[i] >= Spawnable_Draggable.Length)
+            {
+                Debug.LogError("trying to remove draggable outside bounds");
+                throw new System.Exception();
+            }
+
+            TempDraggableList[i] = Spawnable_Draggable[DraggablesToInclude[i]];
+        }
+
+        Spawnable_Draggable = TempDraggableList;
+    }
 
     public GameObject[] HighlightObjects;
 

@@ -8,6 +8,7 @@ public class menu_manager : MonoBehaviour
 
     public GameObject Menu_part;
     public GameObject Settings_part;
+    public GameObject Quests_part;
 
     void Awake()
     {
@@ -84,5 +85,13 @@ public class menu_manager : MonoBehaviour
     {
         Menu_part.SetActive(true);
         Settings_part.SetActive(false);
+    }
+
+    public void Quests_Button()
+    {
+        Quests_part.SetActive(true);
+        //Menu_part.SetActive(false);
+
+
     }
 }
