@@ -2,6 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class Placable
+{
+    public int item_id;
+    public int spawnWeight;
+
+    public Placable(int id_, int spawnWeight_)
+    {
+        item_id = id_;
+        spawnWeight = spawnWeight_;
+    }
+}
+
 public class Draggable_instantiater : MonoBehaviour
 {
     [SerializeField] private GridEditor GridScript;
@@ -25,12 +37,48 @@ public class Draggable_instantiater : MonoBehaviour
 
     [SerializeField] private float smoothSpeed = 0.125f;
 
+ // ######  Blocks   --------------
+    //0 L
+    //1 Penis
+    //2 
+    //3 
+    //4 Bomb
+    //5    - Gold Bomb
+    //6    - Ghost Block
     [SerializeField] private GameObject[] Spawnable_Draggable;
+
+    private Placable[] weightTablePlaceables;
+    int total_placable_weight = 0;
 
     //float timeBetweenSpawns = 1;
     //public float NormaltimeBetweenSpawns = 0.2f;
     //public float FASTtimeBetweenSpawns = 0.2f;
     //private float timer_ind = 255;
+
+    private void GeneratePlaceableTable()
+    {
+        weightTablePlaceables = new Placable[Spawnable_Draggable.Length];
+
+        weightTablePlaceables[0] = new Placable(0, 20); // L
+        weightTablePlaceables[1] = new Placable(1, 20); // Penis
+        weightTablePlaceables[2] = new Placable(2, 20); //
+        weightTablePlaceables[3] = new Placable(3, 20); // 
+        weightTablePlaceables[4] = new Placable(4, 20); // bomb
+        int goldWeight = 0;
+        if(PlayerPrefs.GetInt("Placeable_GoldBomb") > 0)
+        {
+            goldWeight = 5;
+        }
+        weightTablePlaceables[5] = new Placable(5, 10); // gold bomb
+        int ghostWeight = 5 * PlayerPrefs.GetInt("Placeable_GhostBlock");
+        weightTablePlaceables[6] = new Placable(6, 10); // ghost block
+
+        total_placable_weight = 0;
+        foreach (var item in weightTablePlaceables)
+        {
+            total_placable_weight += item.spawnWeight;
+        }
+    }
 
     public void ModifyDraggableList(int[] DraggablesToInclude)
     {
@@ -121,16 +169,34 @@ public class Draggable_instantiater : MonoBehaviour
 
     void Start()
     {
+        GeneratePlaceableTable();
+
         X_PieceLenght = (PosX.localPosition.x - NegX.localPosition.x) / (NumberOfDraggables_N - 1);
 
         spawn_all_draggables();
+    }
+
+    private GameObject instantiate_draggable(Vector3 pos, Transform parent = null)
+    {
+        int randomWeight = Random.Range(1, total_placable_weight);
+
+        for (int i = 0; i < weightTablePlaceables.Length; i++)
+        {
+            if (randomWeight <= weightTablePlaceables[i].spawnWeight)
+            {
+                return Instantiate(Spawnable_Draggable[weightTablePlaceables[i].item_id], pos, Quaternion.identity, parent);
+            }
+            else randomWeight -= weightTablePlaceables[i].spawnWeight;
+        }
+
+        return null;
     }
 
     private void spawn_all_draggables()
     {
         for(int i = 0; i < NumberOfDraggables_N; i++)
         {
-            GameObject GO = Instantiate(Spawnable_Draggable[Random.Range(0, Spawnable_Draggable.Length)], offside_spawnPos.position, Quaternion.identity, transform);
+            GameObject GO = instantiate_draggable(offside_spawnPos.position, transform);
             GO.GetComponent<draggable_piece>().myDraggableIndex = Draggables.Count;
             GO.GetComponent<draggable_piece>().setReferences(this, GridScript);
             Draggables.Add(GO);
@@ -146,8 +212,7 @@ public class Draggable_instantiater : MonoBehaviour
 
     private void spawn_draggable()
     {
-
-        GameObject GO = Instantiate(Spawnable_Draggable[Random.Range(0, Spawnable_Draggable.Length)], offside_spawnPos.position, Quaternion.identity, transform);
+        GameObject GO = instantiate_draggable(offside_spawnPos.position, transform);
         GO.GetComponent<draggable_piece>().myDraggableIndex = Draggables.Count;
         GO.GetComponent<draggable_piece>().setReferences(this, GridScript);
         Draggables.Add(GO);

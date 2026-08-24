@@ -52,6 +52,7 @@ public class Bomb_draggable : draggable_piece
 
         for (int i = 0; i < HighlightSpots.Length; i++)
         {
+            
 
             //Debug.Log("player_pos: " + Vector2Int.RoundToInt((Vector2)player_pos.position) + " | high_spot: " + HighlightSpots[i]);
 

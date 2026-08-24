@@ -16,6 +16,11 @@ public class level_play_system : MonoBehaviour
     private int current_coint_ind = 0;
     private int max_coins = 0;
 
+    [SerializeField] private GameObject[] Bombs_for_animation;
+    //used to track which bomb_explosion to use () we allways want to use oldes one
+    //so that we dont accidentaly use one that is already in use
+    private int current_bomb_ind = 0;
+
     [SerializeField] private TMP_Text money_text;
     [SerializeField] private TMP_Text end_of_level_money_text;
 
@@ -106,6 +111,19 @@ public class level_play_system : MonoBehaviour
         if (current_coint_ind >= max_coins)
         {
             current_coint_ind = 0;
+        }
+    }
+
+    public void spawn_explosion(Vector2 bomb_pos)
+    {
+        Bombs_for_animation[current_bomb_ind].transform.position = bomb_pos;
+        Bombs_for_animation[current_bomb_ind].GetComponent<Animator>().SetTrigger("Bomb");
+
+        //use next bomb next time
+        current_bomb_ind++;
+        if(current_bomb_ind >= Bombs_for_animation.Length)
+        {
+            current_bomb_ind = 0;
         }
     }
 }

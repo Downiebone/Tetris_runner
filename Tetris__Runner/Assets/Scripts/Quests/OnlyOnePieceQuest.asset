@@ -24,4 +24,4 @@ MonoBehaviour:
   Quest_Medium_Difficulity_reward: 200
   Quest_Hard_Difficulity_reward: 300
   PiecesToHave: 
-  Randomize_Piece: 0
+  Randomize_Piece: 1

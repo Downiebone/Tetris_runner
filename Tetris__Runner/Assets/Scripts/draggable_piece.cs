@@ -23,7 +23,7 @@ public class draggable_piece : MonoBehaviour
 
     protected SpriteRenderer[] renderers;
 
-    private SpriteRenderer[] Highlight_renderers;
+    protected SpriteRenderer[] Highlight_renderers;
 
 
     //private Transform player_transform;

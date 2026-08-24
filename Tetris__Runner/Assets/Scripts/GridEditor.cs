@@ -391,10 +391,13 @@ public class GridEditor : MonoBehaviour
     }
     public void deleteTile_exeptFloor(Vector2Int pos)
     {
-        if(pos.y < 1) //dont destroy floor
+        if(pos.y < 1 || pos.y >= gridHeight) //dont destroy floor or "ceiling"
         {
             return;
         }
+
+        //animation
+        //play_system.spawn_explosion(pos);
 
         Cell cell = getCellAtPoint(pos.y, pos.x);
         if (!cell.isActive)
@@ -406,10 +409,13 @@ public class GridEditor : MonoBehaviour
     }
     public void bombTile(Vector2Int pos)
     {
-        if (pos.y < 1) //dont destroy floor
+        if (pos.y < 1 || pos.y >= gridHeight) //dont destroy floor or "ceiling"
         {
             return;
         }
+
+        //animation
+        play_system.spawn_explosion(pos);
 
         Cell cell = getCellAtPoint(pos.y, pos.x);
         if (!cell.isActive)
@@ -424,10 +430,13 @@ public class GridEditor : MonoBehaviour
     //if the player bombed something (for applying player items)
     public void bombTilePlayer(Vector2Int pos)
     {
-        if (pos.y < 1) //dont destroy floor
+        if (pos.y < 1) //dont destroy floor or "ceiling"
         {
             return;
         }
+
+        //animation
+        play_system.spawn_explosion(pos);
 
         Cell cell = getCellAtPoint(pos.y, pos.x);
         if (!cell.isActive)
@@ -442,6 +451,8 @@ public class GridEditor : MonoBehaviour
 
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
+
+        
     }
     void populateGrid()
     {
