@@ -72,6 +72,7 @@ public class Draggable_instantiater : MonoBehaviour
         weightTablePlaceables[5] = new Placable(5, 10); // gold bomb
         int ghostWeight = 5 * PlayerPrefs.GetInt("Placeable_GhostBlock");
         weightTablePlaceables[6] = new Placable(6, 10); // ghost block
+        weightTablePlaceables[7] = new Placable(7, 10); // jump pad
 
         total_placable_weight = 0;
         foreach (var item in weightTablePlaceables)

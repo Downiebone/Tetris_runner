@@ -6575,6 +6575,7 @@ MonoBehaviour:
   - {fileID: 1653362467072932981, guid: 58f88bf506fa74e40afed53a5611beeb, type: 3}
   - {fileID: 5374080915148969997, guid: b9ad8eead301577418a4bc1bf5b5b2a6, type: 3}
   - {fileID: 8119199140450918304, guid: e8e566d71466a2447938eee5211ac781, type: 3}
+  - {fileID: 2553245376212062372, guid: c611dddc61c180144911ea11de4a591a, type: 3}
   HighlightObjects:
   - {fileID: 876334252}
   - {fileID: 1341997614}
@@ -11386,7 +11387,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1622829687
 Transform:
   m_ObjectHideFlags: 0
@@ -12026,6 +12027,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
   - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
   - {fileID: 21300000, guid: 8e00707df108f2c419ca2f7856fed412, type: 3}
+  - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
   cellColors:
   - {r: 0.7433963, g: 0, b: 0, a: 1}
   - {r: 0.30883738, g: 0.6320754, b: 0.1699448, a: 1}
@@ -13557,7 +13559,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1987921902
 Transform:
   m_ObjectHideFlags: 0

@@ -144,6 +144,17 @@ public class Player_Script : MonoBehaviour
         player_up_speed = bomb_force;
     }
 
+    public void forcedJump(float jumpForce)
+    {
+        was_upping = true;
+
+        gravity_modifier = 0;
+        RB.velocity = new Vector2(0, 0);
+        RB.gravityScale = gravity_modifier * player_multiplier;
+
+        player_up_speed = jumpForce;
+    }
+
     public void PlaceBlockOnPlayer()
     {
         transform.position = new Vector3(transform.position.x, player_lastpos.y + 1, 0); // jump up one block
@@ -222,6 +233,38 @@ public class Player_Script : MonoBehaviour
         
     }
 
+    private void PerformBirdJump()
+    {
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            gravity_modifier = 0;
+            RB.velocity = new Vector2(0, 0);
+            RB.gravityScale = gravity_modifier * player_multiplier;
+
+            player_up_speed = bird_jump_height;
+
+            was_upping = true;
+
+        }
+#else
+        if (Input.touchCount > 0) {
+            Touch touch_0 = Input.GetTouch(0);
+
+            if (touch_0.phase == TouchPhase.Began)
+            {
+                gravity_modifier = 0;
+                RB.velocity = new Vector2(0, 0);
+                RB.gravityScale = gravity_modifier * player_multiplier;
+
+                player_up_speed = bird_jump_height;
+
+                was_upping = true;
+            }
+        }
+#endif
+    }
+
     private void Update()
     {
         if(Pause_Manager.GAME_IS_PAUSED == true) {
@@ -249,36 +292,7 @@ public class Player_Script : MonoBehaviour
         {
             if (current_form == transformation_type.Bird)
             {
-
-#if UNITY_EDITOR
-                if (Input.GetKeyDown(KeyCode.Mouse0))
-                {
-                    gravity_modifier = 0;
-                    RB.velocity = new Vector2(0, 0);
-                    RB.gravityScale = gravity_modifier * player_multiplier;
-
-                    player_up_speed = bird_jump_height;
-
-                    was_upping = true;
-
-                }
-#else
-                if (Input.touchCount > 0) {
-                    Touch touch_0 = Input.GetTouch(0);
-
-                    if (touch_0.phase == TouchPhase.Began)
-                    {
-                        gravity_modifier = 0;
-                        RB.velocity = new Vector2(0, 0);
-                        RB.gravityScale = gravity_modifier * player_multiplier;
-
-                        player_up_speed = bird_jump_height;
-
-                        was_upping = true;
-                    }
-                }
-#endif
-
+                PerformBirdJump();
             }
 
             if (time_in_transformation_counter < time_before_transformation_ends)
@@ -347,19 +361,23 @@ public class Player_Script : MonoBehaviour
         new Vector2Int(2,1),
         new Vector2Int(0,2),
         new Vector2Int(1,-1),
-        new Vector2Int(1,-1),
         new Vector2Int(2,-1),
         new Vector2Int(0,-2),
         new Vector2Int(1,-2),
-        new Vector2Int(0, 3),
-        new Vector2Int(1, 3),
+        //new Vector2Int(0, 3),
+        //new Vector2Int(1, 3),
         new Vector2Int(2, 2),
-        new Vector2Int(3, 1),
-        new Vector2Int(3, 0),
+        //new Vector2Int(3, 1),
+        //new Vector2Int(3, 0),
     };
 
     private void check_misc_connection(Vector2Int body_pos)
     {
+        if(GridScript.getCellAtPoint(body_pos).type == Cell.Cell_type.Jumppad)
+        {
+            forcedJump(15);
+        }
+
         if (HaveCoinMagnet)
         {
             for (int i = 0; i < checkMagnetCoin_positions.Length; i++)
@@ -396,14 +414,14 @@ public class Player_Script : MonoBehaviour
 
         if (player_up_speed > 0)
         {
-            if (player_up_speed > 1 && ((Cell_ceiling_exist && (transform.position.y % 1 <= 0.5f || transform.position.y % 1 >= 0.95f)) || Mathf.RoundToInt(transform.position.y) > 10)) // bumb head on ceiling while rising or top of level
+            if (/*player_up_speed > 1 && */((Cell_ceiling_exist && (transform.position.y % 1 <= 0.5f || transform.position.y % 1 >= 0.95f)) || Mathf.RoundToInt(transform.position.y) >= GridScript.gridHeight - 1)) // bumb head on ceiling while rising or top of level
             {
                 transform.position = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y));
                 player_up_speed = 0;
             }
             else if(current_form == transformation_type.Bird && transform.position.y > 8) //transformation limit
             {
-                transform.position = new Vector2(transform.position.x, 8);
+                transform.position = new Vector2(transform.position.x, GridScript.gridHeight - 1);
                 player_up_speed = 0;
             }
             else
@@ -433,6 +451,7 @@ public class Player_Script : MonoBehaviour
 
         if(skipping_steps == false)
         {
+
             GridScript.player_x_val_set(Player_2Int_pos.x);
 
             Vector2Int Ceiling_pos = Player_2Int_pos + new Vector2Int(0, 1);
@@ -460,10 +479,17 @@ public class Player_Script : MonoBehaviour
                         }
                         else
                         {
-                            Vector2 new_pos = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y + 1));
+                            if(transform.position.y + 1 >= GridScript.gridHeight - 0.4f) //stop player from going to top
+                            {
+                                DIE();
+                            }
+                            else
+                            {
+                                Vector2 new_pos = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y + 1));
 
-                            transform.position = new_pos;
-                            RB.velocity = new Vector2(0, 0);
+                                transform.position = new_pos;
+                                RB.velocity = new Vector2(0, 0);
+                            }
                         }
                     }
                 }

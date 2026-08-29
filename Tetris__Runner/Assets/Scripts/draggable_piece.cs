@@ -159,24 +159,26 @@ public class draggable_piece : MonoBehaviour
         {
             PlaceDraggable();
         }
-        //if (Draggable_Speed > draggable_escapeVelocityFAST)
-        //{
-        //    //add another speed that only counts if object is away from a placable spot
+/*
+        if (Draggable_Speed > draggable_escapeVelocityFAST)
+        {
+            //add another speed that only counts if object is away from a placable spot
 
-        //    //if we drag object to fast, remove it from list
-        //    //Debug.Log("ESCAPE SPEED : " + Draggable_Speed);
-        //    CameraObj.RemoveDraggable_atIndex(myDraggableIndex);
-        //    gameObject.layer = 0;
-        //    RB.bodyType = RigidbodyType2D.Dynamic;
-        //    RB.velocity = new Vector2(Draggable_Velocity.x, Draggable_Velocity.y);
-        //}
-        //else
-        //{
-        //    if (Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) < toFarForPlace)
-        //    {
-        //        PlaceDraggable();
-        //    }
-        //}
+            //if we drag object to fast, remove it from list
+            //Debug.Log("ESCAPE SPEED : " + Draggable_Speed);
+            CameraObj.RemoveDraggable_atIndex(myDraggableIndex);
+            gameObject.layer = 0;
+            RB.bodyType = RigidbodyType2D.Dynamic;
+            RB.velocity = new Vector2(Draggable_Velocity.x, Draggable_Velocity.y);
+        }
+        else
+        {
+            if (Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) < toFarForPlace)
+            {
+                PlaceDraggable();
+            }
+        }
+*/
 
         CameraObj.ResetHighlighter_Positions();
     }
@@ -360,7 +362,7 @@ public class draggable_piece : MonoBehaviour
                 placeOnPlayer = true;
             }
 
-            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color);
+            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color, Cell.Cell_type.Ground);
 
             //change to ground layer (this should not matter as they are being destroyed this frame??)
             renderers[i].sortingLayerName = "Ground";

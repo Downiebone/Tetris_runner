@@ -15,7 +15,7 @@ public class Cell
         Ground = 0,
         collectable_coin = 1,
         collectable_big = 2,
-        temp1 = 3,
+        Jumppad = 3,
         temp2 = 4,
         temp3 = 5
     }
