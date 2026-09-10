@@ -292,6 +292,54 @@ public class GridEditor : MonoBehaviour
 
         x_value_to_start_loading += Grid_loaded.GetLength(1);
     }
+
+    //easy clear area. Do this before loading a new one
+    public void ClearLastLoadedLevel_ForEditor()
+    {
+        for (int i = 0; i < gridHeight_SAVE; i++) //height
+        {
+            for (int j = 0; j < gridLength_SAVE; j++) //width
+            {
+                Cell grid_cell = getCellAtPoint(i, j); //check
+                grid_cell.isActive = false;
+
+                grid_cell.sprite_rend.sprite = null;
+            }
+        }
+    }
+    public void Fill_In_Loaded_grid_ALWAYS_ORIGO_ForEditor(Cell[,] Grid_loaded)
+    {
+        ClearLastLoadedLevel_ForEditor();
+
+        for (int i = 0; i < Grid_loaded.GetLength(0); i++) //height
+        {
+            for (int j = 0; j < Grid_loaded.GetLength(1); j++) //width
+            {
+                Cell grid_cell = getCellAtPoint(i, j); //check
+                Cell loaded_cell = Grid_loaded[i, j];
+                grid_cell.isActive = loaded_cell.isActive;
+                grid_cell.type = loaded_cell.type;
+                grid_cell.color_index = loaded_cell.color_index;
+
+                Color set_color = loaded_cell.type == Cell.Cell_type.Ground ? cellColors[loaded_cell.color_index] : Color.white;
+
+                grid_cell.cellColor = set_color;
+
+                grid_cell.sprite_rend.color = set_color;
+                if (!grid_cell.isActive)
+                {
+                    grid_cell.sprite_rend.sprite = null;
+                }
+                else
+                {
+                    grid_cell.sprite_rend.sprite = cellSprites[(int)loaded_cell.type];
+                }
+
+            }
+        }
+
+        gridLength_SAVE = Grid_loaded.GetLength(1);
+    }
     void updatePerlinOffset()
     {
         perlin_x_offset = Random.Range(0f, 1f);
@@ -335,7 +383,8 @@ public class GridEditor : MonoBehaviour
         cell.sprite_rend.color = placeTileColor;
         cell.color_index = color_index;
 
-        cell.sprite_rend.sprite = cellSprites[(int)cell.type];
+        //set sprite to correct sprite, null if correct sprite is none
+        cell.sprite_rend.sprite = cellSprites[(int)cell.type] == null ? null : cellSprites[(int)cell.type];
     }
     public void place_fullCell(Vector2Int pos, Cell newCell)
     {

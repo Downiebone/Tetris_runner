@@ -375,7 +375,7 @@ public class Player_Script : MonoBehaviour
     {
         if(GridScript.getCellAtPoint(body_pos).type == Cell.Cell_type.Jumppad)
         {
-            forcedJump(15);
+            forcedJump(17);
         }
 
         if (HaveCoinMagnet)

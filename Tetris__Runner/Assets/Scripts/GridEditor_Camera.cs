@@ -226,9 +226,15 @@ public class GridEditor_Camera : MonoBehaviour
                 Grid_script.gridLength_SAVE -= 1;
             }
         }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            //Reset position
+            transform.position = new Vector3(12.64f, 7, -10);
+        }
 
     }
 
+    //thing to change between colors when drawing blocks
     private void update_counter_colorIndex()
     {
         counter_before_colorChange--;
@@ -252,6 +258,20 @@ public class GridEditor_Camera : MonoBehaviour
             Colors_images[current_color_index].rectTransform.sizeDelta = new Vector2(35, 50);
         }
         placing_color_int.text = counter_before_colorChange.ToString();
+    }
+
+    public void UI_button_LoadLevel()
+    {
+        if(can_load == false)
+        {
+            Debug.Log("Cant Load Yet!!");
+            return;
+        }
+
+        can_load = false;
+
+        //start loading cells
+        StartCoroutine(CountingCoroutine());
     }
 
     private void apply_scrolling_types(int new_type)
@@ -279,7 +299,8 @@ public class GridEditor_Camera : MonoBehaviour
     //but then puts them in the grid sync
     IEnumerator CountingCoroutine()
     {
-        var task = Save_Script.LoadCells("long_test", "Bot", "Bot", 5);
+        //var task = Save_Script.LoadCells("long_test", "Bot", "Bot", 5);
+        var task = Save_Script.EditorLoadSelectedLevel();
 
         yield return new WaitUntil(() => task.IsCompleted);
 
@@ -291,7 +312,7 @@ public class GridEditor_Camera : MonoBehaviour
 
         Debug.Log("Loaded: " + Save_Script.grid_return.GetLength(0) + " | " + Save_Script.grid_return.GetLength(1));
 
-        Grid_script.Fill_In_Loaded_grid(Save_Script.grid_return);
+        Grid_script.Fill_In_Loaded_grid_ALWAYS_ORIGO_ForEditor(Save_Script.grid_return);
         can_load = true;
         Debug.Log("LoadCells finished successfully!");
     }

@@ -48,26 +48,86 @@ public class GridSaver : MonoBehaviour
     private string from_str = "Bot";
     private string to_str = "Bot";
 
+    private int difficulity_LoadLevel = 1;
+    public string loading_level_name;
+
+    private string from_str_LoadLevel = "Bot";
+    private string to_str_LoadLevel = "Bot";
+    public TMP_Dropdown loadedLevels_dropdown;
+
     public void on_inputField_changed_test(TMP_InputField val)
     {
-        Debug.Log("value_changed: " + val.text);
+        //Debug.Log("value_changed: " + val.text);
         save_level_name = val.text;
     }
 
     public void From_Changed_value(TMP_Dropdown change)
     {
         from_str = change.value == 2 ? "Top" : change.value == 1 ? "Mid" : "Bot";
-        Debug.Log("from_str: " + from_str);
+        //Debug.Log("from_str: " + from_str);
     }
     public void To_Changed_value(TMP_Dropdown change)
     {
         to_str = change.value == 2 ? "Top" : change.value == 1 ? "Mid" : "Bot";
-        Debug.Log("To_str: " + to_str);
+        //Debug.Log("To_str: " + to_str);
     }
     public void DifficulityChanged(TMP_Dropdown change)
     {
-        Debug.Log("New Value : " + (change.value + 1));
+        //Debug.Log("difficulity : " + (change.value + 1));
         difficulity = (change.value + 1);
+    }
+
+    public void From_Changed_value_LoadingLevel(TMP_Dropdown change)
+    {
+        from_str_LoadLevel = change.value == 2 ? "Top" : change.value == 1 ? "Mid" : "Bot";
+        //Debug.Log("from_str_loading level: " + from_str);
+
+        updateLoadLevelList();
+    }
+    public void To_Changed_value_LoadingLevel(TMP_Dropdown change)
+    {
+        to_str_LoadLevel = change.value == 2 ? "Top" : change.value == 1 ? "Mid" : "Bot";
+        //Debug.Log("To_str loading level: " + to_str);
+
+        updateLoadLevelList();
+    }
+    public void DifficulityChanged_LoadingLevel(TMP_Dropdown change)
+    {
+        //Debug.Log("Difficulity loading level : " + (change.value + 1));
+        difficulity_LoadLevel = (change.value + 1);
+
+        updateLoadLevelList();
+    }
+
+    public void TMP_DropdownTest(TMP_Dropdown tmpDp)
+    {
+        Debug.Log("Difficulity loading level :  " + tmpDp.captionText.text); //get actual text of option
+
+        loading_level_name = tmpDp.captionText.text;
+    }
+
+    private void updateLoadLevelList()
+    {
+        string[] newFiles = GetFiles(from_str_LoadLevel, to_str_LoadLevel, difficulity_LoadLevel);
+
+        loadedLevels_dropdown.ClearOptions();
+
+        if(newFiles.Length > 0)
+        {
+            loading_level_name = newFiles[0];
+            Debug.Log("Next load is: " + loading_level_name);
+        }
+        else
+        {
+            loading_level_name = ""; //empty string (we should not be able to load this)
+        }
+
+        foreach (string t in newFiles)
+        {
+            loadedLevels_dropdown.options.Add(new TMP_Dropdown.OptionData() { text = t });
+        }
+
+        loadedLevels_dropdown.RefreshShownValue();
     }
 
     public void Setup_AreaSize(GridEditor GridOb, int height, int width)
@@ -193,7 +253,7 @@ public class GridSaver : MonoBehaviour
         if (string.IsNullOrWhiteSpace(fileName))
             return;
 
-
+        //prob doesnt work exactly like this in real build
         string path = "Assets/Resources/Levels/" + (from_load + "_" + to_load) + "/" + difficulity_load.ToString() + "/" + fileName;
 #if UNITY_EDITOR || true
 
@@ -235,7 +295,52 @@ public class GridSaver : MonoBehaviour
         grid_return = grid;
     }
 
+    public async Task EditorLoadSelectedLevel()
+    {
+        if (string.IsNullOrWhiteSpace(loading_level_name))
+            return;
 
+        //prob doesnt work exactly like this in real build
+        string path = "Assets/Resources/Levels/" + (from_str_LoadLevel + "_" + to_str_LoadLevel) + "/" + difficulity_LoadLevel.ToString() + "/" + loading_level_name;
+#if UNITY_EDITOR || true
+
+#else //TODO: MAKE IT LOAD FROM RESOURCES!! maybe: https://answers.unity.com/questions/8187/how-can-i-read-binary-files-from-resources.html
+
+#endif
+
+        Debug.Log("Loading from: " + path);
+
+        if (!File.Exists(path + "/cells.bytes"))
+        {
+            Debug.LogError("FILE DOEST NOT EXIST, CANT LOAD");
+            return;
+        }
+
+        string data_str = await LoadTextAsync(path + "/dataStr.txt");
+        byte[] vectorString = await LoadBytesAsync(path + "/vectors.bytes");
+        byte[] cellString = await LoadBytesAsync(path + "/cells.bytes");
+
+        List<SVector2Int> vectorList = Deserializer<List<SVector2Int>>(vectorString);
+        List<Cell> savable_cellsList = Deserializer<List<Cell>>(cellString);
+
+        string[] data_str_parts = data_str.Split(Environment.NewLine, StringSplitOptions.None);
+        int heights = int.Parse(data_str_parts[0]);
+        int widths = int.Parse(data_str_parts[1]);
+
+        Debug.Log("Loading stats");
+        Debug.Log("h: " + heights + " | w: " + widths);
+        Debug.Log("vectors: " + vectorList.Count);
+        Debug.Log("cells: " + savable_cellsList.Count);
+
+        Cell[,] grid = new Cell[heights, widths];
+
+        for (int i = 0; i < vectorList.Count; i++)
+        {
+            grid[vectorList[i].y, vectorList[i].x] = savable_cellsList[i];
+        }
+
+        grid_return = grid;
+    }
     public async Task LoadCells_at_random(string from_load, string to_load, int difficulity_load)
     {
 
@@ -333,6 +438,8 @@ public class GridSaver : MonoBehaviour
     {
         TextAsset textAsset = Resources.Load<TextAsset>("manifest");
         manifest = JsonUtility.FromJson<LevelManifest>(textAsset.text);
+
+        updateLoadLevelList();
 
         //string[] levels = GetFiles("Bot", "Mid", 1);
 
@@ -541,5 +648,10 @@ public class GridSaver : MonoBehaviour
     {
         // File.ReadAllBytesAsync is already async, no need for Task.Run
         return await File.ReadAllTextAsync(filePath);
+    }
+
+    public void Hide_Or_Show_EditorMenu(GameObject MenuObj)
+    {
+        MenuObj.SetActive(!MenuObj.activeSelf);
     }
 }

@@ -23,6 +23,7 @@ public class level_play_system : MonoBehaviour
 
     [SerializeField] private TMP_Text money_text;
     [SerializeField] private TMP_Text end_of_level_money_text;
+    [SerializeField] private TMP_Text Score_text;
 
     [SerializeField] private GameObject end_of_level_screen;
 
@@ -125,5 +126,10 @@ public class level_play_system : MonoBehaviour
         {
             current_bomb_ind = 0;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        Score_text.text = Mathf.FloorToInt(player_scrip.gameObject.transform.position.x).ToString();
     }
 }
