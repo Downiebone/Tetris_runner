@@ -82,95 +82,95 @@ public class Draggable_SpawnThing : draggable_piece
         return;
     }
 
-    public override void dragged_position(Vector2 newPosition)
-    {
-        if (Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) > toFarForPlace)
-        {
-            if (to_far_to_place == false)
-            {
-                for (int i = 0; i < HighlightSpots.Length; i++)
-                {
-                    CameraObj.HighlightObjects[i].GetComponent<SpriteRenderer>().color = Color.red;
-                }
-            }
-            to_far_to_place = true;
-        }
-        else
-        {
-            if (to_far_to_place == true)
-            {
-                for (int i = 0; i < HighlightSpots.Length; i++)
-                {
-                    CameraObj.HighlightObjects[i].GetComponent<SpriteRenderer>().color = Color.white;
-                }
-            }
-            to_far_to_place = false;
-        }
+    //public override void dragged_position(Vector2 newPosition)
+    //{
+    //    if (Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) > toFarForPlace)
+    //    {
+    //        if (to_far_to_place == false)
+    //        {
+    //            for (int i = 0; i < HighlightSpots.Length; i++)
+    //            {
+    //                CameraObj.HighlightObjects[i].GetComponent<SpriteRenderer>().color = Color.red;
+    //            }
+    //        }
+    //        to_far_to_place = true;
+    //    }
+    //    else
+    //    {
+    //        if (to_far_to_place == true)
+    //        {
+    //            for (int i = 0; i < HighlightSpots.Length; i++)
+    //            {
+    //                CameraObj.HighlightObjects[i].GetComponent<SpriteRenderer>().color = Color.white;
+    //            }
+    //        }
+    //        to_far_to_place = false;
+    //    }
 
-        transform.position = newPosition;
-        Vector2Int newPos = Vector2Int.RoundToInt(newPosition);
+    //    transform.position = newPosition;
+    //    Vector2Int newPos = Vector2Int.RoundToInt(newPosition);
 
-        //testing this now
-        LastTestedPlaceSpot = newPos;
+    //    //testing this now
+    //    LastTestedPlaceSpot = newPos;
 
-        bool failed_pos = false;
+    //    bool failed_pos = false;
 
 
-        if (ValidSpaceToPlace((new Vector2Int(0, 0)) + newPos) == false) { failed_pos = true; }
-        if (ValidSpaceToPlace((new Vector2Int(0, 1)) + newPos) == false) { failed_pos = true; }
-        if (ValidSpaceToPlace((new Vector2Int(0, -1)) + newPos) == false) { failed_pos = true; }
+    //    if (ValidSpaceToPlace((new Vector2Int(0, 0)) + newPos) == false) { failed_pos = true; }
+    //    if (ValidSpaceToPlace((new Vector2Int(0, 1)) + newPos) == false) { failed_pos = true; }
+    //    if (ValidSpaceToPlace((new Vector2Int(0, -1)) + newPos) == false) { failed_pos = true; }
 
-        //check closest spot aswell (cyotetime :)
-        if (failed_pos)
-        {
-            float number = 0.5f;
-            float closest_numb = (newPosition.x % 1);
-            bool is_x_val = true;
-            float difference = Mathf.Abs(number - closest_numb);
+    //    //check closest spot aswell (cyotetime :)
+    //    if (failed_pos)
+    //    {
+    //        float number = 0.5f;
+    //        float closest_numb = (newPosition.x % 1);
+    //        bool is_x_val = true;
+    //        float difference = Mathf.Abs(number - closest_numb);
 
-            float currentDifference = Mathf.Abs(number - (newPosition.y % 1));
-            if (currentDifference < difference)
-            {
-                closest_numb = (newPosition.y % 1);
-                is_x_val = false;
-            }
-            if (is_x_val)
-            {
-                if (closest_numb > 0.5f)
-                {
-                    newPos = Vector2Int.RoundToInt(newPosition + new Vector2(-1, 0));
-                }
-                else
-                {
-                    newPos = Vector2Int.RoundToInt(newPosition + new Vector2(1, 0));
-                }
-            }
-            else
-            {
-                if (closest_numb > 0.5f)
-                {
-                    newPos = Vector2Int.RoundToInt(newPosition + new Vector2(0, -1));
-                }
-                else
-                {
-                    newPos = Vector2Int.RoundToInt(newPosition + new Vector2(0, 1));
-                }
-            }
+    //        float currentDifference = Mathf.Abs(number - (newPosition.y % 1));
+    //        if (currentDifference < difference)
+    //        {
+    //            closest_numb = (newPosition.y % 1);
+    //            is_x_val = false;
+    //        }
+    //        if (is_x_val)
+    //        {
+    //            if (closest_numb > 0.5f)
+    //            {
+    //                newPos = Vector2Int.RoundToInt(newPosition + new Vector2(-1, 0));
+    //            }
+    //            else
+    //            {
+    //                newPos = Vector2Int.RoundToInt(newPosition + new Vector2(1, 0));
+    //            }
+    //        }
+    //        else
+    //        {
+    //            if (closest_numb > 0.5f)
+    //            {
+    //                newPos = Vector2Int.RoundToInt(newPosition + new Vector2(0, -1));
+    //            }
+    //            else
+    //            {
+    //                newPos = Vector2Int.RoundToInt(newPosition + new Vector2(0, 1));
+    //            }
+    //        }
 
-            for (int i = 0; i < HighlightSpots.Length; i++)
-            {
-                //--------------------------------------------------------------------------------------final fail of placing blocks-(where it returns if all fails)------------------------------------------------
-                if (ValidSpaceToPlace(HighlightSpots[i] + newPos) == false) { return; }
-            }
-        }
+    //        for (int i = 0; i < HighlightSpots.Length; i++)
+    //        {
+    //            //--------------------------------------------------------------------------------------final fail of placing blocks-(where it returns if all fails)------------------------------------------------
+    //            if (ValidSpaceToPlace(HighlightSpots[i] + newPos) == false) { return; }
+    //        }
+    //    }
 
-        LastWorkingPlaceSpot = newPos;
+    //    LastWorkingPlaceSpot = newPos;
 
-        for (int i = 0; i < HighlightSpots.Length; i++)
-        {
-            CameraObj.HighlightObjects[i].transform.position = (Vector2)(HighlightSpots[i] + newPos);
-        }
-    }
+    //    for (int i = 0; i < HighlightSpots.Length; i++)
+    //    {
+    //        CameraObj.HighlightObjects[i].transform.position = (Vector2)(HighlightSpots[i] + newPos);
+    //    }
+    //}
 
     protected override void PlaceDraggable()
     {

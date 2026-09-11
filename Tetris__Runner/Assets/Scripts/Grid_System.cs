@@ -16,9 +16,18 @@ public class Cell
         collectable_coin = 1,
         collectable_big = 2,
         Jumppad = 3,
-        temp2 = 4,
-        temp3 = 5
+        Spike = 4,
+        InvisibleDanger = 5 //temp for like laser idea maybe?
     }
+
+    /// <summary>
+    /// How sprite should be oriented.
+    /// 0 = Normal (Up)
+    /// 1 = Right,
+    /// 2 = Down,
+    /// 3 = Left
+    /// </summary>
+    public int Rotation = 0;
 
     public bool isActive = false;
     public Cell_type type = Cell_type.Ground;

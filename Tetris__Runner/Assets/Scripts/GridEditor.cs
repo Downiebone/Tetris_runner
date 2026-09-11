@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class CellTypes_Class
+{
+    [Tooltip("For Debugging purposes")] public string CellName;
+    [Tooltip("1 or 4 sprites")] public Sprite[] RotatableIcons;
+    [Tooltip("Actual Type")] public Cell.Cell_type ThisCelltype;
+}
 public class GridEditor : MonoBehaviour
 {
     [Header("EDITOR")]
@@ -46,6 +53,8 @@ public class GridEditor : MonoBehaviour
 
     [SerializeField] private GameObject cell_piece_prefab;
 
+    [SerializeField] private Cell.Cell_type[] BuildBlocking_Types;
+
     [Tooltip("Y,X (for some reason hehe)")]
     public Cell[,] Grid;
 
@@ -70,7 +79,9 @@ public class GridEditor : MonoBehaviour
 
     [SerializeField] private Sprite emptyCellSprite;
 
-    [SerializeField] private Sprite[] cellSprites;
+    [SerializeField] private CellTypes_Class[] CellSprites_WithRotation;
+    //obsolete
+    //[SerializeField] private Sprite[] cellSprites;
 
     [SerializeField] private Color[] cellColors;
 
@@ -166,8 +177,10 @@ public class GridEditor : MonoBehaviour
         }
         if (shouldStartByLoadingLevel)
         {
-            updatePerlinOffset();
+            //updatePerlinOffset();
 
+            //these three should probably be 1 function in the future
+            //if we want to entierly leave the "perlin level" concept
             fillGridColors();
 
             fillGridShape();
@@ -230,20 +243,23 @@ public class GridEditor : MonoBehaviour
         }
     }
 
+    //should probably be named "Fill grid floor"
+    //this function makes the floor active. 
+    //However there are remnants from the perling code with the whole "gridheight"
     void fillGridShape()
     {
         int grid_usable_height = (Level_Max_Height) - (Level_Min_Height);
 
         for (int c = 0; c < gridLength; c++)
         {
-            int currMaxHeight = Mathf.RoundToInt(Level_Max_Height * ((float)Random.Range(Level_Min_Height + 1, Level_Max_Height - 1) / grid_usable_height));
+            //int currMaxHeight = Mathf.RoundToInt(Level_Max_Height * ((float)Random.Range(Level_Min_Height + 1, Level_Max_Height - 1) / grid_usable_height));
 
-            if(c < startArea_size)
-            {
-                currMaxHeight = Level_Min_Height;
-            }
+            //if(c < startArea_size)
+            //{
+            //    currMaxHeight = Level_Min_Height;
+            //}
 
-            //Debug.Log("X: " + );
+            //fills floor?
             for (int r = 0; r < gridHeight; r++)
             {
                 if(r < Level_Min_Height)
@@ -284,7 +300,7 @@ public class GridEditor : MonoBehaviour
                 }
                 else
                 {
-                    grid_cell.sprite_rend.sprite = cellSprites[(int)loaded_cell.type];
+                    grid_cell.sprite_rend.sprite = CellSprites_WithRotation[(int)loaded_cell.type].RotatableIcons[loaded_cell.Rotation];
                 }
                 
             }
@@ -332,7 +348,7 @@ public class GridEditor : MonoBehaviour
                 }
                 else
                 {
-                    grid_cell.sprite_rend.sprite = cellSprites[(int)loaded_cell.type];
+                    grid_cell.sprite_rend.sprite = CellSprites_WithRotation[(int)loaded_cell.type].RotatableIcons[loaded_cell.Rotation];
                 }
 
             }
@@ -361,7 +377,33 @@ public class GridEditor : MonoBehaviour
 
         return cur_cell.type == typ && cur_cell.isActive == true;
     }
-    public void placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell = Cell.Cell_type.Ground, int color_index = 0)
+
+    /// <summary>
+    /// Return true if cell at position is one of them that block building
+    /// Blocks that block building are: ground, jumppads, powerups, spikes
+    /// </summary>
+    /// <param name="pos">position of cell to check</param>
+    /// <returns>false if pos out of bounds, or cell isnt blocking</returns>
+    public bool Cell_is_Active_and_blocking_building(Vector2Int pos)
+    {
+        if (pos.y >= gridHeight || pos.y < 0) { return false; }
+
+        Cell cur_cell = getCellAtPoint(pos.y, pos.x); //check
+
+        if (cur_cell.isActive == true)
+        {
+            foreach(Cell.Cell_type typ in BuildBlocking_Types)
+            {
+                if(cur_cell.type == typ)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    public void placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell, int color_index, int pieceRotation)
     {
         Cell cell = getCellAtPoint(pos.y, pos.x);
         //if (cell.isActive && cell.type == typa_cell)
@@ -370,7 +412,7 @@ public class GridEditor : MonoBehaviour
         //}
 
         cell.type = typa_cell;
-        
+        cell.Rotation = pieceRotation;
 
         cell.isActive = true;
 
@@ -383,8 +425,8 @@ public class GridEditor : MonoBehaviour
         cell.sprite_rend.color = placeTileColor;
         cell.color_index = color_index;
 
-        //set sprite to correct sprite, null if correct sprite is none
-        cell.sprite_rend.sprite = cellSprites[(int)cell.type] == null ? null : cellSprites[(int)cell.type];
+        //set sprite to correct sprite
+        cell.sprite_rend.sprite = CellSprites_WithRotation[(int)cell.type].RotatableIcons[pieceRotation];
     }
     public void place_fullCell(Vector2Int pos, Cell newCell)
     {
@@ -396,6 +438,7 @@ public class GridEditor : MonoBehaviour
         //}
 
         cell.type = newCell.type;
+        cell.Rotation = newCell.Rotation;
 
         cell.isActive = newCell.isActive;
 
@@ -410,7 +453,7 @@ public class GridEditor : MonoBehaviour
         cell.sprite_rend.color = placeTileColor;
         cell.color_index = newCell.color_index;
 
-        cell.sprite_rend.sprite = newCell.isActive == true? cellSprites[(int)cell.type] : null;
+        cell.sprite_rend.sprite = newCell.isActive == true? CellSprites_WithRotation[(int)cell.type].RotatableIcons[newCell.Rotation] : null;
     }
     public void replace_active_Tile(Vector2Int pos, Cell.Cell_type replace_to_type)
     {
@@ -426,7 +469,7 @@ public class GridEditor : MonoBehaviour
         }
         cell.type = replace_to_type;
         cell.sprite_rend.color = Color.white;
-        cell.sprite_rend.sprite = cellSprites[(int)cell.type];
+        cell.sprite_rend.sprite = CellSprites_WithRotation[(int)cell.type].RotatableIcons[cell.Rotation];
     }
     public void deleteTile(Vector2Int pos)
     {
@@ -503,6 +546,10 @@ public class GridEditor : MonoBehaviour
 
         
     }
+
+    //enables all the sprites for the floor?
+    //and disables all others
+    //little redundant function
     void populateGrid()
     {
         for (int r = 0; r < gridHeight; r++)
@@ -513,8 +560,8 @@ public class GridEditor : MonoBehaviour
                 Cell curCell_2 = Grid_2[r, c];
                 if (curCell.isActive == true)
                 {
-                    curCell.sprite_rend.sprite = cellSprites[(int)curCell.type];
-                    curCell_2.sprite_rend.sprite = cellSprites[(int)curCell.type];
+                    curCell.sprite_rend.sprite = CellSprites_WithRotation[(int)curCell.type].RotatableIcons[curCell.Rotation];
+                    curCell_2.sprite_rend.sprite = CellSprites_WithRotation[(int)curCell_2.type].RotatableIcons[curCell_2.Rotation];
                 }
                 else
                 {

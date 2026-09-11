@@ -146,7 +146,7 @@ public class DraggablePlaceGridObj : draggable_piece
                 placeOnPlayer = true;
             }
 
-            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color, cellType_ToPlace);
+            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color, cellType_ToPlace, 0, 0);
         }
 
         if (placeOnPlayer)
@@ -164,10 +164,10 @@ public class DraggablePlaceGridObj : draggable_piece
         //instantiate bomb-effect or some thing
     }
 
-    protected override bool ValidSpaceToPlace(Vector2Int pos)
-    {
-        return (pos.y < GridObj.gridHeight && pos.y >= 0) && !GridObj.Cell_is_active_type(pos, Cell.Cell_type.Ground);
-    }
+    //protected override bool ValidSpaceToPlace(Vector2Int pos)
+    //{
+    //    return (pos.y < GridObj.gridHeight && pos.y >= 0) && !GridObj.Cell_is_active_type(pos, Cell.Cell_type.Ground);
+    //}
 
     protected override void hide_visuals_internal()
     {

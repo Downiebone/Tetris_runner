@@ -35,6 +35,14 @@ public class GridSaver : MonoBehaviour
     //THE MANIFEST
     LevelManifest manifest;
 
+    [SerializeField] private TMP_Dropdown save_from_dropdown;
+    [SerializeField] private TMP_Dropdown save_to_dropdown;
+    [SerializeField] private TMP_Dropdown save_difficulity_dropdown;
+    [SerializeField] private TMP_InputField save_name_inputfield;
+
+    [Space]
+
+    [SerializeField] private bool EDITOR_ONLY_STUFF = false;
 
     [SerializeField] private GridEditor GridObj;
 
@@ -54,6 +62,20 @@ public class GridSaver : MonoBehaviour
     private string from_str_LoadLevel = "Bot";
     private string to_str_LoadLevel = "Bot";
     public TMP_Dropdown loadedLevels_dropdown;
+
+    public void PullLoading_To_Saving()
+    {
+        from_str = from_str_LoadLevel;
+        to_str = to_str_LoadLevel;
+        difficulity = difficulity_LoadLevel;
+        save_level_name = loading_level_name;
+
+        save_from_dropdown.value = from_str_LoadLevel == "Top" ? 2 : from_str_LoadLevel == "Mid" ? 1 : 0;
+        save_to_dropdown.value = to_str_LoadLevel == "Top" ? 2 : from_str_LoadLevel == "Mid" ? 1 : 0;
+        save_difficulity_dropdown.value = difficulity_LoadLevel - 1;
+
+        save_name_inputfield.text = loading_level_name;
+    }
 
     public void on_inputField_changed_test(TMP_InputField val)
     {
@@ -170,12 +192,13 @@ public class GridSaver : MonoBehaviour
         if (string.IsNullOrWhiteSpace(fileName))
             return;
 
-
         string path = "Assets/Resources/Levels/" + (from_str + "_" + to_str) + "/" + difficulity.ToString() + "/" +  fileName;
 
         Debug.Log("SAVING TO " + path);
 
-        if (!File.Exists(path + "/chunks.bytes"))
+        bool shouldAddFileToManifest = true;
+
+        if (!File.Exists(path + "/cells.bytes"))
         {
             Directory.CreateDirectory(path);
 
@@ -183,6 +206,8 @@ public class GridSaver : MonoBehaviour
         else
         {
             Debug.LogError("FILE ALREADY EXISTS, OVERRIDING OLD SAVE");
+            //when this happens, we dont need to write it to the manifest
+            shouldAddFileToManifest = false;
         }
         CurrentSaveHeight = GridObj.gridHeight_SAVE;
         CurrentSaveWidth = GridObj.gridLength_SAVE;
@@ -216,16 +241,50 @@ public class GridSaver : MonoBehaviour
             + CurrentSaveWidth.ToString() + Environment.NewLine
             + difficulity.ToString() + Environment.NewLine;
 
-
-
-
         File.WriteAllBytes(path + "/vectors.bytes", vectorByte);
         File.WriteAllBytes(path + "/cells.bytes", cellByte);
         File.WriteAllText(path + "/dataStr.txt", dataStr);
 
+        //if we created a new file, add it to the manifest
+        if (shouldAddFileToManifest == true)
+        {
+            addFilesToManifest(from_str, to_str, difficulity, fileName);
+        }
+    }
 
-        addFilesToManifest(from_str, to_str, difficulity, fileName);
+    private void DeleteLoadedLevel()
+    {
+        if (string.IsNullOrWhiteSpace(loading_level_name))
+        {
+            Debug.LogError("Found nothing to delete: {." + loading_level_name + ".}");
+            return;
+        }
 
+        string path = "Assets/Resources/Levels/" + (from_str_LoadLevel + "_" + to_str_LoadLevel) + "/" + difficulity_LoadLevel.ToString() + "/" + loading_level_name;
+
+        if (!File.Exists(path + "/cells.bytes"))
+        {
+            Debug.LogError("Found nothing to delete at: " + path);
+            return;
+        }
+        else
+        {
+            //File.Delete(path);
+
+            //File.Delete(path + "/cells.bytes");
+            //File.Delete(path + "/dataStr.txt");
+            //File.Delete(path + "/vectors.bytes");
+
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.DeleteAsset(path);
+
+            UnityEditor.AssetDatabase.Refresh();
+#endif
+
+            //Directory.Delete(path);
+
+            removeFileFromManifest(from_str_LoadLevel, to_str_LoadLevel, difficulity_LoadLevel, loading_level_name);
+        }
     }
 
     //public void Load_Grid_size(string fileName, string from_load, string to_load, int difficulity_load, ref int height, ref int width)
@@ -439,7 +498,11 @@ public class GridSaver : MonoBehaviour
         TextAsset textAsset = Resources.Load<TextAsset>("manifest");
         manifest = JsonUtility.FromJson<LevelManifest>(textAsset.text);
 
-        updateLoadLevelList();
+        if (EDITOR_ONLY_STUFF)
+        {
+            updateLoadLevelList();
+        }
+        
 
         //string[] levels = GetFiles("Bot", "Mid", 1);
 
@@ -478,6 +541,8 @@ public class GridSaver : MonoBehaviour
         return sub.files;
     }
 
+    //try to add file to manifest
+    //Return true if succeded, false otherwise
     private bool addFilesToManifest(string from_str, string to_str, int difficulity, string newFile)
     {
         if (manifest == null)
@@ -493,6 +558,7 @@ public class GridSaver : MonoBehaviour
         if (level == null)
         {
             Debug.LogWarning("Level not found: " + levelName);
+            Debug.LogWarning("This should not happen!");
             return false;
         }
 
@@ -500,6 +566,7 @@ public class GridSaver : MonoBehaviour
         if (sub == null)
         {
             Debug.LogWarning($"Subfolder {subfolderId} not found in level {levelName}");
+            Debug.LogWarning("This should not happen!");
             return false;
         }
 
@@ -521,6 +588,67 @@ public class GridSaver : MonoBehaviour
 #endif
 
         Debug.Log($"Added '{newFile}' to {levelName} subfolder {subfolderId}");
+
+        return true;
+    }
+
+    //try to remove file from manifest
+    //Return true if succeded, false otherwise
+    private bool removeFileFromManifest(string from_str, string to_str, int difficulity, string toRemoveFileName)
+    {
+        if (manifest == null)
+        {
+            Debug.LogError("Manifest not loaded!");
+            return false;
+        }
+
+        string levelName = (from_str + "_" + to_str);
+        string subfolderId = difficulity.ToString();
+
+        LevelEntry level = Array.Find(manifest.Levels, l => l.name == levelName);
+        if (level == null)
+        {
+            Debug.LogWarning("Level not found: " + levelName);
+            Debug.LogWarning("This should not happen!");
+            return false;
+        }
+
+        SubfolderEntry sub = Array.Find(level.subfolders, s => s.id == subfolderId);
+        if (sub == null)
+        {
+            Debug.LogWarning($"Subfolder {subfolderId} not found in level {levelName}");
+            Debug.LogWarning("This should not happen!");
+            return false;
+        }
+
+        // Expand array to add new file
+        int oldLength = sub.files.Length;
+        int toRemoveIndex = Array.FindIndex(sub.files, ind => ind == toRemoveFileName);
+
+        if(toRemoveIndex == -1)
+        {
+            //Could not find index of this name
+            Debug.LogError("No file named: [ " + toRemoveFileName + " ], so could not remove it");
+            return false;
+        }
+
+        var toListConversion = new List<string>(sub.files);
+        toListConversion.RemoveAt(toRemoveIndex);
+        sub.files = toListConversion.ToArray();
+
+        // Serialize back to JSON with pretty print
+        string json = JsonUtility.ToJson(manifest, true);
+
+        // Save to disk
+        string manifestPath = "Assets/Resources/manifest.json";
+        File.WriteAllText(manifestPath, json);
+
+        // Refresh AssetDatabase so Unity sees the updated file
+#if UNITY_EDITOR
+        UnityEditor.AssetDatabase.Refresh();
+#endif
+
+        Debug.Log($"Removed '{toRemoveFileName}' from {levelName} subfolder {subfolderId}");
 
         return true;
     }
@@ -653,5 +781,35 @@ public class GridSaver : MonoBehaviour
     public void Hide_Or_Show_EditorMenu(GameObject MenuObj)
     {
         MenuObj.SetActive(!MenuObj.activeSelf);
+    }
+
+    public GameObject DeleteOptionMenuUI;
+    public TMP_Text LevelName;
+
+    public void ShowDeleteOption()
+    {
+        DeleteOptionMenuUI.SetActive(true);
+        if (string.IsNullOrEmpty(loading_level_name))
+        {
+            LevelName.text = "[No Level Selected]";
+        }
+        else
+        {
+            LevelName.text = from_str_LoadLevel + "_" + to_str_LoadLevel + "_" + difficulity_LoadLevel + "_" + loading_level_name;
+        }
+        
+    }
+
+    public void NoDontDelete()
+    {
+        DeleteOptionMenuUI.SetActive(false);
+    }
+
+    public void YesDeleteIt()
+    {
+        DeleteLoadedLevel();
+
+
+        DeleteOptionMenuUI.SetActive(false);
     }
 }

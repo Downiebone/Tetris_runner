@@ -13,6 +13,26 @@ public class undo_cell_value
 }
 public class GridEditor_Camera : MonoBehaviour
 {
+    public int PlaceRotation = 0;
+    public TMP_Text PlaceRotation_Text;
+    public void ChangePlaceRotation()
+    {
+        PlaceRotation++;
+        if(PlaceRotation > 3)
+        {
+            PlaceRotation = 0;
+        }
+        //change text 
+        PlaceRotation_Text.text = PlaceRotation.ToString();
+
+        //change visual after rotation
+        ui_sprite.sprite = CellTypes_Sprites[current_type_placing].RotatableIcons[PlaceRotation];
+    }
+
+    [Tooltip("Sprites of cells")]
+    public CellTypes_Class[] CellTypes_Sprites;
+
+
     [SerializeField] private float camSpeed;
     [SerializeField] private float camSpeed_multiplier;
 
@@ -30,10 +50,6 @@ public class GridEditor_Camera : MonoBehaviour
     public GridSaver Save_Script;
 
     private Vector2Int last_placed_position = new Vector2Int(-8,-8);
-
-    const int max_placing_types = 3;
-
-    [SerializeField] private Sprite[] type_sprite_list;
 
     [SerializeField] private Cell.Cell_type type_cell_placing = Cell.Cell_type.Ground;
     private int current_type_placing = 0;
@@ -141,7 +157,7 @@ public class GridEditor_Camera : MonoBehaviour
     {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2Int currentGridMousePos = new Vector2Int(Grid_script.getClosestGridPos(mouseWorldPos).x, Grid_script.getClosestGridPos(mouseWorldPos).y);
-        cell_highlight.transform.position = Grid_script.getClosestGridPos(mouseWorldPos);
+        cell_highlight.transform.position = new Vector3(currentGridMousePos.x, currentGridMousePos.y, 0);
 
         if (currentGridMousePos != (new Vector2Int(-1, -1)))
         {
@@ -152,11 +168,13 @@ public class GridEditor_Camera : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Mouse0) && currentGridMousePos != last_placed_position)
             {
+                Debug.Log("Placing");
+
                 last_placed_position = currentGridMousePos;
 
                 add_tile_to_undo_list(currentGridMousePos, Grid_script.getCellAtPoint(currentGridMousePos));
 
-                Grid_script.placeTile(currentGridMousePos, Colors_images[current_color_index].color, type_cell_placing, current_color_index);
+                Grid_script.placeTile(currentGridMousePos, Colors_images[current_color_index].color, type_cell_placing, current_color_index, PlaceRotation);
 
                 if (using_random_colors)
                 {
@@ -165,7 +183,7 @@ public class GridEditor_Camera : MonoBehaviour
             }
             if (Input.GetKey(KeyCode.Mouse1))
             {
-                last_placed_position = new Vector2Int(-8, -8); //reset
+                last_placed_position = new Vector2Int(-8, -8); //reset so we allways can delete this. No nonsense
 
                 add_tile_to_undo_list(currentGridMousePos, Grid_script.getCellAtPoint(currentGridMousePos));
 
@@ -176,11 +194,11 @@ public class GridEditor_Camera : MonoBehaviour
         if(Input.mouseScrollDelta.y == 1)
         {
             current_type_placing++;
-            if(current_type_placing > 2)
+            if(current_type_placing >= CellTypes_Sprites.Length)
             {
                 current_type_placing = 0;
             }
-            apply_scrolling_types(current_type_placing);
+            apply_scrolling_types();
 
         }
         else if(Input.mouseScrollDelta.y == -1)
@@ -191,9 +209,9 @@ public class GridEditor_Camera : MonoBehaviour
             }
             else
             {
-                current_type_placing = 2;
+                current_type_placing = CellTypes_Sprites.Length - 1;
             }
-            apply_scrolling_types(current_type_placing);
+            apply_scrolling_types();
         }
 
         if (Input.GetKeyDown(KeyCode.KeypadEnter) && can_load)
@@ -274,25 +292,10 @@ public class GridEditor_Camera : MonoBehaviour
         StartCoroutine(CountingCoroutine());
     }
 
-    private void apply_scrolling_types(int new_type)
+    private void apply_scrolling_types()
     {
-        switch (new_type)
-        {
-            case 0:
-                type_cell_placing = Cell.Cell_type.Ground;
-                ui_sprite.sprite = type_sprite_list[0];
-                break;
-            case 1:
-                type_cell_placing = Cell.Cell_type.collectable_coin;
-                ui_sprite.sprite = type_sprite_list[1];
-                break;
-            case 2:
-                type_cell_placing = Cell.Cell_type.collectable_big;
-                ui_sprite.sprite = type_sprite_list[2];
-                break;
-        }
-
-
+        type_cell_placing = CellTypes_Sprites[current_type_placing].ThisCelltype;
+        ui_sprite.sprite = CellTypes_Sprites[current_type_placing].RotatableIcons[PlaceRotation];
     }
 
     //loads cell async

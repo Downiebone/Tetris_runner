@@ -12232,19 +12232,51 @@ MonoBehaviour:
   current_to_str: Bot
   current_difficulity: 1
   cell_piece_prefab: {fileID: 4221838574275903016, guid: abfc5861c2ea25e4aa5651f7bbe7e6ca, type: 3}
+  BuildBlocking_Types: 00000000020000000300000004000000
   Grid_1_Parent: {fileID: 1785810521}
   Grid_2_Parent: {fileID: 1062195079}
   emptyCellSprite: {fileID: 21300000, guid: 3b22f45192083d34fad154d382b4e303, type: 3}
-  cellSprites:
-  - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
-  - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
-  - {fileID: 21300000, guid: 8e00707df108f2c419ca2f7856fed412, type: 3}
-  - {fileID: 0}
+  CellSprites_WithRotation:
+  - CellName: Blocks
+    RotatableIcons:
+    - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
+    - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
+    - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
+    - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
+    ThisCelltype: 0
+  - CellName: Coins
+    RotatableIcons:
+    - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
+    - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
+    - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
+    - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
+    ThisCelltype: 1
+  - CellName: PowerupTransformation
+    RotatableIcons:
+    - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
+    - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
+    - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
+    - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
+    ThisCelltype: 2
+  - CellName: Jumppad
+    RotatableIcons:
+    - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
+    - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
+    - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
+    - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
+    ThisCelltype: 3
+  - CellName: Spikes
+    RotatableIcons:
+    - {fileID: -163980794, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
+    - {fileID: 862705268, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
+    - {fileID: -531573630, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
+    - {fileID: -1960109896, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
+    ThisCelltype: 4
   cellColors:
-  - {r: 0.7433963, g: 0, b: 0, a: 1}
-  - {r: 0.30883738, g: 0.6320754, b: 0.1699448, a: 1}
+  - {r: 1, g: 0.5707547, b: 0.5707547, a: 1}
+  - {r: 0.7541573, g: 1, b: 0.6462264, a: 1}
   - {r: 0, g: 0.6261792, b: 0.6679245, a: 1}
-  - {r: 0.9245283, g: 0.24857599, b: 0.58283484, a: 1}
+  - {r: 1, g: 0.6839622, b: 0.84106773, a: 1}
   - {r: 1, g: 0.7584515, b: 0.15566039, a: 1}
   gridHeight: 9
   gridLength: 300
@@ -12286,8 +12318,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1e5f3a1a5f4815408cfe6b1f1e4e2bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EDITOR_ONLY_STUFF: 0
   GridObj: {fileID: 1706009099}
   save_level_name: 
+  loading_level_name: 
+  loadedLevels_dropdown: {fileID: 0}
+  DeleteOptionMenuUI: {fileID: 0}
+  LevelName: {fileID: 0}
 --- !u!1 &1713785467
 GameObject:
   m_ObjectHideFlags: 0

@@ -462,6 +462,11 @@ public class Player_Script : MonoBehaviour
 
             Cell_ceiling_exist = GridScript.Cell_is_active_type(Ceiling_pos, Cell.Cell_type.Ground);
 
+            if(Cell_body_current.type == Cell.Cell_type.Spike && Cell_body_current.isActive == true) //we die if we are occupying same block as spike
+            {
+                DIE();
+            }
+
             if (Cell_floor_exist || true) //remove perhaps
             {
                 if (Cell_body_current.isActive && !Cell_ceiling_exist && Cell_body_current.type == Cell.Cell_type.Ground)
@@ -470,7 +475,7 @@ public class Player_Script : MonoBehaviour
                     {
                         DIE();
                     }
-                    else if (current_form != transformation_type.Dashing) // dashing cant move up
+                    else //if (current_form != transformation_type.Dashing) // dashing cant move up
                     {
                         //MOVING UP ONE PIECE
                         if(transform.position.y % 1 > 0.5f && transform.position.y % 1 < 0.8f) // is at very bottom of block
@@ -479,7 +484,7 @@ public class Player_Script : MonoBehaviour
                         }
                         else
                         {
-                            if(transform.position.y + 1 >= GridScript.gridHeight - 0.4f) //stop player from going to top
+                            if(transform.position.y + 1 >= GridScript.gridHeight - 0.4f) //stop player from going to top of screen
                             {
                                 DIE();
                             }

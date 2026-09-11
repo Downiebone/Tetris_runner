@@ -183,12 +183,20 @@ public class draggable_piece : MonoBehaviour
         CameraObj.ResetHighlighter_Positions();
     }
 
-    
     public virtual void dragged_position(Vector2 newPosition)
     {
-
-        //8.5 top of screen limit?
-        if (newPosition.y > 8.5f || Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) > toFarForPlace)
+        //(8.5 is actual top of play-area, but we give player a liiiitle leeway)
+        if(newPosition.y > 8.75f) //if top of screen, force invalid spot
+        {
+            for (int i = 0; i < HighlightSpots.Length; i++)
+            {
+                CameraObj.HighlightObjects[i].GetComponent<SpriteRenderer>().color = Color.red;
+            }
+            to_far_to_place = true;
+            return;
+        }
+        
+        if (Vector2.Distance(LastTestedPlaceSpot, LastWorkingPlaceSpot) > toFarForPlace)
         {
             if (to_far_to_place == false)
             {
@@ -214,7 +222,7 @@ public class draggable_piece : MonoBehaviour
         transform.position = newPosition;
         Vector2Int newPos = Vector2Int.RoundToInt(newPosition); //highlighet object
 
-        Vector2Int[] extra_positions = new Vector2Int[7];
+        Vector2Int[] extra_positions = new Vector2Int[17];
 
         //testing this now
         LastTestedPlaceSpot = newPos;
@@ -255,6 +263,17 @@ public class draggable_piece : MonoBehaviour
                     extra_positions[4] = new Vector2Int(-2, 0);
                     extra_positions[5] = new Vector2Int(-1, 1);
                     extra_positions[6] = new Vector2Int(-1, -1);
+
+                    extra_positions[7] = new Vector2Int(0, 2);
+                    extra_positions[8] = new Vector2Int(0, -2);
+                    extra_positions[9] = new Vector2Int(1, 1);
+                    extra_positions[10] = new Vector2Int(1, -1);
+                    extra_positions[11] = new Vector2Int(2, 0);
+                    extra_positions[12] = new Vector2Int(-3, 0);
+                    extra_positions[13] = new Vector2Int(-2, 1);
+                    extra_positions[14] = new Vector2Int(-2, -1);
+                    extra_positions[15] = new Vector2Int(-1, 2);
+                    extra_positions[16] = new Vector2Int(-1, -2);
                 }
                 else 
                 {
@@ -267,6 +286,17 @@ public class draggable_piece : MonoBehaviour
                     extra_positions[4] = new Vector2Int(2, 0);
                     extra_positions[5] = new Vector2Int(1, 1);
                     extra_positions[6] = new Vector2Int(1, -1);
+
+                    extra_positions[7] = new Vector2Int(0, 2);
+                    extra_positions[8] = new Vector2Int(0, -2);
+                    extra_positions[9] = new Vector2Int(-1, 1);
+                    extra_positions[10] = new Vector2Int(-1, -1);
+                    extra_positions[11] = new Vector2Int(-2, 0);
+                    extra_positions[12] = new Vector2Int(3, 0);
+                    extra_positions[13] = new Vector2Int(2, 1);
+                    extra_positions[14] = new Vector2Int(2, -1);
+                    extra_positions[15] = new Vector2Int(1, 2);
+                    extra_positions[16] = new Vector2Int(1, -2);
                 }
             }
             else
@@ -282,6 +312,17 @@ public class draggable_piece : MonoBehaviour
                     extra_positions[4] = new Vector2Int(0, -2);
                     extra_positions[5] = new Vector2Int(-1, -1);
                     extra_positions[6] = new Vector2Int(1, -1);
+
+                    extra_positions[7] = new Vector2Int(-2, 0);
+                    extra_positions[8] = new Vector2Int(2, 0);
+                    extra_positions[9] = new Vector2Int(-1, 1);
+                    extra_positions[10] = new Vector2Int(1, 1);
+                    extra_positions[11] = new Vector2Int(0, 2);
+                    extra_positions[12] = new Vector2Int(0, -3);
+                    extra_positions[13] = new Vector2Int(-1, -2);
+                    extra_positions[14] = new Vector2Int(1, -2);
+                    extra_positions[15] = new Vector2Int(-2, -1);
+                    extra_positions[16] = new Vector2Int(2, -1);
                 }
                 else
                 {
@@ -294,12 +335,23 @@ public class draggable_piece : MonoBehaviour
                     extra_positions[4] = new Vector2Int(0, 2);
                     extra_positions[5] = new Vector2Int(-1, 1);
                     extra_positions[6] = new Vector2Int(1, 1);
+
+                    extra_positions[7] = new Vector2Int(-2, 0);
+                    extra_positions[8] = new Vector2Int(2, 0);
+                    extra_positions[9] = new Vector2Int(-1, -1);
+                    extra_positions[10] = new Vector2Int(1, -1);
+                    extra_positions[11] = new Vector2Int(0, -2);
+                    extra_positions[12] = new Vector2Int(0, 3);
+                    extra_positions[13] = new Vector2Int(-1, 2);
+                    extra_positions[14] = new Vector2Int(1, 2);
+                    extra_positions[15] = new Vector2Int(-2, 1);
+                    extra_positions[16] = new Vector2Int(2, 1);
                 }
             }
 
             bool for_loop_found_working = false;
 
-            for (int x = 0; x < 7; x++)
+            for (int x = 0; x < extra_positions.Length; x++)
             {
 
                 bool working_newpos = true;
@@ -362,7 +414,7 @@ public class draggable_piece : MonoBehaviour
                 placeOnPlayer = true;
             }
 
-            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color, Cell.Cell_type.Ground);
+            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color, Cell.Cell_type.Ground, 0, 0);
 
             //change to ground layer (this should not matter as they are being destroyed this frame??)
             renderers[i].sortingLayerName = "Ground";
@@ -393,7 +445,7 @@ public class draggable_piece : MonoBehaviour
     protected virtual bool ValidSpaceToPlace(Vector2Int pos)
     {
 
-        return (pos.y < GridObj.gridHeight && pos.y >= 0) && !GridObj.Cell_is_active_type(pos, Cell.Cell_type.Ground);
+        return (pos.y < GridObj.gridHeight && pos.y >= 0) && !GridObj.Cell_is_Active_and_blocking_building(pos);
 
 
 
@@ -449,7 +501,6 @@ public class draggable_piece : MonoBehaviour
         //transform.localScale = new Vector3(selected_scale, selected_scale, 1);
         //current_scale = selected_scale;
     }
-
     protected virtual void enable_highlight()
     {
         foreach (SpriteRenderer rend in Highlight_renderers)
