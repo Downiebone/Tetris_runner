@@ -9,6 +9,10 @@ public class Paralax : MonoBehaviour
     public float AmountOfParallax; //This is amount of parallax scroll. 
     public Camera MainCamera; //Reference of the camera.
 
+    [Space]
+
+    public bool ShouldParalaxWithSprite = true;
+    public float x_bounds = 0;
 
 
     private void Start()
@@ -16,7 +20,16 @@ public class Paralax : MonoBehaviour
         //Getting the starting X position of sprite.
         _startingPos = transform.position.x;
         //Getting the length of the sprites.
-        _lengthOfSprite = GetComponent<SpriteRenderer>().bounds.size.x;
+
+        if (ShouldParalaxWithSprite)
+        {
+            _lengthOfSprite = GetComponent<SpriteRenderer>().bounds.size.x;
+        }
+        else
+        {
+            _lengthOfSprite = x_bounds;
+        }
+        
     }
 
 

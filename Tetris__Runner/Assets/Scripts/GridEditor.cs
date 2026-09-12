@@ -285,6 +285,7 @@ public class GridEditor : MonoBehaviour
             {
                 Cell grid_cell = getCellAtPoint(i, j + x_value_to_start_loading); //check
                 Cell loaded_cell = Grid_loaded[i, j];
+                grid_cell.Rotation = loaded_cell.Rotation;
                 grid_cell.isActive = loaded_cell.isActive;
                 grid_cell.type = loaded_cell.type;
                 grid_cell.color_index = loaded_cell.color_index;
@@ -334,6 +335,7 @@ public class GridEditor : MonoBehaviour
                 Cell grid_cell = getCellAtPoint(i, j); //check
                 Cell loaded_cell = Grid_loaded[i, j];
                 grid_cell.isActive = loaded_cell.isActive;
+                grid_cell.Rotation = loaded_cell.Rotation;
                 grid_cell.type = loaded_cell.type;
                 grid_cell.color_index = loaded_cell.color_index;
 

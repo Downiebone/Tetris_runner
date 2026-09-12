@@ -14417,6 +14417,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AmountOfParallax: 0.9
   MainCamera: {fileID: 1581189957}
+  ShouldParalaxWithSprite: 1
+  x_bounds: 0
 --- !u!212 &1874182792
 SpriteRenderer:
   m_ObjectHideFlags: 0

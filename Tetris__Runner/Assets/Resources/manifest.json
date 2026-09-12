@@ -6,7 +6,9 @@
                 {
                     "id": "1",
                     "files": [
-                        "Bot_plane"
+                        "Bot_plane",
+                        "MoneyArrows",
+                        "PowerUpPoint"
                     ]
                 },
                 {
@@ -32,7 +34,9 @@
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "SpikeZone"
+                    ]
                 }
             ]
         },
@@ -48,7 +52,9 @@
                 },
                 {
                     "id": "2",
-                    "files": []
+                    "files": [
+                        "SpikeUp"
+                    ]
                 },
                 {
                     "id": "3",
@@ -64,7 +70,9 @@
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "SpikeHang"
+                    ]
                 }
             ]
         },
@@ -73,7 +81,9 @@
             "subfolders": [
                 {
                     "id": "1",
-                    "files": []
+                    "files": [
+                        "Stairs"
+                    ]
                 },
                 {
                     "id": "2",
@@ -90,11 +100,15 @@
                 },
                 {
                     "id": "4",
-                    "files": []
+                    "files": [
+                        "SpikeTroUp"
+                    ]
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "SpikePillarUp"
+                    ]
                 }
             ]
         },
@@ -137,14 +151,17 @@
                     "id": "1",
                     "files": [
                         "coin_bridge",
-                        "mid_plane"
+                        "mid_plane",
+                        "MoneyFigure"
                     ]
                 },
                 {
                     "id": "2",
                     "files": [
                         "wind",
-                        "SmalSpikeJump"
+                        "SmalSpikeJump",
+                        "MoneyWSpikRisk",
+                        "power"
                     ]
                 },
                 {
@@ -156,11 +173,15 @@
                 },
                 {
                     "id": "4",
-                    "files": []
+                    "files": [
+                        "LargeSpikeTunnel"
+                    ]
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "OnlySpikesTunnel"
+                    ]
                 }
             ]
         },
