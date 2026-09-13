@@ -48,8 +48,8 @@ public class GridEditor : MonoBehaviour
     [Space]
     [Space]
 
-
-    
+    private bool TimeToSpawn_TransformationObj = false;
+    [SerializeField] private TransformationManager transManager;
 
     [SerializeField] private GameObject cell_piece_prefab;
 
@@ -291,6 +291,18 @@ public class GridEditor : MonoBehaviour
                 grid_cell.color_index = loaded_cell.color_index;
 
                 Color set_color = loaded_cell.type == Cell.Cell_type.Ground ? cellColors[loaded_cell.color_index] : Color.white;
+
+                if(loaded_cell.type == Cell.Cell_type.collectable_big && loaded_cell.isActive == true)
+                {
+                    //make so no shenanigans can happen here
+                    grid_cell.isActive = false;
+
+                    if (TimeToSpawn_TransformationObj)
+                    {
+                        transManager.Spawn_TransformationObject(new Vector3(j + x_value_to_start_loading, i, 0));
+                        TimeToSpawn_TransformationObj = false;
+                    }
+                }
 
                 grid_cell.cellColor = set_color;
                 
@@ -701,5 +713,10 @@ public class GridEditor : MonoBehaviour
         current_from_str = current_to_str;
         can_load = true;
         //Debug.Log("LoadCells finished successfully!");
+    }
+
+    public void TimeToSpawn_TransObj()
+    {
+        TimeToSpawn_TransformationObj = true;
     }
 }

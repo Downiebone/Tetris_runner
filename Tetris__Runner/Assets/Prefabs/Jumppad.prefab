@@ -4840,6 +4840,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5028882919977409927}
   - component: {fileID: 6719690056686928002}
+  - component: {fileID: 8983956528628279770}
   m_Layer: 0
   m_Name: Jumppad
   m_TagString: Untagged
@@ -4917,6 +4918,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8983956528628279770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3224013256334625951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b81157cbc882e4fa16023a7ece206c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4085669252089385905
 GameObject:
   m_ObjectHideFlags: 0

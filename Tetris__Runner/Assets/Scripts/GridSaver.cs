@@ -71,7 +71,7 @@ public class GridSaver : MonoBehaviour
         save_level_name = loading_level_name;
 
         save_from_dropdown.value = from_str_LoadLevel == "Top" ? 2 : from_str_LoadLevel == "Mid" ? 1 : 0;
-        save_to_dropdown.value = to_str_LoadLevel == "Top" ? 2 : from_str_LoadLevel == "Mid" ? 1 : 0;
+        save_to_dropdown.value = to_str_LoadLevel == "Top" ? 2 : to_str_LoadLevel == "Mid" ? 1 : 0;
         save_difficulity_dropdown.value = difficulity_LoadLevel - 1;
 
         save_name_inputfield.text = loading_level_name;

@@ -22468,6 +22468,7 @@ GameObject:
   - component: {fileID: 1363358006}
   - component: {fileID: 1363358008}
   - component: {fileID: 1363358009}
+  - component: {fileID: 1363358010}
   m_Layer: 15
   m_Name: Player_piece
   m_TagString: Player
@@ -22600,6 +22601,25 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 5
+--- !u!114 &1363358010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363358005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a5daa833b7a07343887f91ab19467d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player_Is_Transformed: 0
+  DistanceToCountAsTouching_TransObj: 1.5
+  X_DistanceSufficientlyBehindPlayer: 5
+  SpawnTransformationObject: {fileID: 900478238}
+  minTimeFor_TransSpawn: 1
+  maxTimeFor_TransSpawn: 5
+  gridScript: {fileID: 1706009099}
 --- !u!1 &1363525721
 GameObject:
   m_ObjectHideFlags: 0
@@ -27470,6 +27490,7 @@ MonoBehaviour:
   current_from_str: Bot
   current_to_str: Bot
   current_difficulity: 1
+  transManager: {fileID: 1363358010}
   cell_piece_prefab: {fileID: 4221838574275903016, guid: abfc5861c2ea25e4aa5651f7bbe7e6ca, type: 3}
   BuildBlocking_Types: 00000000020000000300000004000000
   Grid_1_Parent: {fileID: 1785810521}
@@ -27492,10 +27513,10 @@ MonoBehaviour:
     ThisCelltype: 1
   - CellName: PowerupTransformation
     RotatableIcons:
-    - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
-    - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
-    - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
-    - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
     ThisCelltype: 2
   - CellName: Jumppad
     RotatableIcons:
