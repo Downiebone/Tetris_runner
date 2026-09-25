@@ -39,7 +39,8 @@ public class draggable_piece : MonoBehaviour
 
     protected Rigidbody2D RB;
 
-    protected Color Piece_color;
+    //protected Color Piece_color;
+    protected int ColorIndex = 0;
 
     public bool delayed_start_highlight = false;
 
@@ -49,7 +50,7 @@ public class draggable_piece : MonoBehaviour
         current_scale = floating_scale;
 
         RB = GetComponent<Rigidbody2D>();
-        Piece_color = GridObj.GainRandomColor(); // get random color out of the ones chosen in grid-system
+        ColorIndex = GridObj.GainRandomColorIndex(); // get random color out of the ones chosen in grid-system
         spawn_sprites();
         //player_transform = GameObject.FindGameObjectWithTag("Player").transform;
         if(delayed_start_highlight)
@@ -69,12 +70,10 @@ public class draggable_piece : MonoBehaviour
             renderers[i] = GO.GetComponent<SpriteRenderer>();
             Highlight_renderers[i] = GO.transform.GetChild(0).GetComponent<SpriteRenderer>();
             GO.transform.localPosition = (Vector2)HighlightSpots[i];
-            renderers[i].color = Piece_color;
+            renderers[i].color = GridObj.GainColorFromIndex(ColorIndex);
             renderers[i].sortingLayerName = "Floating";
         }
     }
-
-
 
     public void setReferences(Draggable_instantiater CameraOb, GridEditor GridOb)
     {
@@ -414,7 +413,7 @@ public class draggable_piece : MonoBehaviour
                 placeOnPlayer = true;
             }
 
-            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color, Cell.Cell_type.Ground, 0, 0);
+            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), GridObj.GainColorFromIndex(ColorIndex), Cell.Cell_type.Ground, ColorIndex, 0);
 
             //change to ground layer (this should not matter as they are being destroyed this frame??)
             renderers[i].sortingLayerName = "Ground";

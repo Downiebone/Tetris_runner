@@ -30,7 +30,7 @@ public class DraggablePlaceGridObj : draggable_piece
         renderers = new SpriteRenderer[1];
         renderers[0] = GetComponent<SpriteRenderer>();
 
-        Debug.Log("renderer: " + renderers[0].gameObject.name);
+        //Debug.Log("renderer: " + renderers[0].gameObject.name);
 
         if (delayed_start_highlight)
         {
@@ -146,7 +146,7 @@ public class DraggablePlaceGridObj : draggable_piece
                 placeOnPlayer = true;
             }
 
-            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Piece_color, cellType_ToPlace, 0, 0);
+            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Color.white, cellType_ToPlace, 0, 0);
         }
 
         if (placeOnPlayer)

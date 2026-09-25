@@ -8,7 +8,9 @@
                     "files": [
                         "Bot_plane",
                         "MoneyArrows",
-                        "PowerUpPoint"
+                        "PowerUpPoint",
+                        "LaserTest",
+                        "BotMegaTest"
                     ]
                 },
                 {
@@ -130,7 +132,9 @@
                 },
                 {
                     "id": "3",
-                    "files": []
+                    "files": [
+                        "ArrowsDown"
+                    ]
                 },
                 {
                     "id": "4",
@@ -140,7 +144,9 @@
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "SmallTerrorSpikes"
+                    ]
                 }
             ]
         },
@@ -192,17 +198,20 @@
                     "id": "1",
                     "files": [
                         "danger_stair_tp",
-                        "mid_to_top_simple"
+                        "mid_to_top_simple",
+                        "LongSteps"
                     ]
                 },
                 {
                     "id": "2",
-                    "files": []
+                    "files": [
+                        "LilSpikeTop"
+                    ]
                 },
                 {
                     "id": "3",
                     "files": [
-                        "test1"
+                        "Options"
                     ]
                 },
                 {
@@ -234,15 +243,21 @@
                 },
                 {
                     "id": "3",
-                    "files": []
+                    "files": [
+                        "SpikeBridgeDown"
+                    ]
                 },
                 {
                     "id": "4",
-                    "files": []
+                    "files": [
+                        "JustSpikeHole"
+                    ]
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "downFlappyBird"
+                    ]
                 }
             ]
         },
@@ -281,7 +296,8 @@
                 {
                     "id": "1",
                     "files": [
-                        "top_plane"
+                        "top_plane",
+                        "top_MoneySnake"
                     ]
                 },
                 {
@@ -305,7 +321,9 @@
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "NarrowTopSpikes"
+                    ]
                 }
             ]
         }

@@ -17,7 +17,8 @@ public class Cell
         collectable_big = 2,
         Jumppad = 3,
         Spike = 4,
-        InvisibleDanger = 5 //temp for like laser idea maybe?
+        InvisibleDanger = 5, //for like laser maybe?
+        LaserBlock = 6
     }
 
     /// <summary>
@@ -33,6 +34,7 @@ public class Cell
     public Cell_type type = Cell_type.Ground;
     //public int colorIndex = 0;
     [NonSerialized] public SpriteRenderer sprite_rend;
+    [NonSerialized] public BasicBlock BasicBlockScript;
     [NonSerialized] public Color cellColor;
     public SColor saved_cellColor;
     //5 colors??

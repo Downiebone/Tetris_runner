@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class CellTypes_Class
@@ -8,6 +9,10 @@ public class CellTypes_Class
     [Tooltip("For Debugging purposes")] public string CellName;
     [Tooltip("1 or 4 sprites")] public Sprite[] RotatableIcons;
     [Tooltip("Actual Type")] public Cell.Cell_type ThisCelltype;
+    [Tooltip("if this blocks needs to spawn something outside the gríd")] 
+    public bool SpawnSeparateWorldObject;
+    [Tooltip("Actual object to spawn if needed")] public GameObject ObjectToSpawn;
+
 }
 public class GridEditor : MonoBehaviour
 {
@@ -25,6 +30,8 @@ public class GridEditor : MonoBehaviour
     [SerializeField] private string current_from_str = "Bot";
     [SerializeField] private string current_to_str = "Bot";
     [SerializeField] private int current_difficulity = 1;
+
+    [HideInInspector] public UnityEvent GridUpdatedEvent = new UnityEvent();
 
     private string[] to_save_options = new string[3]
     {
@@ -175,9 +182,11 @@ public class GridEditor : MonoBehaviour
         {
             Level_Max_Height = gridHeight;
         }
+
         if (shouldStartByLoadingLevel)
         {
-            //updatePerlinOffset();
+            //update difficulity loot table weight
+            GenerateDifficulityLootTable();
 
             //these three should probably be 1 function in the future
             //if we want to entierly leave the "perlin level" concept
@@ -222,6 +231,7 @@ public class GridEditor : MonoBehaviour
 
                 GameObject GO = Instantiate(cell_piece_prefab, new Vector3(c + Grid_1_Parent.transform.position.x, r + Grid_2_Parent.transform.position.y, 0), Quaternion.identity, Grid_1_Parent.transform);
                 Grid[r, c].sprite_rend = GO.GetComponent<SpriteRenderer>();
+                Grid[r, c].BasicBlockScript = GO.GetComponent<BasicBlock>();
 
                 int colorInd = Random.Range(0, cellColors.Length);
                 Grid[r, c].color_index = colorInd;
@@ -314,6 +324,12 @@ public class GridEditor : MonoBehaviour
                 else
                 {
                     grid_cell.sprite_rend.sprite = CellSprites_WithRotation[(int)loaded_cell.type].RotatableIcons[loaded_cell.Rotation];
+                }
+
+                //if object to spawn needs to spawn a separate object
+                if (CellSprites_WithRotation[(int)loaded_cell.type].SpawnSeparateWorldObject)
+                {
+                    grid_cell.BasicBlockScript.PlacedBlock(new Vector2Int(j + x_value_to_start_loading, i), loaded_cell.Rotation, CellSprites_WithRotation[(int)loaded_cell.type].SpawnSeparateWorldObject, CellSprites_WithRotation[(int)loaded_cell.type].ObjectToSpawn);
                 }
                 
             }
@@ -417,6 +433,40 @@ public class GridEditor : MonoBehaviour
 
         return false;
     }
+
+    //Call this when stuff like the lasers should update
+    public void GridUpdated()
+    {
+        //say to "everyone" that the grid updated
+        //special blocks listen for this
+        //like the laser block!
+        GridUpdatedEvent.Invoke();
+    }
+    public void generateTile_NoEvent(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell, int color_index, int pieceRotation)
+    {
+        Cell cell = getCellAtPoint(pos.y, pos.x);
+        //if (cell.isActive && cell.type == typa_cell)
+        //{
+        //    return;
+        //}
+
+        cell.type = typa_cell;
+        cell.Rotation = pieceRotation;
+
+        cell.isActive = true;
+
+        if (typa_cell != Cell.Cell_type.Ground)
+        {
+            placeTileColor = Color.white;
+        }
+
+        cell.cellColor = placeTileColor;
+        cell.sprite_rend.color = placeTileColor;
+        cell.color_index = color_index;
+
+        //set sprite to correct sprite
+        cell.sprite_rend.sprite = CellSprites_WithRotation[(int)cell.type].RotatableIcons[pieceRotation];
+    }
     public void placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell, int color_index, int pieceRotation)
     {
         Cell cell = getCellAtPoint(pos.y, pos.x);
@@ -469,6 +519,8 @@ public class GridEditor : MonoBehaviour
 
         cell.sprite_rend.sprite = newCell.isActive == true? CellSprites_WithRotation[(int)cell.type].RotatableIcons[newCell.Rotation] : null;
     }
+
+    //for editor?
     public void replace_active_Tile(Vector2Int pos, Cell.Cell_type replace_to_type)
     {
         if (pos.y < 1) //dont replace bottom
@@ -485,6 +537,8 @@ public class GridEditor : MonoBehaviour
         cell.sprite_rend.color = Color.white;
         cell.sprite_rend.sprite = CellSprites_WithRotation[(int)cell.type].RotatableIcons[cell.Rotation];
     }
+
+    //for editor?
     public void deleteTile(Vector2Int pos)
     {
         Cell cell = getCellAtPoint(pos.y, pos.x);
@@ -534,7 +588,7 @@ public class GridEditor : MonoBehaviour
     }
 
     //if the player bombed something (for applying player items)
-    public void bombTilePlayer(Vector2Int pos)
+    public void bombTilePlayer(Vector2Int pos, bool UseBombAnimation = true)
     {
         if (pos.y < 1) //dont destroy floor or "ceiling"
         {
@@ -542,7 +596,15 @@ public class GridEditor : MonoBehaviour
         }
 
         //animation
-        play_system.spawn_explosion(pos);
+        if (UseBombAnimation)
+        {
+            play_system.spawn_explosion(pos);
+        }
+        else
+        {
+            play_system.spawn_spiral(pos);
+        }
+        
 
         Cell cell = getCellAtPoint(pos.y, pos.x);
         if (!cell.isActive)
@@ -557,8 +619,6 @@ public class GridEditor : MonoBehaviour
 
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
-
-        
     }
 
     //enables all the sprites for the floor?
@@ -599,11 +659,17 @@ public class GridEditor : MonoBehaviour
         }
     }
 
-    public Color GainRandomColor()
+    public int GainRandomColorIndex()
     {
-        return cellColors[Random.Range(0, cellColors.Length)];
+        int randomColorIndex = Random.Range(0, cellColors.Length);
+        //colorIndex = randomColorIndex;
+        //return cellColors[randomColorIndex];
+        return randomColorIndex;
     }
-
+    public Color GainColorFromIndex(int inde)
+    {
+        return cellColors[inde];
+    }
     private bool can_load = true;
 
     private void Move_grids()
@@ -678,14 +744,38 @@ public class GridEditor : MonoBehaviour
         
     }
 
+    [SerializeField] private Placable[] weightTableDifficulities;
+    int total_placable_weight = 0;
 
+
+    private void GenerateDifficulityLootTable()
+    {
+        total_placable_weight = 0;
+        foreach (var item in weightTableDifficulities)
+        {
+            total_placable_weight += item.spawnWeight;
+        }
+    }
     public void load_next_level()
     {
         //if (reached_end_of_world) { return; }
 
 
         current_to_str = to_save_options[Random.Range(0, 3)];
-        current_difficulity = difficulity_slider[Random.Range(0, difficulity_slider.Length)];
+
+        //difficulity should be a loot table
+        int randomWeight = Random.Range(1, total_placable_weight);
+
+        for (int i = 0; i < weightTableDifficulities.Length; i++)
+        {
+            if (randomWeight <= weightTableDifficulities[i].spawnWeight)
+            {
+                current_difficulity = weightTableDifficulities[i].item_id;
+                break;
+
+            }
+            else randomWeight -= weightTableDifficulities[i].spawnWeight;
+        }
 
         StartCoroutine(CountingCoroutine(current_from_str, current_to_str, current_difficulity));
     }
@@ -718,5 +808,30 @@ public class GridEditor : MonoBehaviour
     public void TimeToSpawn_TransObj()
     {
         TimeToSpawn_TransformationObj = true;
+    }
+
+    public bool AreCellsOfSameColorQualia(Cell ReferanceCell, Cell CompareToCell)
+    {
+        if (ReferanceCell.type == CompareToCell.type)
+        {
+            if (ReferanceCell.type == Cell.Cell_type.Ground)
+            {
+                if (ReferanceCell.color_index == CompareToCell.color_index)
+                {
+                    //if the block is, they need to be same color
+                    return true;
+                }
+                else
+                {
+                    //is block, but need to be same color, so false
+                    return false;
+                }
+            }
+            else //if not ground, they only need to be of same type
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

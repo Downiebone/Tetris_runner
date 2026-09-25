@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Placable
 {
     public int item_id;
@@ -63,16 +64,18 @@ public class Draggable_instantiater : MonoBehaviour
         weightTablePlaceables[1] = new Placable(1, 20); // Penis
         weightTablePlaceables[2] = new Placable(2, 20); //
         weightTablePlaceables[3] = new Placable(3, 20); // 
-        weightTablePlaceables[4] = new Placable(4, 20); // bomb
+        weightTablePlaceables[4] = new Placable(4, 12); // bomb
         int goldWeight = 0;
         if(PlayerPrefs.GetInt("Placeable_GoldBomb") > 0)
         {
             goldWeight = 5;
         }
-        weightTablePlaceables[5] = new Placable(5, 10); // gold bomb
+        weightTablePlaceables[5] = new Placable(5, 5); // gold bomb
         int ghostWeight = 5 * PlayerPrefs.GetInt("Placeable_GhostBlock");
-        weightTablePlaceables[6] = new Placable(6, 10); // ghost block
-        weightTablePlaceables[7] = new Placable(7, 10); // jump pad
+        weightTablePlaceables[6] = new Placable(6, 5); // ghost block
+        weightTablePlaceables[7] = new Placable(7, 5); // jump pad
+        int ColorBombWeight = 5 * PlayerPrefs.GetInt("Placeable_ColorBomb");
+        weightTablePlaceables[8] = new Placable(8, 10); // Color bomb
 
         total_placable_weight = 0;
         foreach (var item in weightTablePlaceables)

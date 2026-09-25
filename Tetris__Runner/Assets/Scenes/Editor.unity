@@ -12047,6 +12047,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
     - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
     ThisCelltype: 0
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
   - CellName: Coin
     RotatableIcons:
     - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
@@ -12054,6 +12056,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
     - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
     ThisCelltype: 1
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
   - CellName: PowerUpSpot
     RotatableIcons:
     - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
@@ -12061,6 +12065,8 @@ MonoBehaviour:
     - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
     - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
     ThisCelltype: 2
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
   - CellName: Jumppad
     RotatableIcons:
     - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
@@ -12068,6 +12074,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
     - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
     ThisCelltype: 3
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
   - CellName: Spikes
     RotatableIcons:
     - {fileID: -163980794, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
@@ -12075,6 +12083,26 @@ MonoBehaviour:
     - {fileID: -531573630, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
     - {fileID: -1960109896, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
     ThisCelltype: 4
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
+  - CellName: InvisibleDanges
+    RotatableIcons:
+    - {fileID: 21300000, guid: 92549eb6467971c4ab1659e60b0631f5, type: 3}
+    - {fileID: 21300000, guid: 92549eb6467971c4ab1659e60b0631f5, type: 3}
+    - {fileID: 21300000, guid: 92549eb6467971c4ab1659e60b0631f5, type: 3}
+    - {fileID: 21300000, guid: 92549eb6467971c4ab1659e60b0631f5, type: 3}
+    ThisCelltype: 5
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
+  - CellName: LaserGenerator
+    RotatableIcons:
+    - {fileID: -1957879393, guid: 32d05b352351dfb4394fce3d62933693, type: 3}
+    - {fileID: -699026574, guid: 32d05b352351dfb4394fce3d62933693, type: 3}
+    - {fileID: -1118537907, guid: 32d05b352351dfb4394fce3d62933693, type: 3}
+    - {fileID: 554534193, guid: 32d05b352351dfb4394fce3d62933693, type: 3}
+    ThisCelltype: 6
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
   camSpeed: 10
   camSpeed_multiplier: 3
   cell_highlight: {fileID: 126660709}
@@ -15492,7 +15520,7 @@ GameObject:
   - component: {fileID: 2056913879}
   m_Layer: 0
   m_Name: SYSTEM-GridEditor
-  m_TagString: Untagged
+  m_TagString: Grid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15532,6 +15560,10 @@ MonoBehaviour:
   current_from_str: Bot
   current_to_str: Bot
   current_difficulity: 1
+  GridUpdatedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  transManager: {fileID: 0}
   cell_piece_prefab: {fileID: 7604938256440483462, guid: 3d5e27430337fd84e861d00e6c56363f, type: 3}
   BuildBlocking_Types: 
   Grid_1_Parent: {fileID: 1817819364}
@@ -15545,6 +15577,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
     - {fileID: 21300000, guid: 521ab23b03c267744b85bb8ad938a61b, type: 3}
     ThisCelltype: 0
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
   - CellName: Coins
     RotatableIcons:
     - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
@@ -15552,6 +15586,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
     - {fileID: 21300000, guid: a872afcca7972bd40a15169b706e3974, type: 3}
     ThisCelltype: 1
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
   - CellName: TransformationPower
     RotatableIcons:
     - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
@@ -15559,6 +15595,8 @@ MonoBehaviour:
     - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
     - {fileID: 316250253, guid: e1b4d26ce8be9cc4d90c9763ff032201, type: 3}
     ThisCelltype: 2
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
   - CellName: Jump pad
     RotatableIcons:
     - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
@@ -15566,6 +15604,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
     - {fileID: 21300000, guid: db621b7308b57aa4d8a6c03c5ebb3aae, type: 3}
     ThisCelltype: 3
+    SpawnSeparateWorldObject: 1
+    ObjectToSpawn: {fileID: 3224013256334625951, guid: c24d9fc7a5cb2bb459ae56402cb58010, type: 3}
   - CellName: Spikes
     RotatableIcons:
     - {fileID: -163980794, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
@@ -15573,6 +15613,26 @@ MonoBehaviour:
     - {fileID: -531573630, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
     - {fileID: -1960109896, guid: 51c67d87db1f15b40bf8b377df84f907, type: 3}
     ThisCelltype: 4
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
+  - CellName: InvisibleDange
+    RotatableIcons:
+    - {fileID: 21300000, guid: 92549eb6467971c4ab1659e60b0631f5, type: 3}
+    - {fileID: 21300000, guid: 92549eb6467971c4ab1659e60b0631f5, type: 3}
+    - {fileID: 21300000, guid: 92549eb6467971c4ab1659e60b0631f5, type: 3}
+    - {fileID: 21300000, guid: 92549eb6467971c4ab1659e60b0631f5, type: 3}
+    ThisCelltype: 5
+    SpawnSeparateWorldObject: 0
+    ObjectToSpawn: {fileID: 0}
+  - CellName: Laser_Block
+    RotatableIcons:
+    - {fileID: -1957879393, guid: 32d05b352351dfb4394fce3d62933693, type: 3}
+    - {fileID: -699026574, guid: 32d05b352351dfb4394fce3d62933693, type: 3}
+    - {fileID: -1118537907, guid: 32d05b352351dfb4394fce3d62933693, type: 3}
+    - {fileID: 554534193, guid: 32d05b352351dfb4394fce3d62933693, type: 3}
+    ThisCelltype: 6
+    SpawnSeparateWorldObject: 1
+    ObjectToSpawn: {fileID: 4024003560855271117, guid: 3827835085d54e442a3a12edc380341e, type: 3}
   cellColors:
   - {r: 0, g: 0.94117653, b: 0.94117653, a: 1}
   - {r: 0.94117653, g: 0, b: 0, a: 1}
@@ -15590,6 +15650,7 @@ MonoBehaviour:
   perlin_size: 4
   Level_Min_Height: 2
   Level_Max_Height: 8
+  weightTableDifficulities: []
 --- !u!1 &2058527237
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,6 +21,11 @@ public class level_play_system : MonoBehaviour
     //so that we dont accidentaly use one that is already in use
     private int current_bomb_ind = 0;
 
+    [SerializeField] private GameObject[] Spirals_for_animation;
+    //used to track which spiral_animation to use () we allways want to use oldes one
+    //so that we dont accidentaly use one that is already in use
+    private int current_spiral_ind = 0;
+
     [SerializeField] private TMP_Text money_text;
     [SerializeField] private TMP_Text end_of_level_money_text;
     [SerializeField] private TMP_Text Score_text;
@@ -125,6 +130,19 @@ public class level_play_system : MonoBehaviour
         if(current_bomb_ind >= Bombs_for_animation.Length)
         {
             current_bomb_ind = 0;
+        }
+    }
+
+    public void spawn_spiral(Vector2 spiral_pos)
+    {
+        Spirals_for_animation[current_spiral_ind].transform.position = spiral_pos;
+        Spirals_for_animation[current_spiral_ind].GetComponent<Animator>().SetTrigger("Spiral");
+
+        //use next bomb next time
+        current_spiral_ind++;
+        if (current_spiral_ind >= Spirals_for_animation.Length)
+        {
+            current_spiral_ind = 0;
         }
     }
 

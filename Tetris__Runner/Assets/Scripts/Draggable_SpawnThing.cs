@@ -9,8 +9,8 @@ public class Draggable_SpawnThing : draggable_piece
     [SerializeField] private SpriteRenderer highlight_renderer;
 
 
-    [Header("Player launch")]
-    [SerializeField] private float player_launch_rate = 3;
+    //[Header("Player launch")]
+    //[SerializeField] private float player_launch_rate = 3;
 
     [SerializeField] private int spawn_golden_area = 1;
 
@@ -46,7 +46,7 @@ public class Draggable_SpawnThing : draggable_piece
 
         HighlightSpots = new Vector2Int[parts_of_highlight_spots];
 
-        Debug.Log("high_spots.length: " + HighlightSpots.Length.ToString());
+        //Debug.Log("high_spots.length: " + HighlightSpots.Length.ToString());
         int curr_index = 0;
 
         for (int i = -spawn_golden_area; i <= spawn_golden_area; i++)
@@ -69,7 +69,7 @@ public class Draggable_SpawnThing : draggable_piece
         renderers = new SpriteRenderer[1];
         renderers[0] = GetComponent<SpriteRenderer>();
 
-        Debug.Log("renderer: " + renderers[0].gameObject.name);
+        //Debug.Log("renderer: " + renderers[0].gameObject.name);
 
         if (delayed_start_highlight)
         {

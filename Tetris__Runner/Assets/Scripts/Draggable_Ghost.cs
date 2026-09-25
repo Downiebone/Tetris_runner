@@ -66,6 +66,7 @@ public class Draggable_Ghost : draggable_piece
             renderers[i] = GO.GetComponent<SpriteRenderer>();
             Highlight_renderers[i] = GO.transform.GetChild(0).GetComponent<SpriteRenderer>();
             GO.transform.localPosition = (Vector2)HighlightSpots[i];
+            Color Piece_color = GridObj.GainColorFromIndex(ColorIndex);
             Piece_color.a = 0.5f; //------------------------------------------------------------------ ONLY DIFFERENCE FROM PARENT CLASS
             renderers[i].color = Piece_color;
             renderers[i].sortingLayerName = "Floating";
