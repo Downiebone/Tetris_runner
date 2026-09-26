@@ -44,22 +44,12 @@ public class Golden_ring : MonoBehaviour
         }
         else
         {
-            //Debug.Log("curr: " + current_explosion_radius);
-
-            if (current_explosion_radius > max_explosions)
-            {
-                if (destroy_on_use)
-                {
-                    Destroy(this.gameObject);
-                }
-                started = false;
-            } //no more explosions
-
-
-
             if (current_explosion_radius == 0)
             { //initial blast
-                grid_script.replace_active_Tile(my_explosion_pos, Cell.Cell_type.collectable_coin);
+                if (grid_script.Cell_is_Active_and_blocking_building(my_explosion_pos))
+                {
+                    grid_script.replace_active_Tile(my_explosion_pos, Cell.Cell_type.collectable_coin);
+                }
             }
             else
             {
@@ -69,13 +59,33 @@ public class Golden_ring : MonoBehaviour
                     {
                         if (Mathf.Abs(i) + Mathf.Abs(j) == current_explosion_radius) //star shape
                         {
-                            grid_script.replace_active_Tile(my_explosion_pos + new Vector2Int(i, j), Cell.Cell_type.collectable_coin);
+                            if(grid_script.Cell_is_Active_and_blocking_building(my_explosion_pos + new Vector2Int(i, j)))
+                            {
+                                grid_script.replace_active_Tile(my_explosion_pos + new Vector2Int(i, j), Cell.Cell_type.collectable_coin);
+                            }
+                            
                         }
                     }
                 }
             }
             counter = 0;
             current_explosion_radius++;
+
+            if (current_explosion_radius > max_explosions)
+            {
+                //The exapnding bomb is done here
+
+                //tell stuff like lasers to update
+                //should we do this for each "expansion"?
+                grid_script.GridBlocksUpdate();
+
+                if (destroy_on_use)
+                {
+                    Destroy(this.gameObject);
+                    return;
+                }
+                started = false;
+            } //no more explosions
         }
     }
 

@@ -667,6 +667,7 @@ MonoBehaviour:
   - {fileID: 7014325089314971238}
   - {fileID: 3972046582127368747}
   LaserSparcle: {fileID: 7279723180738861215}
+  DistanceToCountAsOffScreen: 10
 --- !u!1 &4500143995027275765
 GameObject:
   m_ObjectHideFlags: 0

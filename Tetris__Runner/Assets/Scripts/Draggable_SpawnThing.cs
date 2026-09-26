@@ -178,7 +178,7 @@ public class Draggable_SpawnThing : draggable_piece
 
         GameObject GO = Instantiate(prefab_to_spawn, (Vector2)LastWorkingPlaceSpot, Quaternion.identity);
 
-        GO.GetComponent<Golden_ring>().expanding_explosion(spawn_golden_area - 1, LastWorkingPlaceSpot);
+        GO.GetComponent<Golden_ring>().expanding_explosion(spawn_golden_area, LastWorkingPlaceSpot);
 
         MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
 

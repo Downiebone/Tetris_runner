@@ -9,8 +9,7 @@
                         "Bot_plane",
                         "MoneyArrows",
                         "PowerUpPoint",
-                        "LaserTest",
-                        "BotMegaTest"
+                        "LaserLearing"
                     ]
                 },
                 {
@@ -18,13 +17,15 @@
                     "files": [
                         "coin_rainbow",
                         "coin_wave",
-                        "SpikeBed"
+                        "SpikeBed",
+                        "LaserBlockade"
                     ]
                 },
                 {
                     "id": "3",
                     "files": [
-                        "pillars_wit_coins"
+                        "pillars_wit_coins",
+                        "JumpadsToSpikes"
                     ]
                 },
                 {
@@ -55,13 +56,15 @@
                 {
                     "id": "2",
                     "files": [
-                        "SpikeUp"
+                        "SpikeUp",
+                        "MoneyBehindLaser"
                     ]
                 },
                 {
                     "id": "3",
                     "files": [
-                        "fireworks"
+                        "fireworks",
+                        "LaserChoise"
                     ]
                 },
                 {
@@ -84,13 +87,15 @@
                 {
                     "id": "1",
                     "files": [
-                        "Stairs"
+                        "Stairs",
+                        "JumpUp"
                     ]
                 },
                 {
                     "id": "2",
                     "files": [
-                        "MoneyVault"
+                        "MoneyVault",
+                        "Dragon"
                     ]
                 },
                 {
@@ -133,7 +138,8 @@
                 {
                     "id": "3",
                     "files": [
-                        "ArrowsDown"
+                        "ArrowsDown",
+                        "JumppadToSpike"
                     ]
                 },
                 {
@@ -174,7 +180,8 @@
                     "id": "3",
                     "files": [
                         "tunnel",
-                        "FlappyBirdSpikes"
+                        "FlappyBirdSpikes",
+                        "OverLaser"
                     ]
                 },
                 {
@@ -205,7 +212,8 @@
                 {
                     "id": "2",
                     "files": [
-                        "LilSpikeTop"
+                        "LilSpikeTop",
+                        "LaserBridge"
                     ]
                 },
                 {
@@ -216,11 +224,15 @@
                 },
                 {
                     "id": "4",
-                    "files": []
+                    "files": [
+                        "LasersFromBottom"
+                    ]
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "LaserTopNBot"
+                    ]
                 }
             ]
         },
@@ -272,21 +284,28 @@
                 },
                 {
                     "id": "2",
-                    "files": []
+                    "files": [
+                        "LaserGoingUo"
+                    ]
                 },
                 {
                     "id": "3",
                     "files": [
-                        "squigily_haven"
+                        "squigily_haven",
+                        "LaserRemoval"
                     ]
                 },
                 {
                     "id": "4",
-                    "files": []
+                    "files": [
+                        "LaserTunnel"
+                    ]
                 },
                 {
                     "id": "5",
-                    "files": []
+                    "files": [
+                        "LaserMayhem"
+                    ]
                 }
             ]
         },

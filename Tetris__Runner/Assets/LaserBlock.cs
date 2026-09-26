@@ -18,7 +18,6 @@ public class LaserBlock : Block_To_Inherit
 
     public override void PlaceThisBlock(Vector2Int gridPos, int spawnRotation)
     {
-        Debug.Log("PlaceThisLaser " + spawnRotation.ToString()); 
 
         myRotation = spawnRotation;
         myGridPosition = gridPos;
@@ -62,7 +61,15 @@ public class LaserBlock : Block_To_Inherit
 
     public override void DestroyThisBlock()
     {
-        Debug.Log("Destroy this laser #########################################");
+
+        for (int i = 0; i < currentActiveLasersPosition.Count; i++)
+        {
+            //remove the invisible danger from last laser positions
+            if (gridScript.getCellAtPoint(currentActiveLasersPosition[i]).type == Cell.Cell_type.InvisibleDanger)
+            {
+                gridScript.deleteTile_exeptFloor(currentActiveLasersPosition[i]);
+            }
+        }
 
         gridScript.GridUpdatedEvent.RemoveListener(OnPlaceEventTriggered);
 
@@ -87,7 +94,6 @@ public class LaserBlock : Block_To_Inherit
 
     void OnPlaceEventTriggered()
     {
-        Debug.Log("Callback executed");
 
         for (int i = 0; i < LaserPieces.Length; i++)
         {
@@ -117,7 +123,7 @@ public class LaserBlock : Block_To_Inherit
                 currentActiveLasersPosition.Add(currentExpandingPos);
 
                 //danger blocks are invisible
-                gridScript.generateTile_NoEvent(currentExpandingPos, Color.white, Cell.Cell_type.InvisibleDanger, 0, 0);
+                gridScript.placeTile(currentExpandingPos, Color.white, Cell.Cell_type.InvisibleDanger, 0, 0);
                 LaserPieces[i].SetActive(true);
                 LaserPieces[i].transform.position = (Vector2)currentExpandingPos;
             }

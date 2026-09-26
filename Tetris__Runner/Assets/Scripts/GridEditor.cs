@@ -60,7 +60,10 @@ public class GridEditor : MonoBehaviour
 
     [SerializeField] private GameObject cell_piece_prefab;
 
-    [SerializeField] private Cell.Cell_type[] BuildBlocking_Types;
+    [SerializeField] private Cell.Cell_type[] BuildBlocking_Types; //blocks that you cant place stuff in
+    [SerializeField] private Cell.Cell_type[] Dangerous_Types; //blocks that kill the player
+    [SerializeField] private Cell.Cell_type[] Walkable_Types; //blocks the player can walk on
+
 
     [Tooltip("Y,X (for some reason hehe)")]
     public Cell[,] Grid;
@@ -244,7 +247,9 @@ public class GridEditor : MonoBehaviour
 
                 GameObject GO_2 = Instantiate(cell_piece_prefab, new Vector3(c + Grid_2_Parent.transform.position.x, r + Grid_2_Parent.transform.position.y, 0), Quaternion.identity, Grid_2_Parent.transform);
                 Grid_2[r, c].sprite_rend = GO_2.GetComponent<SpriteRenderer>();
-                 
+                Grid_2[r, c].BasicBlockScript = GO_2.GetComponent<BasicBlock>();
+
+
                 int colorInd_2 = Random.Range(0, cellColors.Length);
                 Grid_2[r, c].color_index = colorInd_2;
                 Grid_2[r, c].cellColor = cellColors[colorInd_2];
@@ -324,13 +329,15 @@ public class GridEditor : MonoBehaviour
                 else
                 {
                     grid_cell.sprite_rend.sprite = CellSprites_WithRotation[(int)loaded_cell.type].RotatableIcons[loaded_cell.Rotation];
+
+                    //if object to spawn needs to spawn a separate object
+                    if (CellSprites_WithRotation[(int)loaded_cell.type].SpawnSeparateWorldObject)
+                    {
+                        grid_cell.BasicBlockScript.PlacedBlock(new Vector2Int(j + x_value_to_start_loading, i), loaded_cell.Rotation, CellSprites_WithRotation[(int)loaded_cell.type].SpawnSeparateWorldObject, CellSprites_WithRotation[(int)loaded_cell.type].ObjectToSpawn);
+                    }
                 }
 
-                //if object to spawn needs to spawn a separate object
-                if (CellSprites_WithRotation[(int)loaded_cell.type].SpawnSeparateWorldObject)
-                {
-                    grid_cell.BasicBlockScript.PlacedBlock(new Vector2Int(j + x_value_to_start_loading, i), loaded_cell.Rotation, CellSprites_WithRotation[(int)loaded_cell.type].SpawnSeparateWorldObject, CellSprites_WithRotation[(int)loaded_cell.type].ObjectToSpawn);
-                }
+                
                 
             }
         }
@@ -434,38 +441,90 @@ public class GridEditor : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Returns true if this cell kills the player
+    /// </summary>
+    public bool Cell_is_dangerous(Vector2Int pos)
+    {
+        if (pos.y >= gridHeight || pos.y < 0) { return false; }
+
+        Cell cur_cell = getCellAtPoint(pos.y, pos.x); //check
+
+        if (cur_cell.isActive == true)
+        {
+            foreach (Cell.Cell_type typ in Dangerous_Types)
+            {
+                if (cur_cell.type == typ)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /// <summary>
+    /// Returns true if this cell kills the player
+    /// </summary>
+    public bool Cell_is_dangerous(Cell tryCell)
+    {
+        if (tryCell.isActive == true)
+        {
+            foreach (Cell.Cell_type typ in Dangerous_Types)
+            {
+                if (tryCell.type == typ)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /// <summary>
+    /// Returns true if the player can walk on the block
+    /// </summary>
+    public bool Cell_is_walkable(Vector2Int pos)
+    {
+        if (pos.y >= gridHeight || pos.y < 0) { return false; }
+
+        Cell cur_cell = getCellAtPoint(pos.y, pos.x); //check
+
+        if (cur_cell.isActive == true)
+        {
+            foreach (Cell.Cell_type typ in Walkable_Types)
+            {
+                if (cur_cell.type == typ)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    /// <summary>
+    /// Returns true if the player can walk on the block
+    /// </summary>
+    public bool Cell_is_walkable(Cell tryCell)
+    {
+        if (tryCell.isActive == true)
+        {
+            foreach (Cell.Cell_type typ in Walkable_Types)
+            {
+                if (tryCell.type == typ)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     //Call this when stuff like the lasers should update
-    public void GridUpdated()
+    public void GridBlocksUpdate()
     {
         //say to "everyone" that the grid updated
         //special blocks listen for this
         //like the laser block!
         GridUpdatedEvent.Invoke();
-    }
-    public void generateTile_NoEvent(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell, int color_index, int pieceRotation)
-    {
-        Cell cell = getCellAtPoint(pos.y, pos.x);
-        //if (cell.isActive && cell.type == typa_cell)
-        //{
-        //    return;
-        //}
-
-        cell.type = typa_cell;
-        cell.Rotation = pieceRotation;
-
-        cell.isActive = true;
-
-        if (typa_cell != Cell.Cell_type.Ground)
-        {
-            placeTileColor = Color.white;
-        }
-
-        cell.cellColor = placeTileColor;
-        cell.sprite_rend.color = placeTileColor;
-        cell.color_index = color_index;
-
-        //set sprite to correct sprite
-        cell.sprite_rend.sprite = CellSprites_WithRotation[(int)cell.type].RotatableIcons[pieceRotation];
     }
     public void placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell, int color_index, int pieceRotation)
     {
@@ -536,6 +595,8 @@ public class GridEditor : MonoBehaviour
         cell.type = replace_to_type;
         cell.sprite_rend.color = Color.white;
         cell.sprite_rend.sprite = CellSprites_WithRotation[(int)cell.type].RotatableIcons[cell.Rotation];
+
+        cell.BasicBlockScript.DestroyPlacedBlock();
     }
 
     //for editor?
@@ -548,6 +609,8 @@ public class GridEditor : MonoBehaviour
         }
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
+
+        cell.BasicBlockScript.DestroyPlacedBlock();
     }
     public void deleteTile_exeptFloor(Vector2Int pos)
     {
@@ -566,6 +629,8 @@ public class GridEditor : MonoBehaviour
         }
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
+
+        cell.BasicBlockScript.DestroyPlacedBlock();
     }
     public void bombTile(Vector2Int pos)
     {
@@ -585,6 +650,8 @@ public class GridEditor : MonoBehaviour
 
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
+
+        cell.BasicBlockScript.DestroyPlacedBlock();
     }
 
     //if the player bombed something (for applying player items)
@@ -619,6 +686,8 @@ public class GridEditor : MonoBehaviour
 
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
+
+        cell.BasicBlockScript.DestroyPlacedBlock();
     }
 
     //enables all the sprites for the floor?

@@ -64,6 +64,9 @@ public class Bomb_draggable : draggable_piece
             GridObj.bombTilePlayer(LastWorkingPlaceSpot + HighlightSpots[i]);
         }
 
+        //tell stuff like lasers to update
+        GridObj.GridBlocksUpdate();
+
         MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
 
         Destroy(this.gameObject);

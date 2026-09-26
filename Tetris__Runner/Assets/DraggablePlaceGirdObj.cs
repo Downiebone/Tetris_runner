@@ -149,6 +149,9 @@ public class DraggablePlaceGridObj : draggable_piece
             GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Color.white, cellType_ToPlace, 0, 0);
         }
 
+        //tell stuff like lasers to update
+        GridObj.GridBlocksUpdate();
+
         if (placeOnPlayer)
         {
             //player_pos.gameObject.GetComponent<Player_Script>().PlaceCelltypeOnPlayer(cellType_ToPlace);

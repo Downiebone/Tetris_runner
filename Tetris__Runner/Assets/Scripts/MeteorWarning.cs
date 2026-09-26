@@ -71,6 +71,9 @@ public class MeteorWarning : MonoBehaviour
                 
             }
 
+            //tell stuff like lasers to update
+            grid.GridBlocksUpdate();
+
             Destroy(this.gameObject);
         }
         

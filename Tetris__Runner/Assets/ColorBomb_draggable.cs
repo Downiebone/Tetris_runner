@@ -46,6 +46,9 @@ public class ColorBomb_draggable : draggable_piece
             GridObj.bombTilePlayer(LastWorkingPlaceSpot + HighlightSpots[0], false); //the false means it will spawn spiral animation
             MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
 
+            //tell stuff like lasers to update
+            GridObj.GridBlocksUpdate();
+
             Destroy(this.gameObject);
             return;
         }
@@ -75,6 +78,7 @@ public class ColorBomb_draggable : draggable_piece
             Cell CompareToCell = new Cell();
             Vector2Int LookAtSpot = new Vector2Int();
 
+            //up
             LookAtSpot = CurrentsPosition + new Vector2Int(0, 1);
             if (!foundpositions.Contains(LookAtSpot))
             {
@@ -88,7 +92,7 @@ public class ColorBomb_draggable : draggable_piece
                     }
                 }
             }
-
+            //right
             LookAtSpot = CurrentsPosition + new Vector2Int(1, 0);
             if (!foundpositions.Contains(LookAtSpot))
             {
@@ -102,6 +106,7 @@ public class ColorBomb_draggable : draggable_piece
                     }
                 }
             }
+            //down
             LookAtSpot = CurrentsPosition + new Vector2Int(0, -1);
             if (!foundpositions.Contains(LookAtSpot))
             {
@@ -115,6 +120,7 @@ public class ColorBomb_draggable : draggable_piece
                     }
                 }
             }
+            //left
             LookAtSpot = CurrentsPosition + new Vector2Int(-1, 0);
             if (!foundpositions.Contains(LookAtSpot))
             {
@@ -138,6 +144,9 @@ public class ColorBomb_draggable : draggable_piece
         {
             GridObj.bombTilePlayer(foundpositions[i], false); //the false means it will spawn spiral animation
         }
+
+        //tell stuff like lasers to update
+        GridObj.GridBlocksUpdate();
 
         MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
 

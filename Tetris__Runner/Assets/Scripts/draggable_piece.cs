@@ -419,6 +419,9 @@ public class draggable_piece : MonoBehaviour
             renderers[i].sortingLayerName = "Ground";
         }
 
+        //tell stuff like lasers to update
+        GridObj.GridBlocksUpdate();
+
         if (placeOnPlayer)
         {
             player_pos.gameObject.GetComponent<Player_Script>().PlaceBlockOnPlayer();

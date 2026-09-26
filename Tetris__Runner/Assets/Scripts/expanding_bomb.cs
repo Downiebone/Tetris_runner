@@ -47,7 +47,13 @@ public class expanding_bomb : MonoBehaviour
             //Debug.Log("curr: " + current_explosion_radius);
 
             if (current_explosion_radius > max_explosions) {
-                if(destroy_on_use)
+                //expanding bomb is done here
+
+                //tell stuff like lasers to update
+                //do this for each "expansion"?
+                grid_script.GridBlocksUpdate();
+
+                if (destroy_on_use)
                 {
                     Destroy(this.gameObject);
                 }
@@ -57,7 +63,7 @@ public class expanding_bomb : MonoBehaviour
             
 
             if (current_explosion_radius == 0){ //initial blast
-                grid_script.deleteTile(my_explosion_pos);
+                grid_script.deleteTile_exeptFloor(my_explosion_pos);
             }
             else
             {

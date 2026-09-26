@@ -22,7 +22,8 @@ public class Player_Script : MonoBehaviour
     private bool Cell_ceiling_exist;
 
     [SerializeField] private Rigidbody2D RB;
-    [SerializeField] private SpriteRenderer sprit;
+    //[SerializeField] private SpriteRenderer sprit;
+    [SerializeField] private Animator playerAnimator;
 
     [Header("Player Variables")]
 
@@ -74,6 +75,14 @@ public class Player_Script : MonoBehaviour
         Bird = 2
     }
 
+    public enum KindsOFDeath
+    {
+        RunIntoWall = 0,
+        RunIntoCorner = 1,
+        Laser = 2,
+        Spike = 3,
+    }
+
     public transformation_type current_form = transformation_type.Normal;
 
     private float time_in_transformation_counter = 99;
@@ -88,7 +97,7 @@ public class Player_Script : MonoBehaviour
         dashing_speed = dash_speed;
 
         //visual change
-        sprit.color = Color.green;
+        //sprit.color = Color.green;
         //end
 
         time_before_transformation_ends = dash_timer;
@@ -115,7 +124,7 @@ public class Player_Script : MonoBehaviour
         invincible_Counter = 1;
 
         //visual change
-        sprit.color = Color.yellow;
+        //sprit.color = Color.yellow;
         //end
 
         time_before_transformation_ends = bird_timer;
@@ -148,6 +157,8 @@ public class Player_Script : MonoBehaviour
     {
         was_upping = true;
 
+        playerAnimator.SetTrigger("JumpSilly");
+
         gravity_modifier = 0;
         RB.velocity = new Vector2(0, 0);
         RB.gravityScale = gravity_modifier * player_multiplier;
@@ -165,23 +176,23 @@ public class Player_Script : MonoBehaviour
 
     float invincible_Counter = 0;
 
-    private void DIE()
+    private void DIE(KindsOFDeath DeathType)
     {
         if(current_form == transformation_type.Dashing || invincible_Counter > 0) { return; } //cant die while dashing or invincible
 
-        if(current_form == transformation_type.Bird) //end bird
-        {
-            current_form = transformation_type.Normal;
-            sprit.color = Color.blue;
-            drag_inst.enable_top_blockade(false);
+        //if(current_form == transformation_type.Bird) //end bird
+        //{
+        //    current_form = transformation_type.Normal;
+        //    sprit.color = Color.blue;
+        //    drag_inst.enable_top_blockade(false);
 
-            cameraFollow_script.ShakeStart(1, 0.5f);
+        //    cameraFollow_script.ShakeStart(1, 0.5f);
 
-            Instantiate(playerDeath, transform.position, Quaternion.identity);
-            expand_bomb.expanding_explosion(20, Vector2Int.RoundToInt((Vector2)transform.position)); //explode a little
+        //    Instantiate(playerDeath, transform.position, Quaternion.identity);
+        //    expand_bomb.expanding_explosion(20, Vector2Int.RoundToInt((Vector2)transform.position)); //explode a little
 
-            return; //nothing more, we only lose bird when dying as bird
-        }
+        //    return; //nothing more, we only lose bird when dying as bird
+        //}
 
         if (play_system.has_revives()) //we can revive
         {
@@ -195,6 +206,23 @@ public class Player_Script : MonoBehaviour
         }
         else //we are cooked
         {
+            switch (DeathType)
+            {
+                case KindsOFDeath.RunIntoWall:
+                    playerAnimator.SetTrigger("DeathSplatNormal");
+                    break;
+                case KindsOFDeath.RunIntoCorner:
+                    playerAnimator.SetTrigger("DeathSplatCorner");
+                    break;
+                case KindsOFDeath.Laser:
+                    playerAnimator.SetTrigger("DeathMario");
+                    break;
+                case KindsOFDeath.Spike:
+                    playerAnimator.SetTrigger("DeathMario");
+                    break;
+            }
+
+
             cameraFollow_script.ShakeStart(1);
 
             im_dead = true;
@@ -233,37 +261,37 @@ public class Player_Script : MonoBehaviour
         
     }
 
-    private void PerformBirdJump()
-    {
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            gravity_modifier = 0;
-            RB.velocity = new Vector2(0, 0);
-            RB.gravityScale = gravity_modifier * player_multiplier;
+//    private void PerformBirdJump()
+//    {
+//#if UNITY_EDITOR
+//        if (Input.GetKeyDown(KeyCode.Mouse0))
+//        {
+//            gravity_modifier = 0;
+//            RB.velocity = new Vector2(0, 0);
+//            RB.gravityScale = gravity_modifier * player_multiplier;
 
-            player_up_speed = bird_jump_height;
+//            player_up_speed = bird_jump_height;
 
-            was_upping = true;
+//            was_upping = true;
 
-        }
-#else
-        if (Input.touchCount > 0) {
-            Touch touch_0 = Input.GetTouch(0);
+//        }
+//#else
+//        if (Input.touchCount > 0) {
+//            Touch touch_0 = Input.GetTouch(0);
 
-            if (touch_0.phase == TouchPhase.Began)
-            {
-                gravity_modifier = 0;
-                RB.velocity = new Vector2(0, 0);
-                RB.gravityScale = gravity_modifier * player_multiplier;
+//            if (touch_0.phase == TouchPhase.Began)
+//            {
+//                gravity_modifier = 0;
+//                RB.velocity = new Vector2(0, 0);
+//                RB.gravityScale = gravity_modifier * player_multiplier;
 
-                player_up_speed = bird_jump_height;
+//                player_up_speed = bird_jump_height;
 
-                was_upping = true;
-            }
-        }
-#endif
-    }
+//                was_upping = true;
+//            }
+//        }
+//#endif
+//    }
 
     private void Update()
     {
@@ -286,14 +314,13 @@ public class Player_Script : MonoBehaviour
             player_multiplier = Mathf.Clamp(player_multiplier, initialMultiplier, maxMultiplier);
         }
 
-        transform.Translate(Vector2.right * playerSpeed * player_multiplier * dashing_speed * acceleration * Time.deltaTime); //movement always happens
+        //set player animation speed. So it matches with game speed
+        playerAnimator.SetFloat("RunningMultiplier", player_multiplier * acceleration);
+
+        transform.Translate(Vector2.right * playerSpeed * player_multiplier * acceleration * Time.deltaTime); //movement always happens
 
         if (current_form != transformation_type.Normal)
         {
-            if (current_form == transformation_type.Bird)
-            {
-                PerformBirdJump();
-            }
 
             if (time_in_transformation_counter < time_before_transformation_ends)
             {
@@ -319,7 +346,7 @@ public class Player_Script : MonoBehaviour
                 expand_bomb.expanding_explosion(20, Vector2Int.RoundToInt((Vector2)transform.position));
 
                 //make sure we look normal
-                sprit.color = Color.blue;
+                //sprit.color = Color.blue;
             }
 
             //return; // dont do other stuff while transformed
@@ -337,6 +364,10 @@ public class Player_Script : MonoBehaviour
             player_up_speed -= Time.deltaTime * 9.82f * 3;
         }else if (gravity_modifier != 1 && was_upping == true)
         {
+            //start falling
+            Debug.Log("Fall 2");
+            playerAnimator.SetTrigger("Fall");
+
             was_upping = false;
 
             gravity_modifier = 1;
@@ -373,7 +404,7 @@ public class Player_Script : MonoBehaviour
 
     private void check_misc_connection(Vector2Int body_pos)
     {
-        if(GridScript.getCellAtPoint(body_pos).type == Cell.Cell_type.Jumppad)
+        if(GridScript.Cell_is_active_type(body_pos, Cell.Cell_type.Jumppad))
         {
             forcedJump(17);
         }
@@ -384,7 +415,7 @@ public class Player_Script : MonoBehaviour
             {
                 if (GridScript.Cell_is_active_type(body_pos + checkMagnetCoin_positions[i], Cell.Cell_type.collectable_coin))
                 {
-                    GridScript.deleteTile(body_pos + checkMagnetCoin_positions[i]);
+                    GridScript.deleteTile_exeptFloor(body_pos + checkMagnetCoin_positions[i]);
                     play_system.spawn_coin_referance(body_pos + checkMagnetCoin_positions[i], transform);
                 }
             }
@@ -419,16 +450,10 @@ public class Player_Script : MonoBehaviour
                 transform.position = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y));
                 player_up_speed = 0;
             }
-            else if(current_form == transformation_type.Bird && transform.position.y > 8) //transformation limit
-            {
-                transform.position = new Vector2(transform.position.x, GridScript.gridHeight - 1);
-                player_up_speed = 0;
-            }
             else
             {
                 transform.Translate(Vector2.up * player_up_speed * Time.deltaTime);
             }
-
         }
 
         Vector2Int Player_2Int_pos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
@@ -460,37 +485,41 @@ public class Player_Script : MonoBehaviour
 
             Cell_body_current = GridScript.getCellAtPoint(Player_2Int_pos);
 
-            Cell_ceiling_exist = GridScript.Cell_is_active_type(Ceiling_pos, Cell.Cell_type.Ground);
+            Cell_ceiling_exist = GridScript.Cell_is_walkable(Ceiling_pos);
 
-            if(Cell_body_current.type == Cell.Cell_type.Spike && Cell_body_current.isActive == true) //we die if we are occupying same block as spike
+            if (GridScript.Cell_is_dangerous(Cell_body_current)) //we die if we are occupying same block as spike
             {
-                DIE();
+                DIE(KindsOFDeath.Spike);
             }
 
             if (Cell_floor_exist || true) //remove perhaps
             {
-                if (Cell_body_current.isActive && !Cell_ceiling_exist && Cell_body_current.type == Cell.Cell_type.Ground)
+                if (GridScript.Cell_is_walkable(Cell_body_current) && !Cell_ceiling_exist)
                 {
-                    if (GridScript.Cell_is_active_type(Ceiling_pos + new Vector2Int(-1, 0), Cell.Cell_type.Ground))
+                    if (GridScript.Cell_is_walkable(Ceiling_pos + new Vector2Int(-1, 0))) //this is when you die in a corner
                     {
-                        DIE();
+                        DIE(KindsOFDeath.RunIntoCorner);
                     }
                     else //if (current_form != transformation_type.Dashing) // dashing cant move up
                     {
                         //MOVING UP ONE PIECE
-                        if(transform.position.y % 1 > 0.5f && transform.position.y % 1 < 0.8f) // is at very bottom of block
+                        if(transform.position.y % 1 > 0.5f && transform.position.y % 1 < 0.8f) // is at very bottom of a block
                         {
-                            DIE();
+                            DIE(KindsOFDeath.RunIntoWall);
                         }
                         else
                         {
                             if(transform.position.y + 1 >= GridScript.gridHeight - 0.4f) //stop player from going to top of screen
                             {
-                                DIE();
+                                DIE(KindsOFDeath.RunIntoWall);
                             }
                             else
                             {
+                                Debug.Log("Run 2");
+                                playerAnimator.SetTrigger("Run");
                                 Vector2 new_pos = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y + 1));
+                                Floor_pos = new Vector2Int((int)new_pos.x, (int)new_pos.y - 1);
+
 
                                 transform.position = new_pos;
                                 RB.velocity = new Vector2(0, 0);
@@ -498,31 +527,42 @@ public class Player_Script : MonoBehaviour
                         }
                     }
                 }
-                else if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
+                else if (GridScript.Cell_is_walkable(Cell_body_current))
                 {
-                    DIE();
+                    DIE(KindsOFDeath.RunIntoWall);
                 }
             }
             else
             {
-                if (Cell_body_current.isActive && Cell_body_current.type == Cell.Cell_type.Ground)
+                if (GridScript.Cell_is_walkable(Cell_body_current))
                 {
-                    DIE();
+                    DIE(KindsOFDeath.RunIntoWall);
                 }
             }
         }
         
-        Cell_floor_exist = GridScript.Cell_is_active_type(Floor_pos, Cell.Cell_type.Ground);
+        Cell_floor_exist = GridScript.Cell_is_walkable(Floor_pos);
 
-        if (!Cell_floor_exist || (transform.position.y > Floor_pos.y + 1))
+        if (!Cell_floor_exist || (transform.position.y > Floor_pos.y + 1.05f))
         {
+            if(player_up_speed > 0) { return; } //dont fall when rising
+
             if (im_dead || current_form == transformation_type.Dashing) { return; } //dead or dashing are not affected by gravity
+
+            if (RB.velocity.y > -Mathf.Epsilon) //time to begin fall?
+            {
+                Debug.Log("Fall 1");
+                playerAnimator.SetTrigger("Fall");
+            }
+
             RB.gravityScale = gravity_modifier * player_multiplier;
         }
-        else
+        else if(Cell_floor_exist) //land on ground ?
         {
             if(RB.gravityScale != 0)
             {
+                Debug.Log("Run 1");
+                playerAnimator.SetTrigger("Run");
                 transform.position = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y));
             }
             RB.gravityScale = 0;

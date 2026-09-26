@@ -176,6 +176,9 @@ public class GridEditor_Camera : MonoBehaviour
 
                 Grid_script.placeTile(currentGridMousePos, Colors_images[current_color_index].color, type_cell_placing, current_color_index, PlaceRotation);
 
+                //tell stuff like lasers to update. Should we have lasers in editor?
+                //Grid_script.GridBlocksUpdate();
+
                 if (using_random_colors)
                 {
                     update_counter_colorIndex();
