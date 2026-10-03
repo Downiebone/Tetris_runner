@@ -52,8 +52,7 @@ public class MeteorWarning : MonoBehaviour
 
         Vector2Int currSpot = Vector2Int.CeilToInt((Vector2)meteor.position);
 
-        Cell onCell = grid.getCellAtPoint(currSpot);
-        if(onCell.isActive == true && onCell.type == Cell.Cell_type.Ground)
+        if(grid.Cell_is_Active_and_blocking_building(currSpot))
         {
             //play some explosionSound
             MusicManager.Instance.play_soundeffect(ljud);
@@ -75,8 +74,7 @@ public class MeteorWarning : MonoBehaviour
             grid.GridBlocksUpdate();
 
             Destroy(this.gameObject);
-        }
-        
+        }    
     }
 
     IEnumerator flash()

@@ -4232,6 +4232,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1136920306}
+        m_TargetAssemblyTypeName: MusicManager, Assembly-CSharp
+        m_MethodName: Blip
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &593833403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4434,6 +4446,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1139070065}
         m_TargetAssemblyTypeName: menu_manager, Assembly-CSharp
         m_MethodName: Quests_Button
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1136920306}
+        m_TargetAssemblyTypeName: MusicManager, Assembly-CSharp
+        m_MethodName: Blip
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5268,6 +5292,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1139070065}
         m_TargetAssemblyTypeName: menu_manager, Assembly-CSharp
         m_MethodName: Load_shop_scren
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1136920306}
+        m_TargetAssemblyTypeName: MusicManager, Assembly-CSharp
+        m_MethodName: Blip
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6472,6 +6508,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1136920306}
+        m_TargetAssemblyTypeName: MusicManager, Assembly-CSharp
+        m_MethodName: Blip
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &947245059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6632,6 +6680,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1139070065}
         m_TargetAssemblyTypeName: menu_manager, Assembly-CSharp
         m_MethodName: add_money_debug
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1136920306}
+        m_TargetAssemblyTypeName: MusicManager, Assembly-CSharp
+        m_MethodName: Blip
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7325,6 +7385,7 @@ MonoBehaviour:
   effectsSource: {fileID: 1850303168}
   coinSource: {fileID: 635884083}
   coinSound: {fileID: 8300000, guid: 3af9ce9847fe152439c4d1150df89f08, type: 3}
+  BlipSound: {fileID: 8300000, guid: af72d52f711a3644086e83699d90a212, type: 3}
 --- !u!4 &1136920307
 Transform:
   m_ObjectHideFlags: 0
@@ -8721,6 +8782,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1139070065}
         m_TargetAssemblyTypeName: menu_manager, Assembly-CSharp
         m_MethodName: Start_Game
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1136920306}
+        m_TargetAssemblyTypeName: MusicManager, Assembly-CSharp
+        m_MethodName: Blip
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -17,6 +17,8 @@ public class MusicManager : MonoBehaviour
     private AudioSource coinSource;
     [SerializeField]
     private AudioClip coinSound;
+    [SerializeField]
+    private AudioClip BlipSound;
 
     private float damping_multiplier = 1.0f;
 
@@ -116,6 +118,15 @@ public class MusicManager : MonoBehaviour
         {
             coinTimer -= Time.deltaTime;
         }
+    }
+
+    public void Blip()
+    {
+        effectsSource.pitch = Random.Range(0.7f, 1.3f);
+
+        effectsSource.PlayOneShot(BlipSound);
+
+        effectsSource.pitch = 1;
     }
 
 

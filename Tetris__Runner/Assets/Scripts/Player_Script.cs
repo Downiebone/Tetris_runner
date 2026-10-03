@@ -65,6 +65,9 @@ public class Player_Script : MonoBehaviour
 
     private bool HaveCoinMagnet = false;
 
+    [SerializeField] AudioClip SplatSound;
+    [SerializeField] AudioClip JumpSound;
+
 
     // ############################################### --- Power Ups --- #################################################
 
@@ -81,6 +84,7 @@ public class Player_Script : MonoBehaviour
         RunIntoCorner = 1,
         Laser = 2,
         Spike = 3,
+        RunIntoWallAir = 4,
     }
 
     public transformation_type current_form = transformation_type.Normal;
@@ -139,6 +143,8 @@ public class Player_Script : MonoBehaviour
 
         if (current_form != transformation_type.Normal) { return; } //cant bomb in form
 
+        playerAnimator.SetTrigger("JumpSilly");
+
         //Debug.Log("BOMBED!!!!!!!!!");
 
         //bomb_timer = 0.5f;
@@ -159,6 +165,8 @@ public class Player_Script : MonoBehaviour
 
         playerAnimator.SetTrigger("JumpSilly");
 
+        MusicManager.Instance.play_soundeffect(JumpSound);
+
         gravity_modifier = 0;
         RB.velocity = new Vector2(0, 0);
         RB.gravityScale = gravity_modifier * player_multiplier;
@@ -178,6 +186,7 @@ public class Player_Script : MonoBehaviour
 
     private void DIE(KindsOFDeath DeathType)
     {
+        if (im_dead) { return; }
         if(current_form == transformation_type.Dashing || invincible_Counter > 0) { return; } //cant die while dashing or invincible
 
         //if(current_form == transformation_type.Bird) //end bird
@@ -206,37 +215,69 @@ public class Player_Script : MonoBehaviour
         }
         else //we are cooked
         {
+            cameraFollow_script.ShakeStart(0.5f, 0.5f);
+
+            im_dead = true;
+            RB.gravityScale = 0;
+            RB.velocity = new Vector2(0, 0);
+
             switch (DeathType)
             {
                 case KindsOFDeath.RunIntoWall:
                     playerAnimator.SetTrigger("DeathSplatNormal");
+                    StartCoroutine(DeathCoroutine());
+                    SplatFix();
                     break;
                 case KindsOFDeath.RunIntoCorner:
                     playerAnimator.SetTrigger("DeathSplatCorner");
+                    StartCoroutine(DeathCoroutine());
+                    SplatFix();
                     break;
                 case KindsOFDeath.Laser:
                     playerAnimator.SetTrigger("DeathMario");
+                    StartCoroutine(DeathCoroutine());
                     break;
                 case KindsOFDeath.Spike:
                     playerAnimator.SetTrigger("DeathMario");
+                    StartCoroutine(DeathCoroutine());
+                    break;
+                case KindsOFDeath.RunIntoWallAir:
+                    playerAnimator.SetTrigger("DeathSplatNormal");
+                    StartCoroutine(DeathCoroutine(true));
+                    SplatFix();
                     break;
             }
-
-
-            cameraFollow_script.ShakeStart(1);
-
-            im_dead = true;
-            play_system.player_died_collectionFunc();
-            RB.gravityScale = 0;
-            RB.velocity = new Vector2(0, 0);
         }
-       
-        
+    }
+    private void SplatFix()
+    {
+        transform.position = new Vector2(Mathf.RoundToInt(transform.position.x - 1), transform.position.y);
+        MusicManager.Instance.play_soundeffect(SplatSound);
+    }
+
+    private IEnumerator DeathCoroutine(bool ContinueAir = false)
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        if (ContinueAir)
+        {
+            playerAnimator.SetTrigger("ContinueAir");
+        }
+        else
+        {
+            playerAnimator.SetTrigger("Continue");
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        play_system.player_died_collectionFunc();
     }
 
     public void Revived() //add big fancy explosion?
     {
         im_dead = false;
+
+        playerAnimator.SetTrigger("Run");
 
         Instantiate(playerDeath, transform.position, Quaternion.identity);
         expand_bomb.expanding_explosion(25, Vector2Int.RoundToInt((Vector2)transform.position));
@@ -259,6 +300,18 @@ public class Player_Script : MonoBehaviour
             HaveCoinMagnet = true;
         }
         
+    }
+
+    public void checkBodyPosForSpecials(Vector2Int BodyCellPos)
+    {
+        if (GridScript.Cell_is_active_type(BodyCellPos, Cell.Cell_type.Jumppad))
+        {
+            forcedJump(17);
+        }
+        if (GridScript.Cell_is_dangerous(BodyCellPos)) //we die if we are occupying same block as spike
+        {
+            DIE(KindsOFDeath.Spike);
+        }
     }
 
 //    private void PerformBirdJump()
@@ -295,7 +348,7 @@ public class Player_Script : MonoBehaviour
 
     private void Update()
     {
-        if(Pause_Manager.GAME_IS_PAUSED == true) {
+        if(Pause_Manager.GAME_IS_PAUSED == true || im_dead) {
             return; 
         }
 
@@ -365,8 +418,6 @@ public class Player_Script : MonoBehaviour
         }else if (gravity_modifier != 1 && was_upping == true)
         {
             //start falling
-            Debug.Log("Fall 2");
-            playerAnimator.SetTrigger("Fall");
 
             was_upping = false;
 
@@ -404,10 +455,7 @@ public class Player_Script : MonoBehaviour
 
     private void check_misc_connection(Vector2Int body_pos)
     {
-        if(GridScript.Cell_is_active_type(body_pos, Cell.Cell_type.Jumppad))
-        {
-            forcedJump(17);
-        }
+        checkBodyPosForSpecials(body_pos);
 
         if (HaveCoinMagnet)
         {
@@ -434,10 +482,16 @@ public class Player_Script : MonoBehaviour
         
     }
 
-    
+    private void FixedUpdate()
+    {
+        //if(RB.gravityScale == 0) { return; }
+
+        playerAnimator.SetFloat("Downvelocity", RB.velocity.y);
+    }
+
     private void LateUpdate()
     {
-        if(Pause_Manager.GAME_IS_PAUSED == true) {
+        if(Pause_Manager.GAME_IS_PAUSED == true || im_dead) {
             RB.gravityScale = 0;
             RB.velocity = new Vector2(0, 0); //temp fix please
             return;
@@ -487,12 +541,7 @@ public class Player_Script : MonoBehaviour
 
             Cell_ceiling_exist = GridScript.Cell_is_walkable(Ceiling_pos);
 
-            if (GridScript.Cell_is_dangerous(Cell_body_current)) //we die if we are occupying same block as spike
-            {
-                DIE(KindsOFDeath.Spike);
-            }
-
-            if (Cell_floor_exist || true) //remove perhaps
+            if (Cell_floor_exist) //remove perhaps
             {
                 if (GridScript.Cell_is_walkable(Cell_body_current) && !Cell_ceiling_exist)
                 {
@@ -515,8 +564,6 @@ public class Player_Script : MonoBehaviour
                             }
                             else
                             {
-                                Debug.Log("Run 2");
-                                playerAnimator.SetTrigger("Run");
                                 Vector2 new_pos = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y + 1));
                                 Floor_pos = new Vector2Int((int)new_pos.x, (int)new_pos.y - 1);
 
@@ -536,7 +583,7 @@ public class Player_Script : MonoBehaviour
             {
                 if (GridScript.Cell_is_walkable(Cell_body_current))
                 {
-                    DIE(KindsOFDeath.RunIntoWall);
+                    DIE(KindsOFDeath.RunIntoWallAir);
                 }
             }
         }
@@ -549,20 +596,12 @@ public class Player_Script : MonoBehaviour
 
             if (im_dead || current_form == transformation_type.Dashing) { return; } //dead or dashing are not affected by gravity
 
-            if (RB.velocity.y > -Mathf.Epsilon) //time to begin fall?
-            {
-                Debug.Log("Fall 1");
-                playerAnimator.SetTrigger("Fall");
-            }
-
             RB.gravityScale = gravity_modifier * player_multiplier;
         }
         else if(Cell_floor_exist) //land on ground ?
         {
             if(RB.gravityScale != 0)
             {
-                Debug.Log("Run 1");
-                playerAnimator.SetTrigger("Run");
                 transform.position = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y));
             }
             RB.gravityScale = 0;

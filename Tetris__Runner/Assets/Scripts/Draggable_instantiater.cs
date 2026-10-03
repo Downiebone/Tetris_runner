@@ -75,7 +75,8 @@ public class Draggable_instantiater : MonoBehaviour
         weightTablePlaceables[6] = new Placable(6, 5); // ghost block
         weightTablePlaceables[7] = new Placable(7, 5); // jump pad
         int ColorBombWeight = 5 * PlayerPrefs.GetInt("Placeable_ColorBomb");
-        weightTablePlaceables[8] = new Placable(8, 10); // Color bomb
+        weightTablePlaceables[8] = new Placable(8, 5); // Color bomb
+        weightTablePlaceables[9] = new Placable(9, 25); // Dynamite
 
         total_placable_weight = 0;
         foreach (var item in weightTablePlaceables)

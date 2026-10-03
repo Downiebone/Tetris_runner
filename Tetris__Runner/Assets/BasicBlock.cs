@@ -5,6 +5,8 @@ using UnityEngine;
 public class BasicBlock : MonoBehaviour
 {
     GameObject GO = null;
+    [SerializeField] Animator blockAnimator;
+    private bool usingAnimator = false;
 
     //right now it is only for spawning special blocks
     //but maybe this should do more later?
@@ -21,9 +23,33 @@ public class BasicBlock : MonoBehaviour
 
     public void DestroyPlacedBlock()
     {
+        if (usingAnimator)
+        {
+            DisableAnimation();
+        }
         if(GO != null)
         {
             GO.GetComponent<Block_To_Inherit>().DestroyThisBlock();
         }
+    }
+
+    public void UseAnimation(RuntimeAnimatorController animController)
+    {
+        if(animController == null)
+        {
+            DisableAnimation();
+            return;
+        }
+
+        usingAnimator = true;
+        blockAnimator.runtimeAnimatorController = animController;
+
+        blockAnimator.enabled = true;
+    }
+
+    public void DisableAnimation()
+    {
+        usingAnimator = false;
+        blockAnimator.enabled = false;
     }
 }

@@ -12,6 +12,7 @@ public class CellTypes_Class
     [Tooltip("if this blocks needs to spawn something outside the gríd")] 
     public bool SpawnSeparateWorldObject;
     [Tooltip("Actual object to spawn if needed")] public GameObject ObjectToSpawn;
+    [Tooltip("AnimtorController if needed")] public RuntimeAnimatorController AnimatorIfUsed;
 
 }
 public class GridEditor : MonoBehaviour
@@ -324,6 +325,7 @@ public class GridEditor : MonoBehaviour
                 grid_cell.sprite_rend.color = set_color;
                 if (!grid_cell.isActive)
                 {
+                    grid_cell.BasicBlockScript.DisableAnimation();
                     grid_cell.sprite_rend.sprite = null;
                 }
                 else
@@ -335,6 +337,8 @@ public class GridEditor : MonoBehaviour
                     {
                         grid_cell.BasicBlockScript.PlacedBlock(new Vector2Int(j + x_value_to_start_loading, i), loaded_cell.Rotation, CellSprites_WithRotation[(int)loaded_cell.type].SpawnSeparateWorldObject, CellSprites_WithRotation[(int)loaded_cell.type].ObjectToSpawn);
                     }
+                   //currently only used for animating coins
+                    grid_cell.BasicBlockScript.UseAnimation(CellSprites_WithRotation[(int)loaded_cell.type].AnimatorIfUsed);
                 }
 
                 
@@ -526,7 +530,7 @@ public class GridEditor : MonoBehaviour
         //like the laser block!
         GridUpdatedEvent.Invoke();
     }
-    public void placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell, int color_index, int pieceRotation)
+    public Cell placeTile(Vector2Int pos, Color placeTileColor, Cell.Cell_type typa_cell, int color_index, int pieceRotation)
     {
         Cell cell = getCellAtPoint(pos.y, pos.x);
         //if (cell.isActive && cell.type == typa_cell)
@@ -550,6 +554,11 @@ public class GridEditor : MonoBehaviour
 
         //set sprite to correct sprite
         cell.sprite_rend.sprite = CellSprites_WithRotation[(int)cell.type].RotatableIcons[pieceRotation];
+
+        cell.BasicBlockScript.UseAnimation(CellSprites_WithRotation[(int)cell.type].AnimatorIfUsed);
+
+
+        return cell;
     }
     public void place_fullCell(Vector2Int pos, Cell newCell)
     {
@@ -577,6 +586,8 @@ public class GridEditor : MonoBehaviour
         cell.color_index = newCell.color_index;
 
         cell.sprite_rend.sprite = newCell.isActive == true? CellSprites_WithRotation[(int)cell.type].RotatableIcons[newCell.Rotation] : null;
+
+        cell.BasicBlockScript.UseAnimation(CellSprites_WithRotation[(int)cell.type].AnimatorIfUsed);
     }
 
     //for editor?
@@ -592,11 +603,17 @@ public class GridEditor : MonoBehaviour
         {
             return;
         }
+
+        //if object we are replacing is an object who placed something in the scene
+        cell.BasicBlockScript.DestroyPlacedBlock();
+
         cell.type = replace_to_type;
         cell.sprite_rend.color = Color.white;
         cell.sprite_rend.sprite = CellSprites_WithRotation[(int)cell.type].RotatableIcons[cell.Rotation];
 
-        cell.BasicBlockScript.DestroyPlacedBlock();
+        cell.BasicBlockScript.UseAnimation(CellSprites_WithRotation[(int)cell.type].AnimatorIfUsed);
+
+
     }
 
     //for editor?

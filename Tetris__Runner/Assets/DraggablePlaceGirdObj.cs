@@ -139,25 +139,22 @@ public class DraggablePlaceGridObj : draggable_piece
 
         bool placeOnPlayer = false;
 
-        for (int i = 0; i < HighlightSpots.Length; i++)
+        if ((LastWorkingPlaceSpot) == Vector2Int.RoundToInt((Vector2)player_pos.position)) //if we place on the player
         {
-            if ((LastWorkingPlaceSpot + HighlightSpots[i]) == Vector2Int.RoundToInt((Vector2)player_pos.position)) //if we place on the player
-            {
-                placeOnPlayer = true;
-            }
-
-            GridObj.placeTile(new Vector2Int((int)CameraObj.HighlightObjects[i].transform.position.x, (int)CameraObj.HighlightObjects[i].transform.position.y), Color.white, cellType_ToPlace, 0, 0);
+            placeOnPlayer = true;
         }
+
+        Cell updatedCell = GridObj.placeTile(LastWorkingPlaceSpot, Color.white, cellType_ToPlace, 0, 0);
 
         //tell stuff like lasers to update
         GridObj.GridBlocksUpdate();
 
         if (placeOnPlayer)
         {
-            //player_pos.gameObject.GetComponent<Player_Script>().PlaceCelltypeOnPlayer(cellType_ToPlace);
+            player_pos.gameObject.GetComponent<Player_Script>().checkBodyPosForSpecials(LastWorkingPlaceSpot);
         }
 
-        Instantiate(prefab_to_spawn, (Vector2)LastWorkingPlaceSpot, Quaternion.identity);
+        updatedCell.BasicBlockScript.PlacedBlock(LastWorkingPlaceSpot, 0, true, prefab_to_spawn);
 
         MusicManager.Instance.play_soundeffect(place_sound, use_pitch_varying);
 
