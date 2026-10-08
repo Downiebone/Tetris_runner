@@ -5,6 +5,8 @@ using UnityEngine;
 public class draggable_piece : MonoBehaviour
 {
 
+    public int TypeOfDraggable_Index = 0;
+
     [SerializeField] protected GameObject sprite_ref;
 
     protected Draggable_instantiater CameraObj;

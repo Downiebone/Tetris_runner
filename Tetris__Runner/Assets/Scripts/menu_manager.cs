@@ -10,6 +10,8 @@ public class menu_manager : MonoBehaviour
     public GameObject Settings_part;
     public GameObject Quests_part;
 
+    [SerializeField] private Animator UI_Fade_Animator;
+
     void Awake()
     {
         fix_playerprefs();
@@ -67,12 +69,21 @@ public class menu_manager : MonoBehaviour
 
     public void Start_Game()
     {
-        SceneManager.LoadScene("GameScene"); //reload current scene?
+        StartCoroutine(waitforMenuLoad("GameScene"));
     }
 
     public void Load_shop_scren()
     {
-        SceneManager.LoadScene("Shop"); //load shop
+        StartCoroutine(waitforMenuLoad("Shop"));
+    }
+
+    IEnumerator waitforMenuLoad(string sceneName)
+    {
+        UI_Fade_Animator.SetTrigger("Fade");
+
+        yield return new WaitForSeconds(2);
+
+        SceneManager.LoadScene(sceneName);
     }
 
     public void Settings_Button()

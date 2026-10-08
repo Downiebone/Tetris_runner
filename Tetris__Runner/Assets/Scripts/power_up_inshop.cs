@@ -14,16 +14,15 @@ public class power_up_inshop : MonoBehaviour
     [SerializeField] private TMP_Text Prize_Text;
 
     [Space]
-    [SerializeField] private string player_pref_powerup;
-    [SerializeField] private int player_pref_ordering;
+    public string player_pref_draggable;
     [Space]
 
     [SerializeField] private GameObject buy_screen;
     [SerializeField] private CanvasGroup canva_group;
 
-    [SerializeField] private string myName;
-    [SerializeField] private string myDescript;
-    [SerializeField] private Sprite mySprit;
+    public string myName;
+    public string myDescript;
+    public Sprite mySprit;
 
     [SerializeField] private int Prize = 50;
     [SerializeField] private float Prize_Multiplier_on_bought = 2;
@@ -34,9 +33,7 @@ public class power_up_inshop : MonoBehaviour
 
     void Start()
     {
-        current_bought_level = PlayerPrefs.GetInt(player_pref_powerup);
-
-        shop_Manage = GameObject.FindGameObjectWithTag("Shop").GetComponent<SHOP_MANAGER>();
+        current_bought_level = PlayerPrefs.GetInt(player_pref_draggable);
 
         Prize = Mathf.RoundToInt(Mathf.Pow(Prize_Multiplier_on_bought, current_bought_level) * Prize);
 
@@ -94,13 +91,13 @@ public class power_up_inshop : MonoBehaviour
     }
     public void upgrade_me()
     {
-        if(PlayerPrefs.GetInt("Money") > Prize && PlayerPrefs.GetInt(player_pref_powerup) < upgrade_parts)
+        if(PlayerPrefs.GetInt("Money") > Prize && PlayerPrefs.GetInt(player_pref_draggable) < upgrade_parts)
         {
             PlayerPrefs.SetInt("Money", PlayerPrefs.GetInt("Money") - Prize); // remove money
             shop_Manage.UpdateMoney_Text();
 
             current_bought_level++;
-            PlayerPrefs.SetInt(player_pref_powerup, PlayerPrefs.GetInt(player_pref_powerup) + 1);
+            PlayerPrefs.SetInt(player_pref_draggable, PlayerPrefs.GetInt(player_pref_draggable) + 1);
 
             
 
@@ -115,9 +112,7 @@ public class power_up_inshop : MonoBehaviour
     {
         if (current_bought_level != 0)
         {
-            shop_Manage.Set_selected_PowerUp(myName, myDescript, mySprit, upgrade_parts, current_bought_level);
-
-            PlayerPrefs.SetInt("PowerUp_Selected", player_pref_ordering);
+            shop_Manage.Set_selected_PowerUp(mySprit, player_pref_draggable);
         }
 
         leave_enter_state();
@@ -125,8 +120,8 @@ public class power_up_inshop : MonoBehaviour
 
     public void transfer_my_selected(SHOP_MANAGER managered)
     {
-        current_bought_level = PlayerPrefs.GetInt(player_pref_powerup);
+        current_bought_level = PlayerPrefs.GetInt(player_pref_draggable);
 
-        managered.Set_selected_PowerUp(myName, myDescript, mySprit, upgrade_parts, current_bought_level);
+        //managered.Set_selected_PowerUp(myName, myDescript, mySprit, upgrade_parts, current_bought_level);
     }
 }

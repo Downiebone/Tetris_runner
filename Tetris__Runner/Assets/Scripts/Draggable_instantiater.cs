@@ -56,6 +56,13 @@ public class Draggable_instantiater : MonoBehaviour
     //public float FASTtimeBetweenSpawns = 0.2f;
     //private float timer_ind = 255;
 
+    [Space]
+    [Header("PlayerPrefNames")]
+    [SerializeField] private string Dynamite_Playerpref;
+    [SerializeField] private string GoldBomb_Playerpref;
+    [SerializeField] private string Jumppad_Playerpref;
+    [SerializeField] private string ColorBomb_Playerpref;
+
     private void GeneratePlaceableTable()
     {
         weightTablePlaceables = new Placable[Spawnable_Draggable.Length];
@@ -66,17 +73,30 @@ public class Draggable_instantiater : MonoBehaviour
         weightTablePlaceables[3] = new Placable(3, 20); // 
         weightTablePlaceables[4] = new Placable(4, 12); // bomb
         int goldWeight = 0;
-        if(PlayerPrefs.GetInt("Placeable_GoldBomb") > 0)
+        if(PlayerPrefs.GetInt(GoldBomb_Playerpref + "_Selected") == 1)
         {
-            goldWeight = 5;
+            goldWeight = PlayerPrefs.GetInt(GoldBomb_Playerpref) * 3;
         }
-        weightTablePlaceables[5] = new Placable(5, 5); // gold bomb
-        int ghostWeight = 5 * PlayerPrefs.GetInt("Placeable_GhostBlock");
-        weightTablePlaceables[6] = new Placable(6, 5); // ghost block
-        weightTablePlaceables[7] = new Placable(7, 5); // jump pad
-        int ColorBombWeight = 5 * PlayerPrefs.GetInt("Placeable_ColorBomb");
-        weightTablePlaceables[8] = new Placable(8, 5); // Color bomb
-        weightTablePlaceables[9] = new Placable(9, 25); // Dynamite
+        weightTablePlaceables[5] = new Placable(5, goldWeight); // gold bomb
+        weightTablePlaceables[6] = new Placable(6, 0); // ghost block CURRENTLY NOT USED
+        int jumppadWeight = 0;
+        if (PlayerPrefs.GetInt(Jumppad_Playerpref + "_Selected") == 1)
+        {
+            jumppadWeight = PlayerPrefs.GetInt(Jumppad_Playerpref) * 3;
+        }
+        weightTablePlaceables[7] = new Placable(7, jumppadWeight); // jump pad
+        int ColorBombWeight = 0;
+        if (PlayerPrefs.GetInt(ColorBomb_Playerpref + "_Selected") == 1)
+        {
+            ColorBombWeight = PlayerPrefs.GetInt(ColorBomb_Playerpref) * 3;
+        }
+        weightTablePlaceables[8] = new Placable(8, ColorBombWeight); // Color bomb
+        int DynamiteWeight = 0;
+        if (PlayerPrefs.GetInt(Dynamite_Playerpref + "_Selected") == 1)
+        {
+            DynamiteWeight = PlayerPrefs.GetInt(Dynamite_Playerpref) * 3;
+        }
+        weightTablePlaceables[9] = new Placable(9, DynamiteWeight); // Dynamite
 
         total_placable_weight = 0;
         foreach (var item in weightTablePlaceables)
@@ -85,6 +105,9 @@ public class Draggable_instantiater : MonoBehaviour
         }
     }
 
+    //check if we have changed draggablelist (for example for some quest)
+    public bool hasModifiedDraggableList = false;
+
     public void ModifyDraggableList(int[] DraggablesToInclude)
     {
         if(DraggablesToInclude.Length > Spawnable_Draggable.Length)
@@ -92,6 +115,8 @@ public class Draggable_instantiater : MonoBehaviour
             Debug.LogError("too many draggables to removes");
             throw new System.Exception();
         }
+
+        hasModifiedDraggableList = true;
 
         GameObject[] TempDraggableList = new GameObject[DraggablesToInclude.Length];
 
@@ -181,6 +206,49 @@ public class Draggable_instantiater : MonoBehaviour
         spawn_all_draggables();
     }
 
+    /// <summary>
+    /// if we already have instantiated a draggable_piece of the type "index_", return true
+    /// otherwise false
+    /// </summary>
+    private bool alreadyHasDraggableOfIndex(int index_)
+    {
+        for (int i = 0; i < Draggables.Count; i++)
+        {
+            if(Draggables[i].GetComponent<draggable_piece>().TypeOfDraggable_Index == index_)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    List<Placable> removedItemsFromLootTable = new List<Placable>();
+    //make sure we dont get same item twice
+    private void removeItemFromLootTable(int itemIndex, int itemOG_weight)
+    {
+        removedItemsFromLootTable.Add(new Placable(itemIndex, itemOG_weight));
+
+        total_placable_weight -= weightTablePlaceables[itemIndex].spawnWeight;
+        weightTablePlaceables[itemIndex].spawnWeight = 0;
+    }
+    //okej, item is gone we can add it back to loot table
+    private void addItemBackToLootTable(int index_)
+    {
+
+        for (int i = 0; i < removedItemsFromLootTable.Count; i++)
+        {
+            //if we found the item_index of item we want to add back
+            //then add back its spawnWeight, and adjust totalt weight
+            if(removedItemsFromLootTable[i].item_id == index_)
+            {
+                weightTablePlaceables[index_].spawnWeight = removedItemsFromLootTable[i].spawnWeight;
+                total_placable_weight += removedItemsFromLootTable[i].spawnWeight;
+                removedItemsFromLootTable.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
     private GameObject instantiate_draggable(Vector3 pos, Transform parent = null)
     {
         int randomWeight = Random.Range(1, total_placable_weight);
@@ -189,7 +257,12 @@ public class Draggable_instantiater : MonoBehaviour
         {
             if (randomWeight <= weightTablePlaceables[i].spawnWeight)
             {
-                return Instantiate(Spawnable_Draggable[weightTablePlaceables[i].item_id], pos, Quaternion.identity, parent);
+                removeItemFromLootTable(weightTablePlaceables[i].item_id, weightTablePlaceables[i].spawnWeight);
+
+                GameObject dragGO = Instantiate(Spawnable_Draggable[weightTablePlaceables[i].item_id], pos, Quaternion.identity, parent);
+                dragGO.GetComponent<draggable_piece>().setReferences(this, GridScript);
+                dragGO.GetComponent<draggable_piece>().TypeOfDraggable_Index = weightTablePlaceables[i].item_id;
+                return dragGO;
             }
             else randomWeight -= weightTablePlaceables[i].spawnWeight;
         }
@@ -203,7 +276,6 @@ public class Draggable_instantiater : MonoBehaviour
         {
             GameObject GO = instantiate_draggable(offside_spawnPos.position, transform);
             GO.GetComponent<draggable_piece>().myDraggableIndex = Draggables.Count;
-            GO.GetComponent<draggable_piece>().setReferences(this, GridScript);
             Draggables.Add(GO);
         }
         highlight_first_draggable();
@@ -219,7 +291,6 @@ public class Draggable_instantiater : MonoBehaviour
     {
         GameObject GO = instantiate_draggable(offside_spawnPos.position, transform);
         GO.GetComponent<draggable_piece>().myDraggableIndex = Draggables.Count;
-        GO.GetComponent<draggable_piece>().setReferences(this, GridScript);
         Draggables.Add(GO);
     }
 
@@ -297,6 +368,8 @@ public class Draggable_instantiater : MonoBehaviour
             currently_chosen_draggable = Draggables[0].GetComponent<draggable_piece>();
         }
         currently_chosen_draggable.Highlight();
+
+        addItemBackToLootTable(Draggables[index].GetComponent<draggable_piece>().TypeOfDraggable_Index);
 
         Draggables.RemoveAt(index);
 

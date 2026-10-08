@@ -11,13 +11,9 @@ public class Pause_Manager : MonoBehaviour
     [SerializeField] private GameObject UI_pause_menu;
     [SerializeField] private level_play_system play_System;
 
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Animator UI_Fade_Animator;
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
         
     }
@@ -57,6 +53,15 @@ public class Pause_Manager : MonoBehaviour
         GAME_IS_PAUSED = false;
         Resources.UnloadUnusedAssets();
         System.GC.Collect();
+
+        StartCoroutine(waitforMenuLoad());
+    }
+
+    IEnumerator waitforMenuLoad()
+    {
+        UI_Fade_Animator.SetTrigger("Fade");
+
+        yield return new WaitForSeconds(2);
 
         SceneManager.LoadScene("Menu");
     }

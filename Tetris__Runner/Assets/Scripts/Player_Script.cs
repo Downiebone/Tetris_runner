@@ -551,16 +551,47 @@ public class Player_Script : MonoBehaviour
                     }
                     else //if (current_form != transformation_type.Dashing) // dashing cant move up
                     {
-                        //MOVING UP ONE PIECE
-                        if(transform.position.y % 1 > 0.5f && transform.position.y % 1 < 0.8f) // is at very bottom of a block
+                        if(transform.position.y + 1 >= GridScript.gridHeight - 0.4f) //stop player from going to top of screen
                         {
                             DIE(KindsOFDeath.RunIntoWall);
                         }
                         else
                         {
-                            if(transform.position.y + 1 >= GridScript.gridHeight - 0.4f) //stop player from going to top of screen
+                            Vector2 new_pos = new Vector2(transform.position.x, Mathf.RoundToInt(transform.position.y + 1));
+                            Floor_pos = new Vector2Int((int)new_pos.x, (int)new_pos.y - 1);
+
+
+                            transform.position = new_pos;
+                            RB.velocity = new Vector2(0, 0);
+                        }
+
+                    }
+                }
+                else if (GridScript.Cell_is_walkable(Cell_body_current))
+                {
+                    DIE(KindsOFDeath.RunIntoWall);
+                }
+            }
+            else
+            {
+                if (GridScript.Cell_is_walkable(Cell_body_current) && !Cell_ceiling_exist)
+                {
+                    if (GridScript.Cell_is_walkable(Ceiling_pos + new Vector2Int(-1, 0))) //this is when you die in a corner
+                    {
+                        DIE(KindsOFDeath.RunIntoWallAir);
+                    }
+                    else
+                    {
+                        // is at very bottom of a block
+                        if (transform.position.y % 1 > 0.5f && transform.position.y % 1 < 0.8f)
+                        {
+                            DIE(KindsOFDeath.RunIntoWallAir);
+                        }
+                        else
+                        {
+                            if (transform.position.y + 1 >= GridScript.gridHeight - 0.4f) //stop player from going to top of screen
                             {
-                                DIE(KindsOFDeath.RunIntoWall);
+                                DIE(KindsOFDeath.RunIntoWallAir);
                             }
                             else
                             {
@@ -575,13 +606,6 @@ public class Player_Script : MonoBehaviour
                     }
                 }
                 else if (GridScript.Cell_is_walkable(Cell_body_current))
-                {
-                    DIE(KindsOFDeath.RunIntoWall);
-                }
-            }
-            else
-            {
-                if (GridScript.Cell_is_walkable(Cell_body_current))
                 {
                     DIE(KindsOFDeath.RunIntoWallAir);
                 }

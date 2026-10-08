@@ -9,41 +9,49 @@ public class SHOP_MANAGER : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] private TMP_Text money_texs;
 
-    public GameObject powerup_side;
+    public GameObject draggable_side;
     public GameObject item_side;
+    public GameObject skins_side;
 
     public void EnterPowerupSide()
     {
-        powerup_side.SetActive(true);
+        draggable_side.SetActive(true);
         item_side.SetActive(false);
+        skins_side.SetActive(false);
     }
     public void EnterItemSide()
     {
         item_side.SetActive(true);
-        powerup_side.SetActive(false);
+        draggable_side.SetActive(false);
+        skins_side.SetActive(false);
+    }
+    public void EnterSkinsSide()
+    {
+        skins_side.SetActive(true);
+        item_side.SetActive(false);
+        draggable_side.SetActive(false);
     }
 
-
-    [Header("Selected PowerUp")]
-    [SerializeField] private TMP_Text name_obj;
-    [SerializeField] private TMP_Text description_obj;
-    [SerializeField] private Image icon_sprit;
-    [SerializeField] private GameObject Obj_holding_bars;
-
+    [Space]
     [Header("Selected Item")]
-    private int itemToSelect = 1;
-
-    private string item_playerPref_1;
     [SerializeField] private TMP_Text item_name_1;
     [SerializeField] private Image item_icon_1;
     [SerializeField] private Image Item_1_Holder;
+    private string item_playerPref_1;
     [Space]
-    private string item_playerPref_2;
     [SerializeField] private TMP_Text item_name_2;
     [SerializeField] private Image item_icon_2;
     [SerializeField] private Image Item_2_Holder;
+    private string item_playerPref_2;
+    private int itemToSelect = 1;
+
+
+    [Header("Draggables")]
+
+    [SerializeField] private Transform DraggablesSelected_Holder;
 
     [SerializeField] private power_up_inshop[] powers;
+    [SerializeField] private GameObject Draggable_Selected_Prefab;
     [SerializeField] private Item_Inshop[] items;
 
     void Start()
@@ -54,19 +62,13 @@ public class SHOP_MANAGER : MonoBehaviour
 
     private void select_last_selected_powerup()
     {
-        powers[PlayerPrefs.GetInt("PowerUp_Selected")].transfer_my_selected(this);
-
-        HighlightItemHolder(1);
-
-        if (PlayerPrefs.GetInt("Item_Selected_1") != 0)
+        for (int i = 0; i < powers.Length; i++)
         {
-            itemToSelect = 1;
-            items[PlayerPrefs.GetInt("Item_Selected_1") - 1].transfer_my_selected(this, 1);
-        }
-        if (PlayerPrefs.GetInt("Item_Selected_2") != 0)
-        {
-            itemToSelect = 2;
-            items[PlayerPrefs.GetInt("Item_Selected_2") - 1].transfer_my_selected(this, 2);
+            if(PlayerPrefs.GetInt(powers[i].player_pref_draggable + "_Selected") == 1)
+            {
+                GameObject GO = Instantiate(Draggable_Selected_Prefab, Vector3.one, Quaternion.identity, DraggablesSelected_Holder);
+                GO.GetComponent<SelectedDraggable>().SetupSelectedDraggable(powers[i].player_pref_draggable, powers[i].mySprit);
+            }
         }
     }
     public void UpdateMoney_Text()
@@ -147,33 +149,24 @@ public class SHOP_MANAGER : MonoBehaviour
 
     }
 
-    public void Set_selected_PowerUp(string myName, string myDescript, Sprite mySprit, int upgrade_parts, int current_bought_level)
+    public void Set_selected_PowerUp(Sprite mySprit, string PlayerPrefName)
     {
-        name_obj.text = myName;
-        description_obj.text = myDescript;
-        icon_sprit.sprite = mySprit;
-
-        for (int i = 0; i < Obj_holding_bars.transform.childCount; i++) // make only @upgrade_parts children visable
+        if (PlayerPrefs.GetInt(PlayerPrefName + "_Selected") == 1)
         {
-            if (i < upgrade_parts)
-            {
-                Obj_holding_bars.transform.GetChild(i).gameObject.SetActive(true);
-            }
-            else
-            {
-                Obj_holding_bars.transform.GetChild(i).gameObject.SetActive(false);
-            }
-
-            if (i < current_bought_level)
-            {
-                Obj_holding_bars.transform.GetChild(i).gameObject.GetComponent<Image>().color = Color.green; // bought level
-            }
-            else
-            {
-                Obj_holding_bars.transform.GetChild(i).gameObject.GetComponent<Image>().color = Color.white;
-            }
+            //if object already Selected, dont do anything
+            return;
         }
+
+        PlayerPrefs.SetInt(PlayerPrefName + "_Selected", 1);
+
+        GameObject GO = Instantiate(Draggable_Selected_Prefab, Vector3.one, Quaternion.identity, DraggablesSelected_Holder);
+        GO.GetComponent<SelectedDraggable>().SetupSelectedDraggable(PlayerPrefName, mySprit);
     }
+
+    //public void RemovePowerUp(string PlayerPrefName)
+    //{
+    //    PlayerPrefs.SetInt(PlayerPrefName + "_Selected", 0);
+    //}
 
     public void Load_Main_Menu()
     {
