@@ -48,10 +48,19 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 2c231068ce578c1418eae3148b503050, type: 3}
     - {fileID: 2800000, guid: 86e3b72d36fc127448df9e3c5a887d62, type: 3}
     - {fileID: 2800000, guid: 78459d64bc3543045a89dd245ece92b3, type: 3}
+    - {fileID: 2800000, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
+    - cf166de3a1349df4295181bcd9dd6113: -158510854
+    - cf166de3a1349df4295181bcd9dd6113: -2114069670
+    - cf166de3a1349df4295181bcd9dd6113: -728046280
+    - cf166de3a1349df4295181bcd9dd6113: 1962094837
+    - cf166de3a1349df4295181bcd9dd6113: 2019087352
+    - cf166de3a1349df4295181bcd9dd6113: -1101064211
+    - cf166de3a1349df4295181bcd9dd6113: -1058160364
+    - cf166de3a1349df4295181bcd9dd6113: 889117180
     - 78459d64bc3543045a89dd245ece92b3: -515443498
     - 78459d64bc3543045a89dd245ece92b3: 1450616081
     - 78459d64bc3543045a89dd245ece92b3: 1199660565
@@ -1386,6 +1395,14 @@ SpriteAtlas:
     - 86e3b72d36fc127448df9e3c5a887d62: -1856268870
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: -158510854, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
+  - {fileID: -2114069670, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
+  - {fileID: -728046280, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
+  - {fileID: 1962094837, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
+  - {fileID: 2019087352, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
+  - {fileID: -1101064211, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
+  - {fileID: -1058160364, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
+  - {fileID: 889117180, guid: cf166de3a1349df4295181bcd9dd6113, type: 3}
   - {fileID: -515443498, guid: 78459d64bc3543045a89dd245ece92b3, type: 3}
   - {fileID: 1450616081, guid: 78459d64bc3543045a89dd245ece92b3, type: 3}
   - {fileID: 1199660565, guid: 78459d64bc3543045a89dd245ece92b3, type: 3}
@@ -2719,6 +2736,14 @@ SpriteAtlas:
   - {fileID: -1633381081, guid: 86e3b72d36fc127448df9e3c5a887d62, type: 3}
   - {fileID: -1856268870, guid: 86e3b72d36fc127448df9e3c5a887d62, type: 3}
   m_PackedSpriteNamesToIndex:
+  - Lamps_5
+  - Lamps_4
+  - Lamps_7
+  - Lamps_6
+  - Lamps_1
+  - Lamps_0
+  - Lamps_3
+  - Lamps_2
   - 8_8SpaceShipAsset_343
   - 8_8SpaceShipAsset_313
   - 8_8SpaceShipAsset_831

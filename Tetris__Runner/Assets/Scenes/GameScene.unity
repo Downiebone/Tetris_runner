@@ -11854,8 +11854,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 0x
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5795590c3d1f0d04284a1e94af0e878a, type: 2}
+  m_sharedMaterial: {fileID: -3053900587231732399, guid: 5795590c3d1f0d04284a1e94af0e878a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11879,8 +11879,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25
-  m_fontSizeBase: 25
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -12170,7 +12170,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &659390943
@@ -19465,6 +19465,7 @@ MonoBehaviour:
   GoldBomb_Playerpref: Draggable_GoldBomb
   Jumppad_Playerpref: Draggable_Jumppad
   ColorBomb_Playerpref: Draggable_ColorBomb
+  hasModifiedDraggableList: 0
   HighlightObjects:
   - {fileID: 876334252}
   - {fileID: 1341997614}
@@ -20264,8 +20265,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5795590c3d1f0d04284a1e94af0e878a, type: 2}
+  m_sharedMaterial: {fileID: -3053900587231732399, guid: 5795590c3d1f0d04284a1e94af0e878a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -20289,8 +20290,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25
-  m_fontSizeBase: 25
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -21653,7 +21654,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: 19.999992, y: 0}
-  m_SizeDelta: {x: 35, y: 35}
+  m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1134100315
 MonoBehaviour:
@@ -21675,8 +21676,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3b22f45192083d34fad154d382b4e303, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: -102905530, guid: ac741c7bd5e3b2945a8cabd4a36931eb, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -27231,9 +27232,10 @@ MonoBehaviour:
   DistanceToCountAsTouching_TransObj: 1.5
   X_DistanceSufficientlyBehindPlayer: 5
   SpawnTransformationObject: {fileID: 1437048763}
-  minTimeFor_TransSpawn: 1
-  maxTimeFor_TransSpawn: 5
+  minTimeFor_TransSpawn: 10
+  maxTimeFor_TransSpawn: 20
   gridScript: {fileID: 1706009099}
+  SpawnCollectDiamonEffect: {fileID: 6344181444992140248, guid: 05d2cdc303d604643a739179430bfe03, type: 3}
 --- !u!1 &1363525721
 GameObject:
   m_ObjectHideFlags: 0
@@ -31533,7 +31535,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -6.5151367}
+  m_AnchoredPosition: {x: 0, y: 69}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1614694448
@@ -32980,7 +32982,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shouldStartByLoadingLevel: 1
-  x_value_to_start_loading: 10
+  x_value_to_start_loading: 25
   x_value_offset_from_player_to_load: 30
   Save_script: {fileID: 1706009101}
   play_system: {fileID: 844012772}
@@ -39057,8 +39059,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 999x
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5795590c3d1f0d04284a1e94af0e878a, type: 2}
+  m_sharedMaterial: {fileID: -3053900587231732399, guid: 5795590c3d1f0d04284a1e94af0e878a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -39082,8 +39084,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25
-  m_fontSizeBase: 25
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -77,6 +77,11 @@ public class menu_manager : MonoBehaviour
         StartCoroutine(waitforMenuLoad("Shop"));
     }
 
+    public void Load_cellar_scren()
+    {
+        StartCoroutine(waitforMenuLoad("Cellar"));
+    }
+
     IEnumerator waitforMenuLoad(string sceneName)
     {
         UI_Fade_Animator.SetTrigger("Fade");

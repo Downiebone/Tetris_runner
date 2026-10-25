@@ -20,6 +20,8 @@ public class TransformationManager : MonoBehaviour
     [SerializeField] private int maxTimeFor_TransSpawn = 0;
     [SerializeField] private GridEditor gridScript;
 
+    [SerializeField] private GameObject SpawnCollectDiamonEffect;
+
     void Start()
     {
         setTimeTillNext_Transformation();
@@ -29,7 +31,7 @@ public class TransformationManager : MonoBehaviour
     {
         Debug.Log("SPAWNED TRANS");
 
-        SpawnTransformationObject.SetActive(true);
+        SpawnTransformationObject.GetComponent<SpriteRenderer>().enabled = true;
 
         SpawnTransformationObject.transform.position = spawnPos;
 
@@ -40,7 +42,11 @@ public class TransformationManager : MonoBehaviour
     {
         Debug.Log("COLLECTED TRANS");
 
-        SpawnTransformationObject.SetActive(false);
+        PlayerPrefs.SetInt("Diamonds", PlayerPrefs.GetInt("Diamonds") + 1);
+
+        Instantiate(SpawnCollectDiamonEffect, SpawnTransformationObject.transform.position, Quaternion.identity);
+
+        SpawnTransformationObject.GetComponent<SpriteRenderer>().enabled = false;
         //Probably do some kind of effect here. A pickup effect
         //Also do some sound effect
 
@@ -57,8 +63,6 @@ public class TransformationManager : MonoBehaviour
     private void MissToCollect_TransformationObject()
     {
         Debug.Log("MISSED TRANS");
-
-        SpawnTransformationObject.SetActive(false);
 
         TransformationSpawn_IsSpawned = false;
 
