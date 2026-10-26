@@ -31,14 +31,43 @@ public class CellarBoundsManager : MonoBehaviour
 {
     public CellarCubeLayer[] CellAreaPlaceMent;
 
+    [SerializeField] private LayerMask placeOnFloorMask;
+    [SerializeField] private LayerMask placeOnCeilingMask;
+
     public float GetDistanceToMoveDownGroundObj(Vector2 object_pos, CellarPlacableObj CellarOb)
     {
         float minDistance = 0;
 
         if (CellarOb.KindaObject == CellarPlacableObj.ObjectType.PlacableOnFloor)
         {
-            RaycastHit2D hit1 = Physics2D.Raycast(object_pos + CellarOb.CellarObjCorners.BotLeft, Vector2.down);
-            RaycastHit2D hit2 = Physics2D.Raycast(object_pos + CellarOb.CellarObjCorners.BotRight, Vector2.down);
+            RaycastHit2D hit1 = Physics2D.Raycast(object_pos + CellarOb.CellarObjCorners.BotLeft, Vector2.down, 20 , placeOnFloorMask);
+            RaycastHit2D hit2 = Physics2D.Raycast(object_pos + CellarOb.CellarObjCorners.BotRight, Vector2.down, 20, placeOnFloorMask);
+
+            if (hit1 && hit2)
+            {
+                minDistance = hit1.distance < hit2.distance ? hit1.distance : hit2.distance;
+            }
+            else if (hit1)
+            {
+                minDistance = hit1.distance;
+            }
+            else if (hit2)
+            {
+                minDistance = hit2.distance;
+            }
+        }
+
+        return minDistance;
+    }
+
+    public float GetDistanceToMoveUpCeilingObj(Vector2 object_pos, CellarPlacableObj CellarOb)
+    {
+        float minDistance = 0;
+
+        if (CellarOb.KindaObject == CellarPlacableObj.ObjectType.PlacableOnCeiling)
+        {
+            RaycastHit2D hit1 = Physics2D.Raycast(object_pos + CellarOb.CellarObjCorners.TopLeft, Vector2.up, 20, placeOnCeilingMask);
+            RaycastHit2D hit2 = Physics2D.Raycast(object_pos + CellarOb.CellarObjCorners.TopRight, Vector2.up, 20, placeOnCeilingMask);
 
             if (hit1 && hit2)
             {

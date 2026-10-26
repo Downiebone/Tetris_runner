@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5506531001699638534}
   - component: {fileID: 2081982319007617305}
   - component: {fileID: 9002618647630059712}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PlacableTableObj
   m_TagString: Untagged
   m_Icon: {fileID: 0}

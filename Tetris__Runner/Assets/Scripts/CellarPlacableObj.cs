@@ -30,7 +30,8 @@ public class CellarPlacableObj : ScriptableObject
     {
         PlacableOnFloor = 0,
         PlaceableOnWall = 1,
-        Wallpaper = 2
+        Wallpaper = 2,
+        PlacableOnCeiling = 3,
     }
 
 
