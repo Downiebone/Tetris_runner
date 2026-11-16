@@ -54,6 +54,8 @@ public class SHOP_MANAGER : MonoBehaviour
     [SerializeField] private GameObject Draggable_Selected_Prefab;
     [SerializeField] private Item_Inshop[] items;
 
+    [SerializeField] private Animator ui_fade_animator;
+
     void Start()
     {
         UpdateMoney_Text();
@@ -170,6 +172,15 @@ public class SHOP_MANAGER : MonoBehaviour
 
     public void Load_Main_Menu()
     {
+        StartCoroutine(waitforMenuLoad());
+    }
+
+    IEnumerator waitforMenuLoad()
+    {
+        ui_fade_animator.SetTrigger("Fade");
+
+        yield return new WaitForSeconds(1.3f);
+
         SceneManager.LoadScene("Menu");
     }
 }

@@ -86,7 +86,7 @@ public class menu_manager : MonoBehaviour
     {
         UI_Fade_Animator.SetTrigger("Fade");
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1.3f);
 
         SceneManager.LoadScene(sceneName);
     }

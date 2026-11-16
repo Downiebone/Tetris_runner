@@ -22,7 +22,8 @@ public class MeteorSpawner : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(wait_forSpawning_normal(Random.Range(Min_timeBeforeMeteors_Spawn, Max_timeBeforeMeteors_Spawn)));
+        //stop meteors. TODO. add lasers to the zone manager or something
+        //StartCoroutine(wait_forSpawning_normal(Random.Range(Min_timeBeforeMeteors_Spawn, Max_timeBeforeMeteors_Spawn)));
     }
 
     IEnumerator wait_forSpawning_normal(float timeBeforeMeteor)

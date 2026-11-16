@@ -95,6 +95,7 @@ public class GridEditor : MonoBehaviour
     //[SerializeField] private Sprite[] cellSprites;
 
     [SerializeField] private Color[] cellColors;
+    [SerializeField] private Color FloorColor;
 
     //[SerializeField] private bool fillRandom = false;
 
@@ -120,7 +121,7 @@ public class GridEditor : MonoBehaviour
 
     [Tooltip(">= 1")]
     [SerializeField] private int Level_Min_Height = 2;
-    [SerializeField] private int Level_Max_Height = 15;
+    [SerializeField] private int Level_Max_Height = 9;
 
 
     private float perlin_x_offset = 0;
@@ -222,8 +223,6 @@ public class GridEditor : MonoBehaviour
     }
 
     
-
-    // Update is called once per frame
     void fillGridColors()
     {
         for (int r = 0; r < gridHeight; r++)
@@ -236,11 +235,14 @@ public class GridEditor : MonoBehaviour
                 GameObject GO = Instantiate(cell_piece_prefab, new Vector3(c + Grid_1_Parent.transform.position.x, r + Grid_2_Parent.transform.position.y, 0), Quaternion.identity, Grid_1_Parent.transform);
                 Grid[r, c].sprite_rend = GO.GetComponent<SpriteRenderer>();
                 Grid[r, c].BasicBlockScript = GO.GetComponent<BasicBlock>();
+                Grid[r, c].overlay = GO.transform.GetChild(0).gameObject;
 
-                int colorInd = Random.Range(0, cellColors.Length);
-                Grid[r, c].color_index = colorInd;
-                Grid[r, c].cellColor = cellColors[colorInd];
-                Grid[r, c].sprite_rend.color = Grid[r, c].cellColor;
+                //int colorInd = Random.Range(0, cellColors.Length);
+                //Grid[r, c].color_index = colorInd;
+                //Grid[r, c].cellColor = cellColors[colorInd];
+                //Grid[r, c].sprite_rend.color = Grid[r, c].cellColor;
+                Grid[r, c].cellColor = FloorColor;
+                Grid[r, c].sprite_rend.color = FloorColor;
 
 
                 //fill grid_2
@@ -249,12 +251,15 @@ public class GridEditor : MonoBehaviour
                 GameObject GO_2 = Instantiate(cell_piece_prefab, new Vector3(c + Grid_2_Parent.transform.position.x, r + Grid_2_Parent.transform.position.y, 0), Quaternion.identity, Grid_2_Parent.transform);
                 Grid_2[r, c].sprite_rend = GO_2.GetComponent<SpriteRenderer>();
                 Grid_2[r, c].BasicBlockScript = GO_2.GetComponent<BasicBlock>();
+                Grid_2[r, c].overlay = GO_2.transform.GetChild(0).gameObject;
 
 
-                int colorInd_2 = Random.Range(0, cellColors.Length);
-                Grid_2[r, c].color_index = colorInd_2;
-                Grid_2[r, c].cellColor = cellColors[colorInd_2];
-                Grid_2[r, c].sprite_rend.color = Grid_2[r, c].cellColor;
+                //int colorInd_2 = Random.Range(0, cellColors.Length);
+                //Grid_2[r, c].color_index = colorInd_2;
+                //Grid_2[r, c].cellColor = cellColors[colorInd_2];
+                //Grid_2[r, c].sprite_rend.color = Grid_2[r, c].cellColor;
+                Grid_2[r, c].cellColor = FloorColor;
+                Grid_2[r, c].sprite_rend.color = FloorColor;
             }
         }
     }
@@ -275,10 +280,15 @@ public class GridEditor : MonoBehaviour
             //    currMaxHeight = Level_Min_Height;
             //}
 
-            //fills floor?
+            //fills floor
             for (int r = 0; r < gridHeight; r++)
             {
                 if(r < Level_Min_Height)
+                {
+                    Grid[r, c].isActive = true;
+                    Grid_2[r, c].isActive = true;
+                }
+                if (r > Level_Max_Height)
                 {
                     Grid[r, c].isActive = true;
                     Grid_2[r, c].isActive = true;
@@ -295,7 +305,7 @@ public class GridEditor : MonoBehaviour
     public void Fill_In_Loaded_grid(Cell[,] Grid_loaded)
     {
 
-        for (int i = 0; i < Grid_loaded.GetLength(0); i++) //height
+        for (int i = 2; i < Grid_loaded.GetLength(0); i++) //height
         {
             for (int j = 0; j < Grid_loaded.GetLength(1); j++) //width
             {
@@ -327,9 +337,18 @@ public class GridEditor : MonoBehaviour
                 {
                     grid_cell.BasicBlockScript.DisableAnimation();
                     grid_cell.sprite_rend.sprite = null;
+                    grid_cell.overlay.SetActive(false);
                 }
                 else
                 {
+                    if(grid_cell.type == Cell.Cell_type.Ground) //if object is a "block" and active
+                    {
+                        grid_cell.overlay.SetActive(true);
+                    }else
+                    {
+                        grid_cell.overlay.SetActive(false);
+                    }
+
                     grid_cell.sprite_rend.sprite = CellSprites_WithRotation[(int)loaded_cell.type].RotatableIcons[loaded_cell.Rotation];
 
                     //if object to spawn needs to spawn a separate object
@@ -547,6 +566,11 @@ public class GridEditor : MonoBehaviour
         {
             placeTileColor = Color.white;
         }
+        else
+        {
+            //if we place a "block" add the overlay
+            cell.overlay.SetActive(true);
+        }
 
         cell.cellColor = placeTileColor;
         cell.sprite_rend.color = placeTileColor;
@@ -580,6 +604,11 @@ public class GridEditor : MonoBehaviour
         {
             placeTileColor = Color.white;
         }
+        else
+        {
+            //blocks get overlay for contrast
+            cell.overlay.SetActive(true);
+        }
 
         cell.cellColor = placeTileColor;
         cell.sprite_rend.color = placeTileColor;
@@ -593,7 +622,7 @@ public class GridEditor : MonoBehaviour
     //for editor?
     public void replace_active_Tile(Vector2Int pos, Cell.Cell_type replace_to_type)
     {
-        if (pos.y < 1) //dont replace bottom
+        if (pos.y < Level_Min_Height || pos.y > Level_Max_Height) //dont replace bottom
         {
             return;
         }
@@ -603,6 +632,8 @@ public class GridEditor : MonoBehaviour
         {
             return;
         }
+        //if we replace tile to ground then we add overlay, otherwise remove overlay
+        cell.overlay.SetActive(replace_to_type == Cell.Cell_type.Ground);
 
         //if object we are replacing is an object who placed something in the scene
         cell.BasicBlockScript.DestroyPlacedBlock();
@@ -631,7 +662,7 @@ public class GridEditor : MonoBehaviour
     }
     public void deleteTile_exeptFloor(Vector2Int pos)
     {
-        if(pos.y < 1 || pos.y >= gridHeight) //dont destroy floor or "ceiling"
+        if(pos.y < Level_Min_Height || pos.y > Level_Max_Height) //dont destroy floor or "ceiling"
         {
             return;
         }
@@ -646,12 +677,13 @@ public class GridEditor : MonoBehaviour
         }
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
+        cell.overlay.SetActive(false);
 
         cell.BasicBlockScript.DestroyPlacedBlock();
     }
     public void bombTile(Vector2Int pos)
     {
-        if (pos.y < 1 || pos.y >= gridHeight) //dont destroy floor or "ceiling"
+        if (pos.y < Level_Min_Height || pos.y > Level_Max_Height) //dont destroy floor or "ceiling"
         {
             return;
         }
@@ -667,6 +699,7 @@ public class GridEditor : MonoBehaviour
 
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
+        cell.overlay.SetActive(false);
 
         cell.BasicBlockScript.DestroyPlacedBlock();
     }
@@ -674,7 +707,7 @@ public class GridEditor : MonoBehaviour
     //if the player bombed something (for applying player items)
     public void bombTilePlayer(Vector2Int pos, bool UseBombAnimation = true)
     {
-        if (pos.y < 1) //dont destroy floor or "ceiling"
+        if (pos.y < Level_Min_Height || pos.y > Level_Max_Height) //dont destroy floor or "ceiling"
         {
             return;
         }
@@ -703,6 +736,7 @@ public class GridEditor : MonoBehaviour
 
         cell.isActive = false;
         cell.sprite_rend.sprite = null;
+        cell.overlay.SetActive(false);
 
         cell.BasicBlockScript.DestroyPlacedBlock();
     }
@@ -722,11 +756,15 @@ public class GridEditor : MonoBehaviour
                 {
                     curCell.sprite_rend.sprite = CellSprites_WithRotation[(int)curCell.type].RotatableIcons[curCell.Rotation];
                     curCell_2.sprite_rend.sprite = CellSprites_WithRotation[(int)curCell_2.type].RotatableIcons[curCell_2.Rotation];
+                    curCell.overlay.SetActive(true);
+                    curCell_2.overlay.SetActive(true);
                 }
                 else
                 {
                     curCell.sprite_rend.sprite = null;
                     curCell_2.sprite_rend.sprite = null;
+                    curCell.overlay.SetActive(false);
+                    curCell_2.overlay.SetActive(false);
                 }
             }
         }

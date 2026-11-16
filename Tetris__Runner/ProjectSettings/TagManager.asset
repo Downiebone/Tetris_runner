@@ -20,12 +20,12 @@ TagManager:
   - CellarWalls
   - CellarGroundObj
   - Ground
-  - 
+  - CellarSittableObj
   - 
   - 
   - 
   - Player
-  - 
+  - CellarPlayer
   - 
   - 
   - 

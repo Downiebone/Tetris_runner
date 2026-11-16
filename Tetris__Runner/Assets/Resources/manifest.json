@@ -18,7 +18,8 @@
                         "coin_rainbow",
                         "coin_wave",
                         "SpikeBed",
-                        "LaserBlockade"
+                        "LaserBlockade",
+                        "SneakyBounce"
                     ]
                 },
                 {
@@ -250,7 +251,8 @@
                     "id": "2",
                     "files": [
                         "coin_tunnel",
-                        "downing_arrows"
+                        "downing_arrows",
+                        "BouncyPads"
                     ]
                 },
                 {

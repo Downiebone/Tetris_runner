@@ -34,6 +34,7 @@ public class Cell
     public Cell_type type = Cell_type.Ground;
     //public int colorIndex = 0;
     [NonSerialized] public SpriteRenderer sprite_rend;
+    [NonSerialized] public GameObject overlay;
     [NonSerialized] public BasicBlock BasicBlockScript;
     [NonSerialized] public Color cellColor;
     public SColor saved_cellColor;

@@ -27,6 +27,7 @@ public class level_play_system : MonoBehaviour
     private int current_spiral_ind = 0;
 
     [SerializeField] private TMP_Text money_text;
+    [SerializeField] private Animator money_animator;
     [SerializeField] private TMP_Text end_of_level_money_text;
     [SerializeField] private TMP_Text Score_text;
 
@@ -86,7 +87,7 @@ public class level_play_system : MonoBehaviour
     }
     private void update_money_text()
     {
-        //shake the counter a little :)
+        money_animator.SetTrigger("Coin");
         money_text.text = money_from_level.ToString() + "x";
     }
 

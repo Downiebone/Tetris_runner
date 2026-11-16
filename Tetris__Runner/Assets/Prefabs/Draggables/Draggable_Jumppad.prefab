@@ -163,6 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf345bc5baea48b4280a4ff334284054, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TypeOfDraggable_Index: 0
   sprite_ref: {fileID: 7604938256440483462, guid: 3d5e27430337fd84e861d00e6c56363f, type: 3}
   floating_scale: 1
   selected_scale: 1.25

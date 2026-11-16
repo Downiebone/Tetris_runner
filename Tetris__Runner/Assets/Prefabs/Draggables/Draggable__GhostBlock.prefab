@@ -184,6 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 478de6418709b9341a6a78022bf7ae74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TypeOfDraggable_Index: 0
   sprite_ref: {fileID: 7604938256440483462, guid: 3d5e27430337fd84e861d00e6c56363f, type: 3}
   floating_scale: 0.75
   selected_scale: 1.25
@@ -213,8 +214,8 @@ MonoBehaviour:
   - {x: -1, y: -1}
   HighlightSpot_Line:
   - {x: 0, y: 0}
-  - {x: 0, y: 1}
-  - {x: 0, y: -1}
+  - {x: 1, y: 0}
+  - {x: -1, y: 0}
 --- !u!50 &4044893829045433679
 Rigidbody2D:
   serializedVersion: 4
@@ -271,7 +272,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

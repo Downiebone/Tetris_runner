@@ -50,9 +50,7 @@ public class Pause_Manager : MonoBehaviour
     {
         play_System.save_moneys();
 
-        GAME_IS_PAUSED = false;
-        Resources.UnloadUnusedAssets();
-        System.GC.Collect();
+        
 
         StartCoroutine(waitforMenuLoad());
     }
@@ -61,7 +59,11 @@ public class Pause_Manager : MonoBehaviour
     {
         UI_Fade_Animator.SetTrigger("Fade");
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1.3f);
+
+        GAME_IS_PAUSED = false;
+        Resources.UnloadUnusedAssets();
+        System.GC.Collect();
 
         SceneManager.LoadScene("Menu");
     }

@@ -59,10 +59,6 @@ public class GridEditor_Camera : MonoBehaviour
     private bool using_random_colors = true;
 
     private int[] counter_vals = { //how many blocks you need to place before new color
-        1,
-        2,
-        2,
-        2,
         3,
         3,
         4,
@@ -159,18 +155,21 @@ public class GridEditor_Camera : MonoBehaviour
         Vector2Int currentGridMousePos = new Vector2Int(Grid_script.getClosestGridPos(mouseWorldPos).x, Grid_script.getClosestGridPos(mouseWorldPos).y);
         cell_highlight.transform.position = new Vector3(currentGridMousePos.x, currentGridMousePos.y, 0);
 
-        if (currentGridMousePos != (new Vector2Int(-1, -1)))
+        //dont spawn if we on invalid spot, or hover ui
+        bool lookingAtUi = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
+        if (currentGridMousePos != (new Vector2Int(-1, -1)) && !lookingAtUi)
         {
             if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Mouse1))
             {
                 undo_cell_values.Clear();
+                last_placed_position = new Vector2Int(-8,-8);
             }
 
             if (Input.GetKey(KeyCode.Mouse0) && currentGridMousePos != last_placed_position)
             {
-                Debug.Log("Placing");
+                //Debug.Log("Placing");
 
-                last_placed_position = currentGridMousePos;
+                //last_placed_position = currentGridMousePos;
 
                 add_tile_to_undo_list(currentGridMousePos, Grid_script.getCellAtPoint(currentGridMousePos));
 
@@ -194,7 +193,9 @@ public class GridEditor_Camera : MonoBehaviour
             }
         }
 
-        if(Input.mouseScrollDelta.y == 1)
+        last_placed_position = currentGridMousePos;
+
+        if (Input.mouseScrollDelta.y == 1)
         {
             current_type_placing++;
             if(current_type_placing >= CellTypes_Sprites.Length)
@@ -225,16 +226,22 @@ public class GridEditor_Camera : MonoBehaviour
             StartCoroutine(CountingCoroutine());
         }
 
-        if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Z))
-        {
-            for (int i = 0; i < undo_cell_values.Count; i++)
-            {
-                //Debug.Log("saved_cell: " + undo_cell_values[i].cell.isActive);
-                Grid_script.place_fullCell(undo_cell_values[i].yx_vals, undo_cell_values[i].cell);
+        //if(Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Z))
+        //{
+        //    for (int i = 0; i < undo_cell_values.Count; i++)
+        //    {
+        //        //Debug.Log("saved_cell: " + undo_cell_values[i].cell.isActive);
+        //        Grid_script.place_fullCell(undo_cell_values[i].yx_vals, undo_cell_values[i].cell);
 
-            }
-            undo_cell_values.Clear();
+        //    }
+        //    undo_cell_values.Clear();
+        //}
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ChangePlaceRotation();
         }
+
+        if (lookingAtUi) { return; }
 
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -247,7 +254,7 @@ public class GridEditor_Camera : MonoBehaviour
                 Grid_script.gridLength_SAVE -= 1;
             }
         }
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.J))
         {
             //Reset position
             transform.position = new Vector3(12.64f, 7, -10);

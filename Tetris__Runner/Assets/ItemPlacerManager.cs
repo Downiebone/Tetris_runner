@@ -7,9 +7,11 @@ using UnityEngine.SceneManagement;
 
 public class ItemPlacerManager : MonoBehaviour
 {
-    public CellarBoundsManager boundsManager;
+    public CellarBoundsManager[] boundsManager;
+    [SerializeField] private CellarAlienBehavior cellAlien;
 
     public CellarPlacableObj[] PlacableObj;
+    private List<CellarPlacableObj> ItemsPlacedInWorld = new List<CellarPlacableObj>();
 
     public GameObject UI_PreviewButtons;
     public GameObject UI_PlacableCellarItem;
@@ -18,6 +20,8 @@ public class ItemPlacerManager : MonoBehaviour
     public GameObject UI_cellarItem_Prefab;
     public CanvasGroup PreviewCanvasGroup;
     public GameObject PreviewButton;
+    public GameObject VisualsForAltering_previewBoxSize;
+    [Tooltip("8, 16, 32, 64")] public float[] GreenBoxProportions;
 
     [Space]
 
@@ -32,6 +36,7 @@ public class ItemPlacerManager : MonoBehaviour
     public TMP_Text diamonds_Text;
 
     Camera main_cam;
+    private bool Placable_FaceDirection_trueIsRight = true;
     private bool PreviewingItem = false;
     private bool CanPlacePreviewItem = false;
     private Vector2 MovingToPosition;
@@ -48,6 +53,35 @@ public class ItemPlacerManager : MonoBehaviour
 
     private GameObject Preview_PlacedObj;
 
+    public GameObject GemSparkle_medium;
+    public GameObject GemSparkle_bigger;
+    public GameObject GemSparkle_huge;
+
+    //should return true if the cellar is nice enough
+    //nice enough should maybe mean a light source and somewhere it can sit
+    public bool isCellarLivable()
+    {
+        bool HaslightSource = false;
+        bool hasSittable = false;
+        for (int i = 0; i < ItemsPlacedInWorld.Count; i++)
+        {
+            if(HaslightSource == false && ItemsPlacedInWorld[i].Objects_properties == CellarPlacableObj.ObjectProperties.LightSource)
+            {
+                HaslightSource = true;
+                continue;
+            }
+            if (hasSittable == false && ItemsPlacedInWorld[i].Objects_properties == CellarPlacableObj.ObjectProperties.Sittable)
+            {
+                hasSittable = true;
+            }
+            if(HaslightSource && hasSittable)
+            {
+                break;
+            }
+        }
+        return (HaslightSource && hasSittable) == true;
+    }
+
     void Start()
     {
         DiamondAmmount = PlayerPrefs.GetInt("Diamonds");
@@ -58,6 +92,14 @@ public class ItemPlacerManager : MonoBehaviour
         fillCellarShopItems();
 
         fillBoughtItems_FromPlayerprefs();
+
+        //make sure it starts after placer
+        cellAlien.DelayedStart();
+    }
+
+    public float GetRandom_X_pos_In_CurrentBounds(Vector2 alienPos)
+    {
+        return boundsManager[0].GetRandom_X_value_inCurrentRoom(alienPos);
     }
 
     private void updateDiamondTextUI()
@@ -78,6 +120,7 @@ public class ItemPlacerManager : MonoBehaviour
                 float itemY = PlayerPrefs.GetFloat(I_playerprefNem + "_y" + "_" + (x + 1).ToString());
 
                 Instantiate(PlacableObj[i].PrefabToUse, new Vector3(itemX, itemY, 0), Quaternion.identity);
+                ItemsPlacedInWorld.Add(PlacableObj[i]);
             }
         }
     }
@@ -112,7 +155,7 @@ public class ItemPlacerManager : MonoBehaviour
         {
             HighlightPortion.transform.position = worldPosition;
 
-            if (boundsManager.IsObjectInBounds(worldPosition, currentlyPreviewedCellarObj))
+            if (boundsManager[0].IsObjectInBounds(worldPosition, currentlyPreviewedCellarObj))
             {
 
                 HighlightObjectSpriterend_Box.color = Color.green;
@@ -120,14 +163,14 @@ public class ItemPlacerManager : MonoBehaviour
 
                 if (currentlyPreviewedCellarObj.KindaObject == CellarPlacableObj.ObjectType.PlacableOnFloor)
                 {
-                    float moveDownDistance = boundsManager.GetDistanceToMoveDownGroundObj(worldPosition, currentlyPreviewedCellarObj);
+                    float moveDownDistance = boundsManager[0].GetDistanceToMoveDownGroundObj(worldPosition, currentlyPreviewedCellarObj);
                     MovingToPosition = new Vector2(worldPosition.x, worldPosition.y - moveDownDistance);
                     //HighlightPortion_visuals.transform.position = new Vector2(worldPosition.x, worldPosition.y - moveDownDistance);
                     //HighlightPortion_visuals.transform.position = Vector3.Lerp(HighlightPortion_visuals.transform.position, new Vector2(worldPosition.x, worldPosition.y - moveDownDistance), smoothSpeed * Time.deltaTime);
                 }
                 if (currentlyPreviewedCellarObj.KindaObject == CellarPlacableObj.ObjectType.PlacableOnCeiling)
                 {
-                    float moveUpDistance = boundsManager.GetDistanceToMoveUpCeilingObj(worldPosition, currentlyPreviewedCellarObj);
+                    float moveUpDistance = boundsManager[0].GetDistanceToMoveUpCeilingObj(worldPosition, currentlyPreviewedCellarObj);
                     MovingToPosition = new Vector2(worldPosition.x, worldPosition.y + moveUpDistance);
                     //HighlightPortion_visuals.transform.position = new Vector2(worldPosition.x, worldPosition.y - moveDownDistance);
                     //HighlightPortion_visuals.transform.position = Vector3.Lerp(HighlightPortion_visuals.transform.position, new Vector2(worldPosition.x, worldPosition.y - moveDownDistance), smoothSpeed * Time.deltaTime);
@@ -145,7 +188,7 @@ public class ItemPlacerManager : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            //boundsManager.IsObjectInBounds(worldPosition, currentlyPreviewedCellarObj);
+            //boundsManager[0].IsObjectInBounds(worldPosition, currentlyPreviewedCellarObj);
         }
 #endif
     }
@@ -201,6 +244,7 @@ public class ItemPlacerManager : MonoBehaviour
         DiamondAmmount = DiamondAmmount - currentlyPreviewedCellarObj.CellarPrize;
         PlayerPrefs.SetInt("Diamonds", DiamondAmmount);
         updateDiamondTextUI();
+        SpawnSparkeParticles(currentlyPreviewedCellarObj.CellarPrize, HighlightPortion_visuals.transform.position);
 
         string playerPrefName = currentlyPreviewedCellarObj.getPlayerPrefName();
 
@@ -213,7 +257,13 @@ public class ItemPlacerManager : MonoBehaviour
         PlayerPrefs.SetFloat(playerPrefName + "_y" + "_" + newAmmount, HighlightPortion_visuals.transform.position.y);
 
         //spawn actual object
-        Instantiate(currentlyPreviewedCellarObj.PrefabToUse, HighlightPortion_visuals.transform.position, Quaternion.identity);
+        GameObject GO = Instantiate(currentlyPreviewedCellarObj.PrefabToUse, HighlightPortion_visuals.transform.position, Quaternion.identity);
+        ItemsPlacedInWorld.Add(currentlyPreviewedCellarObj); // add to list that knows of all spawned items
+
+        if(currentlyPreviewedCellarObj.Objects_properties == CellarPlacableObj.ObjectProperties.Sittable)
+        {
+            GO.GetComponent<CellarSitObj>().FacingRight = Placable_FaceDirection_trueIsRight;
+        }
 
         PreviewingItem = false;
         CanPlacePreviewItem = false;
@@ -231,6 +281,25 @@ public class ItemPlacerManager : MonoBehaviour
 
         UI_PreviewButtons.SetActive(false);
         UI_PlacableCellarItem.SetActive(true);
+
+        //tell alien we placed a block
+        cellAlien.PlacedItemCall();
+    }
+
+    private void SpawnSparkeParticles(int ObjectPrize, Vector3 aposition)
+    {
+        if(ObjectPrize >= 100)
+        {
+            Instantiate(GemSparkle_huge, aposition, Quaternion.identity);
+        }
+        else if(ObjectPrize >= 20)
+        {
+            Instantiate(GemSparkle_bigger, aposition, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(GemSparkle_medium, aposition, Quaternion.identity);
+        }
     }
 
     public void CancelPreview()
@@ -252,6 +321,7 @@ public class ItemPlacerManager : MonoBehaviour
         UI_PlacableCellarItem.SetActive(true);
     }
 
+    //when you first click an item in the shop
     public void startPreivewItem(CellarPlacableObj itemToPreview)
     {
         HighlightObjectSpriterend.sprite = itemToPreview.SpriteAndVariance[0]; //change to accomidate varriance later
@@ -263,6 +333,8 @@ public class ItemPlacerManager : MonoBehaviour
         CanPlacePreviewItem = false;
         HighlightObjectSpriterend_Box.color = Color.red;
 
+        setGreenPreviewBoxSize(itemToPreview.Objects_size);
+
         HighlightPortion.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, 0);
 
         //#####################################   Preview UI  ###################################################################
@@ -272,6 +344,30 @@ public class ItemPlacerManager : MonoBehaviour
 
         UI_PreviewButtons.SetActive(true);
         UI_PlacableCellarItem.SetActive(false);
+    }
+
+    private void setGreenPreviewBoxSize(CellarPlacableObj.ObjectSize newSize)
+    {
+        float newSizeToSet = 1.1f;
+
+        switch (newSize)
+        {
+            case CellarPlacableObj.ObjectSize.is_8_8:
+                newSizeToSet = GreenBoxProportions[0];
+                break;
+            case CellarPlacableObj.ObjectSize.is_16_16:
+                newSizeToSet = GreenBoxProportions[1];
+                break;
+            case CellarPlacableObj.ObjectSize.is_32_32:
+                newSizeToSet = GreenBoxProportions[2];
+                break;
+            case CellarPlacableObj.ObjectSize.is_64_64:
+                newSizeToSet = GreenBoxProportions[3];
+                break;
+
+        }
+
+        VisualsForAltering_previewBoxSize.transform.localScale = new Vector3(newSizeToSet, newSizeToSet, 1);
     }
 
     public void OpenPurchaseItems()
@@ -285,8 +381,19 @@ public class ItemPlacerManager : MonoBehaviour
         UI_PlacableCellarItem.SetActive(false);
     }
 
+    [SerializeField] private Animator UI_Fade_Animator;
+
+    IEnumerator waitforMenuLoad(string sceneName)
+    {
+        UI_Fade_Animator.SetTrigger("Fade");
+
+        yield return new WaitForSeconds(1.3f);
+
+        SceneManager.LoadScene(sceneName);
+    }
+
     public void loadMenu()
     {
-        SceneManager.LoadScene("Menu");
+        StartCoroutine(waitforMenuLoad("Menu"));
     }
 }

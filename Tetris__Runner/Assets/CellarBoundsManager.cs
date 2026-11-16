@@ -31,6 +31,8 @@ public class CellarBoundsManager : MonoBehaviour
 {
     public CellarCubeLayer[] CellAreaPlaceMent;
 
+    private float playerSize_marg = 0.25f;
+
     [SerializeField] private LayerMask placeOnFloorMask;
     [SerializeField] private LayerMask placeOnCeilingMask;
 
@@ -84,6 +86,21 @@ public class CellarBoundsManager : MonoBehaviour
         }
 
         return minDistance;
+    }
+
+    public float GetRandom_X_value_inCurrentRoom(Vector2 alienPos)
+    {
+        int cellArea_ind_playerIsIn = 0;
+        for (int i = 0; i < CellAreaPlaceMent.Length; i++)
+        {
+            if (CellAreaPlaceMent[i].PointInArea(alienPos))
+            {
+                cellArea_ind_playerIsIn = i;
+                break;
+            }
+        }
+
+        return Random.Range(CellAreaPlaceMent[cellArea_ind_playerIsIn].BotLeft.x + playerSize_marg, CellAreaPlaceMent[cellArea_ind_playerIsIn].BotRight.x - playerSize_marg);
     }
 
     public bool IsObjectInBounds(Vector2 object_pos, CellarPlacableObj CellarOb)

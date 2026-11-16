@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68e216e5259b57642a24028192e9fb5a, type: 3}
+  m_Name: Couch
+  m_EditorClassIdentifier: 
+  playerPrefName: CellarCouch
+  SpriteAndVariance:
+  - {fileID: 21300000, guid: 6821b67eaf48a1a4d92d1b048f425a41, type: 3}
+  PrefabToUse: {fileID: 4832752950909314030, guid: b496c45e69977ad4bad7f0adb1f7b619, type: 3}
+  KindaObject: 0
+  Objects_properties: 3
+  Objects_size: 2
+  CellarPrize: 25
+  CellarObjCorners:
+    TopLeft: {x: -0.8125, y: 0.5}
+    TopRight: {x: 0.6875, y: 0.5}
+    BotLeft: {x: -0.75, y: -0.5}
+    BotRight: {x: 0.75, y: -0.5}

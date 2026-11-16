@@ -17,6 +17,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 36b29b6ffe963024aa25c56923801e4b, type: 3}
   PrefabToUse: {fileID: 6643765080821982450, guid: 2c22140c3753a0c4fbc75e42a139b85c, type: 3}
   KindaObject: 3
+  Objects_properties: 1
+  Objects_size: 1
   CellarPrize: 15
   CellarObjCorners:
     TopLeft: {x: -0.0625, y: 0.4375}

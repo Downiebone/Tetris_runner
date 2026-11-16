@@ -187,7 +187,7 @@ public class draggable_piece : MonoBehaviour
     public virtual void dragged_position(Vector2 newPosition)
     {
         //(8.5 is actual top of play-area, but we give player a liiiitle leeway)
-        if(newPosition.y > 8.75f) //if top of screen, force invalid spot
+        if(newPosition.y > 8.5f) //if top of screen, force invalid spot
         {
             for (int i = 0; i < HighlightSpots.Length; i++)
             {

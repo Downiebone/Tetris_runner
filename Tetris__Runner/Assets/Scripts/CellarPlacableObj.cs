@@ -34,6 +34,23 @@ public class CellarPlacableObj : ScriptableObject
         PlacableOnCeiling = 3,
     }
 
+    public enum ObjectSize
+    {
+        is_8_8 = 0,
+        is_16_16 = 1,
+        is_32_32 = 2,
+        is_64_64 = 3,
+    }
+
+    public enum ObjectProperties
+    {
+        NormalObj = 0,
+        LightSource = 1,
+        AudioSource = 2,
+        Sittable = 3,
+        Interactable = 4,
+    }
+
 
     [SerializeField] protected string playerPrefName;
     public string getPlayerPrefName() { return playerPrefName; }
@@ -43,6 +60,10 @@ public class CellarPlacableObj : ScriptableObject
     public GameObject PrefabToUse;
 
     public ObjectType KindaObject;
+
+    public ObjectProperties Objects_properties = ObjectProperties.NormalObj;
+
+    public ObjectSize Objects_size = ObjectSize.is_16_16;
 
     public int CellarPrize;
 

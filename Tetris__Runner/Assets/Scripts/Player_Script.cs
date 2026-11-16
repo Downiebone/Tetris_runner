@@ -15,6 +15,8 @@ public class Player_Script : MonoBehaviour
 
     public GameObject playerDeath;
 
+    public GameObject playerJumpPrefab;
+
     private Cell Cell_body_current;
 
     private bool Cell_floor_exist;
@@ -145,6 +147,8 @@ public class Player_Script : MonoBehaviour
 
         playerAnimator.SetTrigger("JumpSilly");
 
+        Instantiate(playerJumpPrefab, transform.position, Quaternion.identity);
+
         //Debug.Log("BOMBED!!!!!!!!!");
 
         //bomb_timer = 0.5f;
@@ -166,6 +170,8 @@ public class Player_Script : MonoBehaviour
         playerAnimator.SetTrigger("JumpSilly");
 
         MusicManager.Instance.play_soundeffect(JumpSound);
+
+        Instantiate(playerJumpPrefab, transform.position, Quaternion.identity);
 
         gravity_modifier = 0;
         RB.velocity = new Vector2(0, 0);
@@ -203,50 +209,38 @@ public class Player_Script : MonoBehaviour
         //    return; //nothing more, we only lose bird when dying as bird
         //}
 
-        if (play_system.has_revives()) //we can revive
+        
+        cameraFollow_script.ShakeStart(0.5f, 0.5f);
+
+        im_dead = true;
+        RB.gravityScale = 0;
+        RB.velocity = new Vector2(0, 0);
+
+        switch (DeathType)
         {
-            //maybe some screen shake? large explosion
-            play_system.Remove_Revive();
-
-            cameraFollow_script.ShakeStart(0.8f, 0.5f);
-
-            Instantiate(playerDeath, transform.position, Quaternion.identity);
-            expand_bomb.expanding_explosion(25, Vector2Int.RoundToInt((Vector2)transform.position));
-        }
-        else //we are cooked
-        {
-            cameraFollow_script.ShakeStart(0.5f, 0.5f);
-
-            im_dead = true;
-            RB.gravityScale = 0;
-            RB.velocity = new Vector2(0, 0);
-
-            switch (DeathType)
-            {
-                case KindsOFDeath.RunIntoWall:
-                    playerAnimator.SetTrigger("DeathSplatNormal");
-                    StartCoroutine(DeathCoroutine());
-                    SplatFix();
-                    break;
-                case KindsOFDeath.RunIntoCorner:
-                    playerAnimator.SetTrigger("DeathSplatCorner");
-                    StartCoroutine(DeathCoroutine());
-                    SplatFix();
-                    break;
-                case KindsOFDeath.Laser:
-                    playerAnimator.SetTrigger("DeathMario");
-                    StartCoroutine(DeathCoroutine());
-                    break;
-                case KindsOFDeath.Spike:
-                    playerAnimator.SetTrigger("DeathMario");
-                    StartCoroutine(DeathCoroutine());
-                    break;
-                case KindsOFDeath.RunIntoWallAir:
-                    playerAnimator.SetTrigger("DeathSplatNormal");
-                    StartCoroutine(DeathCoroutine(true));
-                    SplatFix();
-                    break;
-            }
+            case KindsOFDeath.RunIntoWall:
+                playerAnimator.SetTrigger("DeathSplatNormal");
+                StartCoroutine(DeathCoroutine());
+                SplatFix();
+                break;
+            case KindsOFDeath.RunIntoCorner:
+                playerAnimator.SetTrigger("DeathSplatCorner");
+                StartCoroutine(DeathCoroutine());
+                SplatFix();
+                break;
+            case KindsOFDeath.Laser:
+                playerAnimator.SetTrigger("DeathMario");
+                StartCoroutine(DeathCoroutine());
+                break;
+            case KindsOFDeath.Spike:
+                playerAnimator.SetTrigger("DeathMario");
+                StartCoroutine(DeathCoroutine());
+                break;
+            case KindsOFDeath.RunIntoWallAir:
+                playerAnimator.SetTrigger("DeathSplatNormal");
+                StartCoroutine(DeathCoroutine(true));
+                SplatFix();
+                break;
         }
     }
     private void SplatFix()
@@ -258,6 +252,26 @@ public class Player_Script : MonoBehaviour
     private IEnumerator DeathCoroutine(bool ContinueAir = false)
     {
         yield return new WaitForSeconds(1.5f);
+
+        if (play_system.has_revives()) //we can revive
+        {
+            //maybe some screen shake? large explosion
+            play_system.Remove_Revive();
+
+            cameraFollow_script.ShakeStart(0.8f, 0.5f);
+
+            //add some kind of aniamtion. Maybe an explosion?
+
+            im_dead = false;
+            RB.gravityScale = 1;
+            playerAnimator.SetTrigger("Run");
+
+            Instantiate(playerDeath, transform.position, Quaternion.identity);
+            expand_bomb.expanding_explosion(25, Vector2Int.RoundToInt((Vector2)transform.position));
+
+            yield break;
+        }
+
 
         if (ContinueAir)
         {
